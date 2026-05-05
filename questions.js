@@ -503,7 +503,698 @@ const questions = [
   { 
     question: "According to Colossians 4:14, what was Luke’s profession?", 
     options: ["Tax collector", "Physician", "Tentmaker", "Fisherman"], 
-    answer: 1 }
+    answer: 1 
+  },
+
+  { 
+    question: "In 1 Thessalonians 4:16, what will accompany the Lord’s descent from heaven?", 
+    options: ["A trumpet call", "Lightning and thunder", "Angels singing", "The sound of many waters"], 
+    answer: 0 
+},
+
+  { 
+    question: "Which church received Paul’s shortest letter?", 
+    options: ["Galatians", "Philemon", "Titus", "2 Thessalonians"], 
+    answer: 1 
+  },
+
+  { 
+    question: "In Hebrews 11, who is described as having 'considered God faithful who had made the promise' regarding Sarah?", 
+    options: ["Abraham", "Isaac", "Jacob", "Joseph"], 
+    answer: 0 
+  },
+
+  { 
+    question: "According to James 2:25, who was considered righteous by her actions in hiding the spies?", 
+    options: ["Deborah", "Rahab", "Jael", "Esther"], 
+    answer: 1 
+  },
+
+  { 
+    question: "What warning does Jude give about certain men who 'crept in unnoticed'?", 
+    options: ["They deny the Lord", "They are false teachers", "They are immoral", "All of the above"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Who was the high priest that prophesied that one man should die for the people? (John 11:50)", 
+    options: ["Annas", "Caiaphas", "Gamliel", "Nicodemus"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Which miracle is recorded in all four Gospels?", 
+    options: ["Feeding of the 5000", "Walking on water", "Raising Lazarus", "Healing the blind man"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "In which city did Paul preach from the Areopagus? (Acts 17:22)", 
+    options: ["Corinth", "Athens", "Ephesus", "Philippi"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "What did Paul say he counted as loss compared to knowing Christ? (Philippians 3:8)", 
+    options: ["His Roman citizenship", "His education under Gamaliel", "All things", "His tentmaking trade"], 
+    answer: 2 
+  },
+
+  { 
+    question: "According to Matthew 26:15, how many pieces of silver did Judas Iscariot receive for betraying Jesus?", 
+    options: ["20", "30", "40", "50"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Which woman was the first to see the risen Jesus and was told not to cling to Him? (John 20:17)", 
+    options: ["Mary the mother of Jesus", "Mary Magdalene", "Mary of Bethany", "Salome"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In Acts 5, what exact amount of money did Ananias and Sapphira keep back from the sale of their property?", 
+    options: ["Part of the proceeds", "All of it", "Only the profit", "Nothing"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "Who fell out of a window while Paul was preaching in Troas and was raised from the dead? (Acts 20:9-12)", 
+    options: ["Mnason", "Lyconia", "Eutychus", "Sopater"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "In Romans 16:3-5, who are described by Paul as his fellow workers in Christ Jesus and hosts of a house church?", 
+    options: ["Aquila and Priscilla", "Timothy and Titus", "Barnabas and John Mark", "Silas and Luke"], 
+    answer: 0 
+  },
+
+  { 
+    question: "According to 1 Corinthians 1:14-16, whom did Paul personally baptize in Corinth?", 
+    options: ["Crispus and Gaius", "Apollos and Cephas", "Aquila and Priscilla", "Stephanas and his household"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "In 2 Corinthians 12:7, what did Paul call the thorn given to him in the flesh?", 
+    options: ["A messenger of Satan", "An angel of light", "A spirit of infirmity", "A demon of depression"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "Which church did Paul say he robbed other churches to serve? (2 Corinthians 11:8)", 
+    options: ["Corinth", "Ephesus", "Thessalonica", "Philippi"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "In Galatians 3:28, Paul declares there is neither Jew nor Gentile, slave nor free, male nor female, for all are one in whom?", 
+    options: ["The church", "Christ Jesus", "The Spirit", "The new covenant"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "According to Ephesians 6:5-8, how should servants (employees) obey their earthly masters?", 
+    options: ["Only when watched", "With fear and trembling", "With sincerity of heart as to Christ", "Only if they are believers"], 
+    answer: 2 
+  },
+
+  { 
+    question: "Who was the runaway slave that Paul converted and sent back to his master Philemon?", 
+    options: ["Epaphroditus", "Tychicus", "Onesimus", "Archippus"], 
+    answer: 2
+  },
+  
+  { 
+    question: "In Hebrews 5:7, during the days of His flesh, Jesus offered up prayers with loud cries and tears to the One who could save Him from what?", 
+    options: ["Roman rule", "Sin", "Death", "Betrayal"], 
+    answer: 2
+  },
+  
+  { 
+    question: "According to James 5:17, how long did Elijah pray that it would not rain?", 
+    options: ["Three and a half years", "Seven years", "Forty days", "One year"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "In 1 Peter 5:13, who does Peter refer to as 'she who is in Babylon, chosen together with you'?", 
+    options: ["The church in Rome", "Mark’s mother", "His wife", "The elect lady"], 
+    answer: 0 
+  },
+
+  { 
+    question: "According to 2 Peter 2:15, which Old Testament prophet’s way did the false teachers follow for the sake of profit?", 
+    options: ["Balaam son of Beor", "Jonah", "Elijah", "Isaiah"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "What does Revelation 1:18 say Jesus holds in His hands?", 
+    options: ["The keys of death and Hades", "The seven stars", "The book of life", "The sharp double-edged sword"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "In Revelation 3:20, Jesus says He stands at the door and knocks. To whom is this message addressed?", 
+    options: ["The church in Sardis", "The church in Laodicea", "The church in Philadelphia", "All seven churches"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "How many elders are seated around the throne in Revelation 4?", 
+    options: ["12", "24", "7", "144,000"], 
+    answer: 1 
+  },
+
+  { 
+    question: "According to Revelation 7:4, how many were sealed from all the tribes of Israel?", 
+    options: ["12,000", "144,000", "1,000,000", "7,000"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "What was written on the scroll that only the Lamb was worthy to open? (Revelation 5)", 
+    options: ["The title deed of the earth", "Names of the redeemed", "The seven seals", "Judgments against Babylon"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "Which of the seven churches was warned that their lampstand would be removed if they did not repent? (Revelation 2:5)", 
+    options: ["Smyrna", "Pergamum", "Ephesus", "Thyatira"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "According to Acts 18:2, why had Aquila and Priscilla recently come from Italy?", 
+    options: ["They were missionaries", "Claudius had ordered all Jews to leave Rome", "They were fleeing persecution in Jerusalem", "They were sent by the apostles"], 
+    answer: 1 
+  },
+
+  { 
+    question: "In Luke 2:25, what was the name of the man in Jerusalem waiting for the consolation of Israel?", 
+    options: ["Joseph", "Zacharias", "Simeon", "Nicodemus"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "According to John 4:18, how many husbands had the Samaritan woman at the well had before her current man?", 
+    options: ["3", "10", "7", "5"], 
+    answer: 3
+  },
+  
+  { 
+    question: "In Acts 19:19, what was the total value of the sorcery scrolls burned in Ephesus?", 
+    options: ["50,000 drachmas", "30 pieces of silver", "100 talents of gold", "One million denarii"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "Which epistle contains the verse 'I can do all this through him who gives me strength'?", 
+    options: ["Ephesians", "Philippians", "Colossians", "1 Thessalonians"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In 2 Timothy 4:13, what items did Paul ask Timothy to bring?", 
+    options: ["My cloak and books", "Coat and Sandals", "My scrolls and letters", "Books and parchments"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Who was the only person in the Bible explicitly called 'a man after God’s own heart'?", 
+    options: ["Abraham", "Moses", "David", "Paul"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "In which book does the phrase 'the just shall live by faith' first appear in the Old Testament?", 
+    options: ["Psalms", "Proverbs", "Habakkuk", "Isaiah"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "What was the name of the high priest who tore his clothes when Jesus declared He was the Son of Man?", 
+    options: ["Annas", "Joseph", "Gamliel", "Caiaphas"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which prophet was commanded by God to eat a scroll that tasted sweet as honey but made his stomach bitter?", 
+    options: ["Jeremiah", "Nehemiah", "Daniel", "Ezekiel"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Which single verse in the Bible is quoted more times in the New Testament than any other Old Testament verse?", 
+    options: ["Psalm 110:1", "Isaiah 53:5", "Genesis 15:6", "Exodus 20:3"], 
+    answer: 0 
+  },
+
+  { 
+    question: "Which book of the Bible ends with these words: 'Even so, come, Lord Jesus'?", 
+    options: ["Jude", "Revelation", "Hebrews", "2 Peter"], 
+    answer: 1 
+  },
+
+  { 
+    question: "Which book and chapter records the feeding of the 5000?", 
+    options: ["Matthew 14", "Mark 6", "Luke 9", "John 6"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "Where did Jesus say 'Peace I leave with you; my peace I give you'?", 
+    options: ["Matthew 11", "John 14", "John 16", "Philippians 4"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In which book and chapter is the story of the Philippian jailer’s conversion found?", 
+    options: ["Acts 12", "Acts 16", "Acts 19", "Acts 28"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Where does Paul write about the 'thorn in my flesh'?", 
+    options: ["Galatians 4", "2 Corinthians 12", "1 Corinthians 12", "Colossians 4"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Which chapter of Revelation describes the New Jerusalem coming down from heaven?", 
+    options: ["Revelation 20", "Revelation 21", "Revelation 22", "Revelation 19"], 
+    answer: 1 
+  },
+
+  { 
+    question: "Which book and chapter contains the parable of the Prodigal Son?", 
+    options: ["Matthew 18", "Luke 15", "Mark 12", "John 11"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Where did Jesus raise Lazarus from the dead?", 
+    options: ["Mark 5", "Matthew 11", "Luke 7", "John 11"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "In which chapter of Acts did the Holy Spirit come upon the disciples on the Day of Pentecost?", 
+    options: ["Acts 1", "Acts 10", "Acts 4", "Acts 2"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Where does the conversion of Saul (Paul) on the road to Damascus occur?", 
+    options: ["Acts 7", "Acts 26", "Acts 22", "Acts 9"], 
+    answer: 3
+  },
+  
+  { 
+    question: "In which book and chapter is the Jerusalem Council recorded?", 
+    options: ["Acts 13", "Acts 15", "Galatians 2", "Romans 14"], 
+    answer: 1 
+  },
+
+  { 
+    question: "According to Deuteronomy, what was the punishment for a false witness?", 
+    options: ["Exile", "Fines", "The same punishment he intended", "Public shaming"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "Which verse in Deuteronomy contains the command to 'love the Lord your God with all your heart and with all your soul and with all your strength'?", 
+    options: ["Deuteronomy 4:6", "Deuteronomy 6:5", "Deuteronomy 10:12", "Deuteronomy 11:13"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In the Old Testament, what was required if someone made a rash vow and could not fulfill it?", 
+    options: ["They were put to death", "They had to bring a sin offering", "They were forgiven automatically", "They paid a heavy fine"], 
+    answer: 1 
+  },
+
+  { 
+    question: "Jesus criticized the Pharisees for tithing mint, dill, and cumin while neglecting what?", 
+    options: ["The weightier matters of the law", "Temple sacrifices", "Prayer and fasting", "Sabbath observance"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "The Sadducees did not believe in which two important doctrines?", 
+    options: ["Resurrection and angels", "Resurrection and judgment", "Angels and spirits", "All of the above"], 
+    answer: 3 
+  },
+
+  { 
+    question: "When the Pharisees asked Jesus about divorce, which book did He quote from to answer them?", 
+    options: ["Deuteronomy", "Genesis", "Leviticus", "Exodus"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Jesus called the Pharisees 'whitewashed tombs'. In which chapter of Matthew did He say this?", 
+    options: ["Matthew 15", "Matthew 23", "Matthew 12", "Matthew 21"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Paul stood trial before King Agrippa and made his defense in which chapter of Acts?", 
+    options: ["Acts 24", "Acts 25", "Acts 26", "Acts 22"], 
+    answer: 2 
+  },
+
+  { 
+    question: "Paul was let down through a window in a basket to escape from which city?", 
+    options: ["Jerusalem", "Damascus", "Antioch", "Ephesus"], 
+    answer: 1 
+  },
+
+  { 
+    question: "How many times did Paul mention being shipwrecked in 2 Corinthians 11?", 
+    options: ["Once", "Three times", "Five times", "Seven times"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In Revelation 2-3, which church was told they had a name of being alive but were actually dead?", 
+    options: ["Sardis", "Laodicea", "Thyatira", "Pergamum"], 
+    answer: 0 
+  },
+
+  { 
+    question: "How many questions did God ask Job in the whirlwind speeches?", 
+    options: ["38", "52", "77", "Over 100"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which New Testament book never mentions the word 'love'?", 
+    options: ["2 John", "3 John", "Jude", "Philemon"], 
+    answer: 1 
+  },
+
+  { 
+    question: "In Acts 23, how many soldiers, horsemen, and spearmen did the commander send to escort Paul to Caesarea at night?", 
+    options: ["200 soldiers, 70 horsemen, 200 spearmen", "470 soldiers, 70 horsemen", "1000 soldiers", "500 total"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "Which parable of Jesus is the only one that ends with the phrase 'Go and do likewise'?", 
+    options: ["The Good Samaritan", "The Prodigal Son", "The Lost Sheep", "The Persistent Widow"], 
+    answer: 0 
+  },
+
+  { 
+    question: "What does Paul say believers should not be regarding those who have 'fallen asleep' in 1 Thessalonians 4?", 
+    options: ["Ignorant", "Sorrowful", "Anxious", "Overconfident"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "In Revelation 3:10, Jesus promises to keep the church of Philadelphia from what?", 
+    options: ["Persecution", "The hour of trial coming on the whole world", "The mark of the beast", "The second death"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Which Old Testament event is frequently seen as a type or picture of the Rapture ?", 
+    options: ["Noah’s flood", "Enoch being taken", "Lot’s escape from Sodom", "Both B and C"], 
+    answer: 3 
+  },
+
+  { 
+    question: "According to Revelation 13, how many heads and horns does the Beast coming out of the sea have?", 
+    options: ["7 heads and 10 horns", "10 heads and 7 horns", "4 heads and 10 horns", "1 head and 7 horns"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "What number is associated with the Beast in Revelation 13:18?", 
+    options: ["616", "666", "777", "888"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Who gives power, throne, and great authority to the Beast from the sea?", 
+    options: ["The Dragon", "The False Prophet", "Babylon the Great", "Michael the Archangel"], 
+    answer: 0 
+  },
+  
+  { 
+    question: "In Revelation 16, where is the place called in Hebrew 'Armageddon'?", 
+    options: ["Valley of Jehoshaphat", "Mount of Olives", "Plain of Megiddo", "Valley of Hinnom"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "Which angel is described as having the key to the Abyss and binding Satan for 1000 years?", 
+    options: ["Gabriel", "Michael", "An unnamed angel", "The Angel of the Lord"], 
+    answer: 2 
+  },
+
+  { 
+    question: "In Revelation 12, how many stars were in the crown on the head of the woman clothed with the sun?", 
+    options: ["7", "10", "12", "24"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "What warning is given to those who worship the Beast and receive his mark?", 
+    options: ["They will be thrown into the lake of fire", "They will be tormented with burning sulfur", "They will have no rest day or night", "All of the above"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which angel announces the fall of Babylon the Great in Revelation 18?", 
+    options: ["The angel with the seven bowls", "Another angel coming down from heaven", "The angel standing in the sun", "Michael"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In Revelation 19, who leads the armies of heaven riding on white horses following Christ?", 
+    options: ["The 144,000", "The saints and angels", "The twenty-four elders", "The martyrs"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "What is written on the robe and thigh of the rider called Faithful and True in Revelation 19?", 
+    options: ["King of kings and Lord of lords", "The Word of God", "Alpha and Omega", "Lion of Judah"], 
+    answer: 0 
+  },
+
+  { 
+    question: "Which angel is sent to measure the temple and the altar in Revelation 11?", 
+    options: ["The angel with the little scroll", "A mighty angel", "The two witnesses", "None — John is told to measure it"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "In Revelation 14, what do the 144,000 have written on their foreheads?", 
+    options: ["The mark of the Beast", "The name of the Father and the Lamb", "666", "A new name"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "What is the name of the great city that is spiritually called Sodom and Egypt, where the two witnesses are killed?", 
+    options: ["Babylon", "Jerusalem", "Nineveh", "Rome"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Which bowl judgment turns the rivers and springs of water into blood?", 
+    options: ["The second", "The third", "The fourth", "The sixth"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "In Revelation 20, after the 1000 years, Satan is released and gathers nations for battle at what place?", 
+    options: ["Armageddon", "Gog and Magog", "The Valley of Decision", "Megiddo"], 
+    answer: 1 
+  },
+
+  { 
+    question: "What warning is given three times in Revelation about adding to or taking away from the words of the prophecy?", 
+    options: ["Revelation 1:3", "Revelation 22:18-19", "Revelation 3:3", "Revelation 14:9-10"], 
+    answer: 1 
+  },
+  
+  { 
+    question: "Which angel shows John the New Jerusalem in Revelation 21?", 
+    options: ["The angel with the seven plagues", "One of the seven angels who had the seven bowls", "Gabriel", "The angel standing in the sun"], 
+    answer: 1 
+  },
+
+  { 
+    question: "How many times does the phrase 'the rest of the acts of [king] are written in the book of the kings of Israel and Judah' appear in 2 Chronicles?", 
+    options: ["8 times", "12 times", "15 times", "Over 20 times"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which king of Judah is described as doing what was right in the eyes of the Lord but not removing the high places?", 
+    options: ["Asa", "Jehoshaphat", "Uzziah", "Jotham"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who said 'O Lord God of our fathers, are You not God in heaven, and do You not rule over all the kingdoms of the nations?'", 
+    options: ["Hezekiah", "Josiah", "Jehoshaphat", "Asa"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "In 2 Chronicles, which king reigned for 52 years, the longest reign of any king of Judah?", 
+    options: ["Hezekiah", "Josiah", "Manasseh", "Uzziah"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Which wicked king of Judah sacrificed his own sons in the fire?", 
+    options: ["Ahaz", "Amon", "Jehoiakim", "Manasseh"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who was the Cushite commander defeated by King Asa and the army of Judah?", 
+    options: ["Zerah", "Shishak", "Tirhakah", "Sennacherib"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which king of Judah walked in the ways of David and removed the high places?", 
+    options: ["Jehoshaphat", "Hezekiah", "Josiah", "Asa"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who was the prophetess that King Josiah sent to inquire of the Lord?", 
+    options: ["Deborah", "Miriam", "Huldah", "Noadiah"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Which king of Judah was carried to Babylon in bronze fetters?", 
+    options: ["Jehoiachin", "Zedekiah", "Jehoiakim", "Manasseh"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who was the Levite that David appointed as chief musician along with Asaph?", 
+    options: ["Heman", "Jeduthun", "Korah", "Ethan the Ezrahite"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which king of Judah did evil and burned incense in the high places?", 
+    options: ["Jotham", "Ahaz", "Hezekiah", "Josiah"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who was the Ammonite king that made war against Jehoshaphat?", 
+    options: ["Nahash", "Baalis", "Sanballat", "Ammon"], 
+    answer: 3 
+  },
+
+  { 
+    question: "In 2 Chronicles, which king is described as having a heart that was perfect toward God all his days?", 
+    options: ["Hezekiah", "Josiah", "Jehoshaphat", "Asa"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who was the captain of the host that helped put Joash on the throne?", 
+    options: ["Joab", "Abner", "Benaiah", "Jehoiada"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which king of Judah repaired the temple and paid the workers with money collected from the people?", 
+    options: ["Manasseh", "Amon", "Jehoash", "Josiah"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Who was the seer that rebuked King Uzziah for burning incense?", 
+    options: ["Isaiah", "Jeremiah", "Zechariah", "Azariah the priest"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "Which king of Judah humbled himself when the prophet Isaiah warned him of coming judgment?", 
+    options: ["Ahaz", "Manasseh", "Amon", "Hezekiah"], 
+    answer: 3 
+  },
+
+  { 
+    question: "What did Jonathan give David as a sign of their covenant of friendship?", 
+    options: ["His sword", "His robe and armor", "His bow", "His horse"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "Where did David flee to escape from Saul and live among the Philistines?", 
+    options: ["Hebron", "Ziklag", "Gath", "Jerusalem"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "Who was the Amalekite that claimed to have killed Saul?", 
+    options: ["Doeg", "Agag", "The young man from Amalek", "Abner"], 
+    answer: 2 
+  },
+  
+  { 
+    question: "In 2 Samuel 5, David captured which city and made it his capital?", 
+    options: ["Hebron", "Jerusalem", "Bethlehem", "Zion"], 
+    answer: 2 
+  },
+
+  { 
+    question: "Who was the king of Gath that David fled to?", 
+    options: ["Achish", "Achishh", "Akish", "Aachish"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Who was the high priest during the time of David?", 
+    options: ["Abiathar", "Abithar", "Abiather", "Abiaathar"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Who advised Absalom to publicly take David's concubines?", 
+    options: ["Ahithophel", "Aihthophel", "Aihtophel", "Ahitophel"], 
+    answer: 0 
+  },
+
+  { 
+    question: "Who was the priest that helped Joash become king as a child?", 
+    options: ["Jehoiada", "Jehoiadah", "Jehoida", "Jehoiadda"], 
+    answer: 0 
+  },
+
+  { 
+    question: "Who was the silversmith in Ephesus who caused a riot against Paul?", 
+    options: ["Demetrius", "Demetrious", "Demetrius", "Demetriuss"], 
+    answer: 3 
+  },
+
+  { 
+    question: "Who was the proconsul of Cyprus that Paul converted?", 
+    options: ["Sergius Paulus", "Sergius Paul", "Sergius Paullus", "Sergius Paulus"], 
+    answer: 3 
+  },
+  
+  { 
+    question: "What was the name of the sorcerer struck blind by Paul?", 
+    options: ["Elymas", "Elymass", "Elimas", "Elymus"], 
+    answer: 3 
+  }
 ];
 
 console.log(`✅ Questions.js loaded successfully with ${questions.length} questions`);
