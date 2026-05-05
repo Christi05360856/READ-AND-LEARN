@@ -310,7 +310,6 @@ function showResults(correctCount) {
     : '📚 Keep studying! The Word of God is worth knowing deeply.';
 
   renderChart(correctCount, TOTAL_QUESTIONS - correctCount);
-  renderReview();
 }
 
 function renderChart(correct, incorrect) {
@@ -342,23 +341,5 @@ function renderChart(correct, incorrect) {
     }
   });
 }
-
-function renderReview() {
-  reviewListEl.innerHTML = '';
-  for (let i = 0; i < TOTAL_QUESTIONS; i++) {
-    const q = selectedQuestions[i];
-    const userAns = userAnswers[i];
-    const isCorrect = userAns !== undefined && q.answer === userAns;
-    const item = document.createElement('div');
-    item.classList.add('review-item');
-    item.innerHTML = `
-      <p><strong>Q${i+1}:</strong> ${q.question}</p>
-      <p>Your answer: <span class="${isCorrect ? 'correct' : 'wrong'}">${userAns !== undefined ? LETTERS[userAns] + '. ' + q.options[userAns] : 'No answer'}</span></p>
-      ${!isCorrect ? `<p>Correct: <span class="correct">${LETTERS[q.answer]}. ${q.options[q.answer]}</span></p>` : ''}
-    `;
-    reviewListEl.appendChild(item);
-  }
-}
-
 // Start the app
 init();
