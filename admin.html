@@ -667,7 +667,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-week">W0</div>
+              <div class="stat-value" id="stat-week">W1</div>
               <div class="stat-label">Current Week</div>
             </div>
             <div class="stat-icon red"><i class="fas fa-calendar-week"></i></div>
@@ -847,6 +847,9 @@
 
     let currentTab = 'leaderboard';
 
+    // EPOCH: May 5, 2026 (Monday) - Week 1 starts here
+    const WEEK_EPOCH = new Date('2026-05-05T00:00:00');
+
     // ========== AUTH ==========
     function adminLogin() {
       const email = document.getElementById('admin-email').value.trim();
@@ -856,8 +859,6 @@
       auth.signInWithEmailAndPassword(email, password)
         .then(userCred => {
           const user = userCred.user;
-          // Check if user is admin (you can set this in Firebase Console > Authentication > Custom Claims)
-          // For now, allow any logged-in user to access admin
           showDashboard();
         })
         .catch(err => {
@@ -898,6 +899,43 @@
       if (tab === 'quizzes') loadQuizzes();
     }
 
+    // ========== WEEK FUNCTIONS (FIXED) ==========
+    function getCurrentWeekId() {
+      const now = new Date();
+      const diffTime = now - WEEK_EPOCH;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const weekNumber = Math.floor(diffDays / 7) + 1;
+      return '2026-W' + weekNumber;
+    }
+
+    function getDisplayWeek() {
+      const now = new Date();
+      const diffTime = now - WEEK_EPOCH;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const weekNumber = Math.floor(diffDays / 7) + 1;
+      return weekNumber;
+    }
+
+    function getWeekStart() {
+      const now = new Date();
+      const diffTime = now - WEEK_EPOCH;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const weekNumber = Math.floor(diffDays / 7);
+      const start = new Date(WEEK_EPOCH);
+      start.setDate(start.getDate() + (weekNumber * 7));
+      return start.toISOString().split('T')[0];
+    }
+
+    function getWeekEnd() {
+      const now = new Date();
+      const diffTime = now - WEEK_EPOCH;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      const weekNumber = Math.floor(diffDays / 7);
+      const end = new Date(WEEK_EPOCH);
+      end.setDate(end.getDate() + (weekNumber * 7) + 6);
+      return end.toISOString().split('T')[0];
+    }
+
     // ========== LOAD ALL STATS ==========
     async function loadAllData() {
       loadStats();
@@ -935,9 +973,8 @@
         const avg = count > 0 ? Math.round(totalScore / count) : 0;
         document.getElementById('stat-avg').textContent = avg + '%';
 
-        // Current week
-        const now = new Date();
-        const weekNum = getWeekNumber(now);
+        // Current week (FIXED)
+        const weekNum = getDisplayWeek();
         document.getElementById('stat-week').textContent = 'W' + weekNum;
 
       } catch (err) {
@@ -1165,21 +1202,7 @@
       }
     }
 
-    // ========== UTILITIES ==========
-    function getCurrentWeekId() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const week = getWeekNumber(now);
-      return year + '-W' + week;
-    }
-
-    function getWeekNumber(d) {
-      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-      return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    }
-
+    // ========== TOAST ==========
     function showToast(msg, type) {
       const toast = document.getElementById('toast');
       const toastMsg = document.getElementById('toast-msg');
