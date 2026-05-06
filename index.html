@@ -13,32 +13,157 @@
 
   <main class="app">
 
-    <!-- Landing Screen -->
+    <!-- ==================== LANDING SCREEN ==================== -->
     <section id="landing-screen" class="screen center">
       <div class="card landing-card">
         <div class="logo">📖</div>
         <h1>Bible Quiz Platform</h1>
         <p class="subtitle">100 Questions • 20 Minutes</p>
 
-        <!-- Auth Buttons -->
-        <div class="auth-bar">
-          <button id="auth-btn" class="secondary-btn">Login / Register</button>
-          <div id="user-info" class="user-info hidden">
-            <span id="user-name"></span>
-            <button id="logout-btn" class="text-btn">Logout</button>
+        <!-- Auth Buttons (shown when logged out) -->
+        <div id="auth-section" class="auth-section">
+          <p class="auth-prompt">🔐 Login or create an account to begin</p>
+          <button id="auth-btn" class="primary-btn">Login / Register</button>
+        </div>
+
+        <!-- Welcome Section (shown when logged in) -->
+        <div id="welcome-section" class="welcome-section hidden">
+          <div class="welcome-message">
+            <h2>Welcome back, <span id="welcome-name">Champion</span>! 🎉</h2>
+            <p class="welcome-subtitle">Are you ready for today's quiz?</p>
+            <p class="welcome-challenge">🏆 Wanna top the leaderboard and claim amazing rewards?</p>
+            <p class="welcome-verse">"Study to show yourself approved..." — 2 Timothy 2:15</p>
+          </div>
+
+          <div class="welcome-actions">
+            <button id="begin-test-btn" class="primary-btn begin-btn">📝 Begin Test</button>
+            <button id="view-leaderboard-btn" class="secondary-btn">🏆 View Leaderboard</button>
+            <button id="view-rewards-btn" class="secondary-btn">🎁 My Rewards</button>
           </div>
         </div>
 
-        <div class="input-group">
-          <input type="text" id="username" placeholder="Enter your full name" autocomplete="off" minlength="3">
-        </div>
-
-        <button id="start-btn" class="primary-btn">Start Exam</button>
         <p class="footer">TechGuru Systems</p>
       </div>
     </section>
 
-    <!-- Quiz Screen -->
+    <!-- ==================== LEADERBOARD SCREEN ==================== -->
+    <section id="leaderboard-screen" class="screen hidden">
+      <div class="quiz-wrapper">
+        <div class="top-bar">
+          <h2>🏆 Weekly Leaderboard</h2>
+          <span class="week-badge" id="leaderboard-week-badge">Week 19</span>
+        </div>
+
+        <div class="card leaderboard-card">
+          <div class="leaderboard-intro">
+            <p>See where you stand among other Bible scholars! 📖</p>
+            <p class="leaderboard-motivation">Top 3 winners get FREE data rewards every week! 🎁</p>
+          </div>
+
+          <div id="leaderboard-list" class="leaderboard-list">
+            <p class="loading">Loading leaderboard...</p>
+          </div>
+          <div id="leaderboard-user-rank"></div>
+        </div>
+
+        <div class="nav-controls">
+          <button id="back-from-leaderboard" class="secondary-btn">← Back</button>
+          <button id="take-quiz-from-leaderboard" class="primary-btn">📝 Take Quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== REWARDS SCREEN ==================== -->
+    <section id="rewards-screen" class="screen hidden">
+      <div class="quiz-wrapper">
+        <div class="top-bar">
+          <h2>🎁 My Rewards</h2>
+          <div id="rewards-user-name" class="username-display"></div>
+        </div>
+
+        <div class="card rewards-card">
+          <div class="rewards-header">
+            <h3>Your Points Progress</h3>
+            <p class="rewards-subtitle">Earn points by taking quizzes and climb the leaderboard!</p>
+          </div>
+
+          <!-- Points Display -->
+          <div class="points-display">
+            <div class="current-points">
+              <span id="reward-current-points">0</span>
+              <span class="points-label">points</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="progress-tracker-large">
+            <div class="progress-bar-large">
+              <div id="reward-progress-fill" class="progress-fill-large"></div>
+            </div>
+            <div class="progress-labels">
+              <span>0</span>
+              <span id="reward-next-milestone">5,000</span>
+              <span>10,000</span>
+            </div>
+          </div>
+
+          <!-- Reward Tiers -->
+          <div class="reward-tiers">
+            <div class="reward-tier" data-tier="5000">
+              <div class="tier-icon">📱</div>
+              <div class="tier-info">
+                <h4>1GB Data</h4>
+                <p>Reach 5,000 points</p>
+              </div>
+              <div class="tier-status" id="tier-5000">Locked 🔒</div>
+            </div>
+            <div class="reward-tier" data-tier="10000">
+              <div class="tier-icon">📱📱</div>
+              <div class="tier-info">
+                <h4>2GB Data</h4>
+                <p>Reach 10,000 points</p>
+              </div>
+              <div class="tier-status" id="tier-10000">Locked 🔒</div>
+            </div>
+            <div class="reward-tier" data-tier="25000">
+              <div class="tier-icon">📱📱📱</div>
+              <div class="tier-info">
+                <h4>5GB Data</h4>
+                <p>Reach 25,000 points</p>
+              </div>
+              <div class="tier-status" id="tier-25000">Locked 🔒</div>
+            </div>
+          </div>
+
+          <!-- Weekly Top 3 Reward Info -->
+          <div class="weekly-reward-info">
+            <h4>🏆 Weekly Top 3 Bonus Rewards</h4>
+            <div class="weekly-tiers">
+              <div class="weekly-tier">
+                <span class="weekly-medal">🥇</span>
+                <span>2GB Data</span>
+              </div>
+              <div class="weekly-tier">
+                <span class="weekly-medal">🥈</span>
+                <span>1GB Data</span>
+              </div>
+              <div class="weekly-tier">
+                <span class="weekly-medal">🥉</span>
+                <span>500MB Data</span>
+              </div>
+            </div>
+            <p class="weekly-note">Top 3 on the leaderboard at the end of each week win automatically!</p>
+          </div>
+        </div>
+
+        <div class="nav-controls">
+          <button id="back-from-rewards" class="secondary-btn">← Back</button>
+          <button id="take-quiz-from-rewards" class="primary-btn">📝 Take Quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== QUIZ SCREEN ==================== -->
     <section id="quiz-screen" class="screen hidden">
       <div class="quiz-wrapper">
         <div class="top-bar">
@@ -65,7 +190,7 @@
       </div>
     </section>
 
-    <!-- Result Screen -->
+    <!-- ==================== RESULT SCREEN ==================== -->
     <section id="result-screen" class="screen center hidden">
       <div class="card result-card">
         <div class="result-header">
@@ -116,10 +241,9 @@
             <h3>🏆 Weekly Leaderboard</h3>
             <span class="week-badge" id="week-badge">Week 19</span>
           </div>
-          <div id="leaderboard-list" class="leaderboard-list">
+          <div id="review-leaderboard-list" class="leaderboard-list">
             <p class="loading">Loading leaderboard...</p>
           </div>
-          <div id="user-rank"></div>
         </div>
 
         <!-- Reward Claim Button (shown only for top 3) -->
@@ -130,11 +254,15 @@
           </div>
         </div>
 
-        <button onclick="location.reload()" class="primary-btn">Take Again</button>
+        <div class="result-actions">
+          <button onclick="showScreen('leaderboard')" class="secondary-btn">🏆 Leaderboard</button>
+          <button onclick="showScreen('rewards')" class="secondary-btn">🎁 My Rewards</button>
+          <button onclick="location.reload()" class="primary-btn">🔄 Take Again</button>
+        </div>
       </div>
     </section>
 
-    <!-- Submit Modal -->
+    <!-- ==================== SUBMIT MODAL ==================== -->
     <div id="confirm-modal" class="modal hidden">
       <div class="modal-content">
         <div class="modal-icon">⚠️</div>
@@ -147,7 +275,7 @@
       </div>
     </div>
 
-    <!-- Auth Modal -->
+    <!-- ==================== AUTH MODAL ==================== -->
     <div id="auth-modal" class="modal hidden">
       <div class="modal-content auth-modal-content">
         <div class="auth-tabs">
@@ -168,12 +296,10 @@
           <input type="password" id="reg-password" placeholder="Password (min 6 chars)" required>
           <button type="submit" class="primary-btn">Create Account</button>
         </form>
-
-        <button id="close-auth" class="text-btn close-auth-btn">Continue as Guest</button>
       </div>
     </div>
 
-    <!-- Reward Claim Modal -->
+    <!-- ==================== REWARD CLAIM MODAL ==================== -->
     <div id="reward-modal" class="modal hidden">
       <div class="modal-content">
         <div class="modal-icon">🎁</div>
@@ -197,18 +323,14 @@
   </main>
 
   <!-- ============================================ -->
-  <!-- STEP 1: Firebase SDKs -->
+  <!-- FIREBASE SETUP -->
   <!-- ============================================ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-  <!-- ============================================ -->
-  <!-- STEP 2: Initialize Firebase (MUST be before firebase.js) -->
-  <!-- ============================================ -->
   <script>
-    // REPLACE THESE VALUES with your actual Firebase config from the console
-    const firebaseConfig = {
+    firebase.initializeApp({
   apiKey: "AIzaSyCEmiQRwVR6TT3UpQHc6yIYAAq-E2E9W4w",
   authDomain: "bible-quiz-36ba0.firebaseapp.com",
   projectId: "bible-quiz-36ba0",
@@ -217,19 +339,8 @@
   appId: "1:570860971209:web:f88225f800c0f5556f5918",
   measurementId: "G-WD3YD9N6Y3"
 };
-
-    // Initialize Firebase
-    try {
-      firebase.initializeApp(firebaseConfig);
-      console.log('✅ Firebase initialized successfully in HTML');
-    } catch (e) {
-      console.error('❌ Firebase init error in HTML:', e.message);
-    }
   </script>
 
-  <!-- ============================================ -->
-  <!-- STEP 3: Your app scripts -->
-  <!-- ============================================ -->
   <script src="questions.js"></script>
   <script src="firebase.js"></script>
   <script src="script.js"></script>
