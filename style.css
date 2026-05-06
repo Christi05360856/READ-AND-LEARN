@@ -972,3 +972,336 @@ button:active {
     margin: 16px;
   }
 }
+
+
+/* ============================================
+   WELCOME SCREEN
+   ============================================ */
+
+.welcome-section {
+  animation: fadeInUp 0.5s ease;
+}
+
+.welcome-message {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.welcome-message h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.welcome-name {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.welcome-subtitle {
+  font-size: 18px;
+  color: #475569;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.welcome-challenge {
+  font-size: 16px;
+  color: #f59e0b;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.welcome-verse {
+  font-size: 14px;
+  color: #64748b;
+  font-style: italic;
+  background: #f8fafc;
+  padding: 10px 16px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.begin-btn {
+  font-size: 18px;
+  padding: 18px 32px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.auth-section {
+  margin-bottom: 20px;
+}
+
+.auth-prompt {
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* ============================================
+   LEADERBOARD SCREEN
+   ============================================ */
+
+.leaderboard-card {
+  margin: 16px auto;
+  padding: 28px;
+}
+
+.leaderboard-intro {
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.leaderboard-intro p {
+  font-size: 15px;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.leaderboard-motivation {
+  font-weight: 700;
+  color: #f59e0b !important;
+  font-size: 14px !important;
+}
+
+/* ============================================
+   REWARDS SCREEN
+   ============================================ */
+
+.rewards-card {
+  margin: 16px auto;
+  padding: 28px;
+}
+
+.rewards-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.rewards-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.rewards-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.points-display {
+  text-align: center;
+  margin: 24px 0;
+}
+
+.current-points {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.current-points span:first-child {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.points-label {
+  font-size: 18px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.progress-tracker-large {
+  margin: 20px 0;
+}
+
+.progress-bar-large {
+  width: 100%;
+  height: 16px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill-large {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #f59e0b);
+  border-radius: 8px;
+  transition: width 0.6s ease;
+  width: 0%;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* Reward Tiers */
+.reward-tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.reward-tier {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.reward-tier.tier-unlocked {
+  background: #dcfce7;
+  border-color: #22c55e;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.tier-icon {
+  font-size: 28px;
+}
+
+.tier-info {
+  flex: 1;
+}
+
+.tier-info h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.tier-info p {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.tier-status {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.tier-status.unlocked {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Weekly Reward Info */
+.weekly-reward-info {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  border-radius: 16px;
+  border: 1px solid #fbbf24;
+}
+
+.weekly-reward-info h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.weekly-tiers {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.weekly-tier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.weekly-medal {
+  font-size: 28px;
+}
+
+.weekly-tier span:last-child {
+  font-size: 13px;
+  font-weight: 700;
+  color: #92400e;
+}
+
+.weekly-note {
+  text-align: center;
+  font-size: 12px;
+  color: #a16207;
+  font-weight: 500;
+}
+
+/* Result Actions */
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Auth Modal - removed close button since no guests */
+.auth-modal-content {
+  padding: 28px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .welcome-message h2 {
+    font-size: 20px;
+  }
+
+  .welcome-subtitle {
+    font-size: 16px;
+  }
+
+  .current-points span:first-child {
+    font-size: 36px;
+  }
+
+  .weekly-tiers {
+    gap: 12px;
+  }
+
+  .reward-tier {
+    padding: 12px;
+  }
+}
