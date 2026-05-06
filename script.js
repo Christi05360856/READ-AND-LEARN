@@ -1,13 +1,9 @@
 // ============================================
-// BIBLE QUIZ - script.js (New Flow)
+// BIBLE QUIZ - script.js (STACK OVERFLOW FIXED)
 // ============================================
 
-const landingScreen = document.getElementById('landing-screen');
 const quizScreen    = document.getElementById('quiz-screen');
 const resultScreen  = document.getElementById('result-screen');
-
-const usernameInput = document.getElementById('username');
-const startBtn      = document.getElementById('start-btn');
 
 const currentNumEl   = document.getElementById('current-num');
 const qNumEl         = document.getElementById('q-num');
@@ -58,7 +54,6 @@ function getRandomEmoji(isCorrect) {
 }
 
 function init() {
-  // Don't auto-start anything - wait for user to click "Begin Test"
   prevBtn.addEventListener('click', () => navigate(-1));
   nextBtn.addEventListener('click', () => navigate(1));
   submitBtn.addEventListener('click', openSubmitModal);
@@ -67,12 +62,11 @@ function init() {
 }
 
 function startQuiz() {
-  // Get name from logged in user or input
   const user = firebase.auth().currentUser;
   if (user) {
     candidateName = user.displayName || user.email;
   } else {
-    candidateName = usernameInput.value.trim();
+    candidateName = 'Guest';
   }
 
   displayNameEl.textContent = candidateName;
@@ -88,23 +82,6 @@ function startQuiz() {
   renderQuestion();
   updateNavButtons();
   startTimer();
-}
-
-function showScreen(screenName) {
-  // Use the global showScreen from firebase.js if available
-  if (typeof window.showScreen === 'function') {
-    window.showScreen(screenName);
-    return;
-  }
-
-  // Fallback
-  landingScreen.classList.add('hidden');
-  quizScreen.classList.add('hidden');
-  resultScreen.classList.add('hidden');
-
-  if (screenName === 'landing') landingScreen.classList.remove('hidden');
-  if (screenName === 'quiz')    quizScreen.classList.remove('hidden');
-  if (screenName === 'result')  resultScreen.classList.remove('hidden');
 }
 
 function shuffleArray(array) {
@@ -129,7 +106,7 @@ function startTimer() {
 function updateTimerDisplay() {
   const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
   const s = (timeLeft % 60).toString().padStart(2, '0');
-  timerEl.textContent = `${m}:${s}`;
+  timerEl.textContent = m + ':' + s;
   if (timeLeft <= 120) timerEl.style.color = '#dc2626';
   else timerEl.style.color = '#ef4444';
 }
@@ -240,7 +217,7 @@ function showFeedback(isCorrect, correctIdx, animate) {
   } else {
     feedbackArea.classList.add('wrong-feedback');
     feedbackEmoji.textContent = getRandomEmoji(false);
-    feedbackMsg.textContent = `Wrong! The correct answer is ${LETTERS[correctIdx]}.`;
+    feedbackMsg.textContent = 'Wrong! The correct answer is ' + LETTERS[correctIdx] + '.';
   }
 
   if (!animate) {
@@ -267,7 +244,6 @@ async function submitQuiz() {
   const score = calculateScore();
   const points = calculatePoints(score);
 
-  // Save to Firebase if user is logged in
   if (typeof saveQuizResult === 'function' && firebase.auth().currentUser) {
     await saveQuizResult(score, TOTAL_QUESTIONS, timeLeft, points);
   }
@@ -296,13 +272,17 @@ function calculatePoints(score) {
 }
 
 async function showResults(correctCount, points) {
-  showScreen('result');
+  // Transition to result screen FIRST (no side effects in showScreen)
+  if (typeof window.showScreen === 'function') {
+    window.showScreen('result');
+  }
+
   const percentage = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
 
-  candidateNameEl.textContent = `Candidate: ${candidateName}`;
-  scoreDisplayEl.textContent = `${percentage}%`;
-  detailedScoreEl.textContent = `${correctCount} / ${TOTAL_QUESTIONS}`;
-  pointsEarnedEl.textContent = `+${points.toLocaleString()} points earned`;
+  candidateNameEl.textContent = 'Candidate: ' + candidateName;
+  scoreDisplayEl.textContent = percentage + '%';
+  detailedScoreEl.textContent = correctCount + ' / ' + TOTAL_QUESTIONS;
+  pointsEarnedEl.textContent = '+' + points.toLocaleString() + ' points earned';
 
   scoreBadgeEl.className = 'score-badge';
   if (percentage >= 50) {
@@ -321,15 +301,16 @@ async function showResults(correctCount, points) {
 
   renderChart(correctCount, TOTAL_QUESTIONS - correctCount);
 
-  // Load dashboard and leaderboard
+  // Load dashboard and leaderboard AFTER screen transition is complete
   if (typeof loadUserDashboard === 'function') {
     await loadUserDashboard();
   }
+
+  // Single call to render review leaderboard (not doubled by showScreen)
   if (typeof renderReviewLeaderboard === 'function') {
     await renderReviewLeaderboard();
   }
 
-  // Check reward eligibility
   await checkRewardEligibility();
 }
 
