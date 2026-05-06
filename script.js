@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - script.js (Auto-Marking + Emoji + Nav)
+// BIBLE QUIZ - script.js (Firebase Integrated)
 // ============================================
 
 const landingScreen = document.getElementById('landing-screen');
@@ -32,13 +32,15 @@ const candidateNameEl  = document.getElementById('candidate-name');
 const scoreDisplayEl   = document.getElementById('score-display');
 const detailedScoreEl  = document.getElementById('detailed-score');
 const scoreBadgeEl     = document.getElementById('score-badge');
+const pointsEarnedEl   = document.getElementById('points-earned');
 const studyTipEl       = document.getElementById('study-tip');
-const reviewListEl     = document.getElementById('review-list');
 const resultChartCtx   = document.getElementById('resultChart').getContext('2d');
+const rewardSection    = document.getElementById('reward-section');
+const claimRewardBtn   = document.getElementById('claim-reward-btn');
 
 let currentIndex = 0;
 let userAnswers  = {};
-let timeLeft     = 20 * 60; // 20 minutes
+let timeLeft     = 20 * 60;
 let timerInterval = null;
 let candidateName = '';
 let quizSubmitted = false;
@@ -48,7 +50,6 @@ let isWaitingForNext = false;
 const TOTAL_QUESTIONS = 100;
 const LETTERS = ['A', 'B', 'C', 'D'];
 
-// Emoji arrays for variety
 const CORRECT_EMOJIS = ['😊', '😄', '🎉', '✨', '🌟', '👏', '🙌', '💯'];
 const WRONG_EMOJIS   = ['😢', '😞', '😔', '💔', '😟', '😕', '🤦', '😿'];
 
@@ -65,6 +66,12 @@ function init() {
   submitBtn.addEventListener('click', openSubmitModal);
   cancelSubmitBtn.addEventListener('click', closeSubmitModal);
   confirmSubmitBtn.addEventListener('click', submitQuiz);
+
+  if (claimRewardBtn) {
+    claimRewardBtn.addEventListener('click', () => {
+      document.getElementById('reward-modal').classList.remove('hidden');
+    });
+  }
 }
 
 function showScreen(screenName) {
@@ -97,12 +104,11 @@ function handleStart() {
   candidateName = name;
   displayNameEl.textContent = name;
 
-  // Randomly select 100 questions
   selectedQuestions = shuffleArray(questions).slice(0, TOTAL_QUESTIONS);
 
   currentIndex = 0;
   userAnswers = {};
-  timeLeft = 20 * 60; // 20 minutes
+  timeLeft = 20 * 60;
   quizSubmitted = false;
   isWaitingForNext = false;
 
@@ -112,7 +118,6 @@ function handleStart() {
   showScreen('quiz');
 }
 
-// Timer functions
 function startTimer() {
   clearInterval(timerInterval);
   updateTimerDisplay();
@@ -131,14 +136,12 @@ function updateTimerDisplay() {
   else timerEl.style.color = '#ef4444';
 }
 
-// Question Rendering
 function renderQuestion() {
   const q = selectedQuestions[currentIndex];
   currentNumEl.textContent = currentIndex + 1;
   qNumEl.textContent = currentIndex + 1;
   questionTextEl.textContent = q.question;
 
-  // Hide feedback area
   feedbackArea.classList.add('hidden');
   feedbackArea.className = 'feedback-area hidden';
   isWaitingForNext = false;
@@ -150,7 +153,6 @@ function renderQuestion() {
     btn.setAttribute('data-letter', LETTERS[idx]);
     btn.textContent = opt;
 
-    // If already answered, show the marking
     if (userAnswers.hasOwnProperty(currentIndex)) {
       const savedAnswer = userAnswers[currentIndex];
       const correctIdx = q.answer;
@@ -168,7 +170,6 @@ function renderQuestion() {
     optionsEl.appendChild(btn);
   });
 
-  // If already answered, show feedback
   if (userAnswers.hasOwnProperty(currentIndex)) {
     const savedAnswer = userAnswers[currentIndex];
     const correctIdx = q.answer;
@@ -194,7 +195,6 @@ function navigate(direction) {
   }
 }
 
-// ===== AUTO-MARKING + EMOJI LOGIC =====
 function handleOptionClick(selectedIdx) {
   if (isWaitingForNext) return;
 
@@ -202,13 +202,10 @@ function handleOptionClick(selectedIdx) {
   const correctIdx = q.answer;
   const isCorrect = selectedIdx === correctIdx;
 
-  // Store answer
   userAnswers[currentIndex] = selectedIdx;
 
-  // Get all option elements
   const optionEls = optionsEl.querySelectorAll('.option');
 
-  // Apply visual feedback
   optionEls.forEach((el, idx) => {
     if (idx === correctIdx) {
       el.classList.add('correct');
@@ -219,12 +216,10 @@ function handleOptionClick(selectedIdx) {
     }
   });
 
-  // Show feedback with emoji
   showFeedback(isCorrect, correctIdx, true);
 
   isWaitingForNext = true;
 
-  // Auto-advance after delay
   setTimeout(() => {
     if (currentIndex < TOTAL_QUESTIONS - 1) {
       currentIndex++;
@@ -265,14 +260,21 @@ function closeSubmitModal() {
   confirmModal.classList.add('hidden');
 }
 
-function submitQuiz() {
+async function submitQuiz() {
   if (quizSubmitted) return;
   quizSubmitted = true;
   clearInterval(timerInterval);
   closeSubmitModal();
 
   const score = calculateScore();
-  showResults(score);
+  const points = calculatePoints(score);
+
+  // Save to Firebase if user is logged in
+  if (typeof saveQuizResult === 'function' && firebase.auth().currentUser) {
+    await saveQuizResult(score, TOTAL_QUESTIONS, timeLeft, points);
+  }
+
+  showResults(score, points);
 }
 
 function calculateScore() {
@@ -285,15 +287,26 @@ function calculateScore() {
   return correct;
 }
 
-function showResults(correctCount) {
+function calculatePoints(score) {
+  const percentage = score / TOTAL_QUESTIONS;
+  let points = score * 10; // 10 points per correct answer
+
+  // Bonuses
+  if (percentage >= 0.9) points += 100; // 90%+ bonus
+  if (Object.keys(userAnswers).length === TOTAL_QUESTIONS) points += 50; // Completion bonus
+
+  return points;
+}
+
+async function showResults(correctCount, points) {
   showScreen('result');
   const percentage = Math.round((correctCount / TOTAL_QUESTIONS) * 100);
 
   candidateNameEl.textContent = `Candidate: ${candidateName}`;
   scoreDisplayEl.textContent = `${percentage}%`;
   detailedScoreEl.textContent = `${correctCount} / ${TOTAL_QUESTIONS}`;
+  pointsEarnedEl.textContent = `+${points.toLocaleString()} points earned`;
 
-  // Score badge
   scoreBadgeEl.className = 'score-badge';
   if (percentage >= 50) {
     scoreBadgeEl.classList.add('pass');
@@ -310,6 +323,31 @@ function showResults(correctCount) {
     : '📚 Keep studying! The Word of God is worth knowing deeply.';
 
   renderChart(correctCount, TOTAL_QUESTIONS - correctCount);
+
+  // Load dashboard and leaderboard
+  if (typeof loadUserDashboard === 'function') {
+    await loadUserDashboard();
+  }
+  if (typeof renderLeaderboard === 'function') {
+    await renderLeaderboard();
+  }
+
+  // Check if user is in top 3 for reward
+  await checkRewardEligibility();
+}
+
+async function checkRewardEligibility() {
+  const user = firebase.auth().currentUser;
+  if (!user || !rewardSection) return;
+
+  const entries = await fetchLeaderboard();
+  const rank = entries.findIndex(e => e.userId === user.uid) + 1;
+
+  if (rank > 0 && rank <= 3) {
+    rewardSection.classList.remove('hidden');
+  } else {
+    rewardSection.classList.add('hidden');
+  }
 }
 
 function renderChart(correct, incorrect) {
@@ -341,5 +379,6 @@ function renderChart(correct, incorrect) {
     }
   });
 }
+
 // Start the app
 init();
