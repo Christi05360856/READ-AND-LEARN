@@ -383,7 +383,7 @@ const questions = [
   { 
     question: "Who was forced to carry Jesus’ cross to Golgotha, and from which city was he?", 
     options: ["Simon of Cyrene", "Joseph of Arimathea from Jerusalem", "Nicodemus the Pharisee", "Simon Peter from Bethsaida"], 
-    answer: 0 
+    answer: 1
   },
   
   { 
@@ -695,7 +695,7 @@ const questions = [
   { 
     question: "In Luke 2:25, what was the name of the man in Jerusalem waiting for the consolation of Israel?", 
     options: ["Joseph", "Zacharias", "Simeon", "Nicodemus"], 
-    answer: 0 
+    answer: 2 
   },
   
   { 
@@ -1194,7 +1194,369 @@ const questions = [
     question: "What was the name of the sorcerer struck blind by Paul?", 
     options: ["Elymas", "Elymass", "Elimas", "Elymus"], 
     answer: 3 
+  },
+
+  { 
+    question: "In which passage did Jesus give the two greatest commandments?", 
+    options: ["Matthew 22:34-40", "Matthew 22:35-41", "Mark 12:28-34", "Luke 10:25-28"], 
+    answer: 0 
+ },
+
+  
+  { 
+    question: "Where in the Bible do we find the verse 'For God so loved the world...'?", 
+    options: ["John 3:14-16", "John 3:15-17", "John 3:16-18", "John 3:16"], 
+    answer: 3 
+  },
+
+ { 
+   question: "The Great Commission is found in which chapter?", 
+   options: ["Matthew 26", "Matthew 27", "Matthew 28", "Mark 16"], 
+   answer: 2 
+ },
+
+ { 
+   question: "Where did Jesus say 'I am the way, the truth, and the life'?", 
+   options: ["John 13:6", "John 14:4", "John 14:6", "John 15:1"], 
+   answer: 2 
+ },
+
+ { 
+   question: "The Lord's Prayer is recorded in which chapter of Matthew?", 
+   options: ["Matthew 5", "Matthew 6", "Matthew 7", "Matthew 8"], 
+   answer: 1 
+ },
+
+ { 
+    question: 'The verse "If Satan drives out Satan, he is divided against himself" was spoken during which event?', 
+    options: ["When healing the blind", "When accused of using Beelzebul", "During the Sermon on the Mount", "When feeding the 5000"], 
+    answer: 1 
+ },
+
+ { 
+    question: '"The Son of Man is Lord of the Sabbath" is recorded in which verse?', 
+    options: ["Matthew 12:6", "Matthew 12:8", "Mark 2:28", "Luke 6:5"], 
+    answer: 1 
+ },
+
+ { 
+    question: 'In which verse did Jesus say "I am the way and the truth and the life. No one comes to the Father except through me"?', 
+    options: ["John 13:6", "John 14:4", "John 14:6", "John 15:1"], 
+    answer: 2 
+ },
+
+ { 
+    question: 'What shall we say then? Shall we go on sinning so that grace may increase?', 
+    options: ["Romans 5:20", "Romans 6:1", "Romans 6:15", "Romans 7:7"], 
+    answer: 1 
+ },
+
+ { 
+    question: 'The parable of the sower where some seed fell among thorns is found in which verse?', 
+    options: ["Matthew 13:5", "Matthew 13:7", "Matthew 13:8", "Matthew 13:22"], 
+    answer: 1 
+ },
+
+ { 
+    question: '"Love the Lord your God with all your heart and with all your soul and with all your mind" is the first and greatest commandment. In which book?', 
+    options: ["Exodus", "Leviticus", "Deuteronomy", "Matthew"], 
+    answer: 3 
+ },
+
+ { 
+    question: 'Where is the verse "I can do all this through him who gives me strength"?', 
+    options: ["Philippians 4:11", "Philippians 4:12", "Philippians 4:13", "Ephesians 6:10"], 
+    answer: 2 
+ },
+
+ { 
+    question: '"For it is by grace you have been saved, through faith — and this is not from yourselves, it is the gift of God" is in which chapter?', 
+    options: ["Romans 5", "Ephesians 1", "Ephesians 2", "Titus 3"], 
+    answer: 2 
+ },
+
+ { 
+    question: 'The "Love Chapter" (If I speak in the tongues of men or of angels...) is found in which book?', 
+    options: ["Romans 12", "1 Corinthians 12", "1 Corinthians 13", "1 John 4"], 
+    answer: 2 
+ },
+
+ { 
+    question: '"Do not worry about tomorrow, for tomorrow will worry about itself" was said by Jesus in which chapter?', 
+    options: ["Matthew 5", "Matthew 6", "Matthew 7", "Luke 12"], 
+    answer: 1 
+ },
+
+ { 
+    question: 'Where did the disciples first get called Christians?', 
+    options: ["Jerusalem", "Antioch", "Rome", "Ephesus"], 
+    answer: 1 
+ },
+
+ { 
+    question: '"Faith without works is dead" is written in which chapter?', 
+    options: ["James 1", "James 2", "Hebrews 11", "Galatians 5"], 
+    answer: 1 
+ },
+
+ { 
+    question: 'In which book does Paul say "I am not ashamed of the gospel, because it is the power of God..."?', 
+    options: ["1 Corinthians", "Romans", "Galatians", "2 Timothy"], 
+    answer: 1 
+ },
+              
+  { 
+    question: '"Do not store up for yourselves treasures on earth" was said by Jesus in which chapter?', 
+    options: ["Matthew 5", "Matthew 6", "Matthew 7", "Luke 12"], 
+    answer: 1 
+  },
+
+  { 
+    question: '"Ask and it will be given to you; seek and you will find" is recorded in which chapter?', 
+    options: ["Matthew 5", "Matthew 6", "Matthew 7", "John 14"], 
+    answer: 2 
+  },
+
+  { 
+    question: 'The verse "I am the bread of life" was spoken by Jesus in which chapter?', 
+    options: ["John 4", "John 6", "John 8", "John 10"], 
+    answer: 1 
+  },
+
+  { 
+    question: '"I am the light of the world" is found in which chapter of John?', 
+    options: ["John 6", "John 8", "John 9", "John 12"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'Where is the verse "The thief comes only to steal and kill and destroy..."?', 
+    options: ["John 8", "John 10", "John 12", "John 14"], 
+    answer: 1 
+  },
+
+  { 
+    question: '"Peace I leave with you; my peace I give you" was said by Jesus in which chapter?', 
+    options: ["John 13", "John 14", "John 15", "John 16"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The verse "I am the resurrection and the life" was spoken to whom?', 
+    options: ["Peter", "Martha", "Mary Magdalene", "Lazarus"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'Where does Paul say "We walk by faith, not by sight"?', 
+    options: ["Romans 8", "2 Corinthians 4", "2 Corinthians 5", "Hebrews 11"], 
+    answer: 2 
+  },
+
+  { 
+    question: '"All things work together for good" is found in which chapter?', 
+    options: ["Romans 5", "Romans 8", "Romans 12", "Philippians 4"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The verse "If God is for us, who can be against us?" is in which chapter?', 
+    options: ["Romans 5", "Romans 8", "Romans 12", "Ephesians 6"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'Where is the verse "The wages of sin is death, but the gift of God is eternal life"?', 
+    options: ["Romans 3", "Romans 5", "Romans 6", "Romans 8"], 
+    answer: 2 
+  },
+
+  { 
+    question: '"There is therefore now no condemnation for those who are in Christ Jesus" is in which chapter?', 
+    options: ["Romans 5", "Romans 6", "Romans 7", "Romans 8"], 
+    answer: 3 
+  },
+
+  { 
+    question: 'In which chapter does Paul say "I have fought the good fight, I have finished the race"?', 
+    options: ["1 Timothy 6", "2 Timothy 3", "2 Timothy 4", "Philippians 3"], 
+    answer: 2 
+  },
+
+  { 
+    question: 'The verse "The Lord is my shepherd, I shall not want" is from which book?', 
+    options: ["Proverbs", "Psalms", "Isaiah", "Jeremiah"], 
+    answer: 1 
+  },
+
+  { 
+    question: '"Train up a child in the way he should go" is found in which book?', 
+    options: ["Proverbs", "Psalms", "Ecclesiastes", "Deuteronomy"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'Jesus said "You are the salt of the earth" and "You are the light of the world" during which major teaching?', 
+    options: ["The Last Supper", "The Sermon on the Mount", "The Olivet Discourse", "The Upper Room Discourse"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In which context did Jesus say "Do not judge, or you too will be judged"?', 
+    options: ["When healing on the Sabbath", "During the Sermon on the Mount", "While speaking to the Pharisees", "At the feeding of the 5000"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The parable of the Good Samaritan was told by Jesus in response to what question?', 
+    options: ["Who is my neighbour?", "How can I inherit eternal life?", "What must I do to be saved?", "Who is the greatest in the kingdom?"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'Jesus told the parable of the Prodigal Son while speaking to which group?', 
+    options: ["His disciples", "The Pharisees and teachers of the law", "The crowd by the lake", "The Roman soldiers"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'When Jesus said "It is easier for a camel to go through the eye of a needle than for someone who is rich to enter the kingdom of God", who was He speaking to?', 
+    options: ["The Pharisees", "A rich young ruler", "His disciples", "The crowd"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The feeding of the 5000 took place after Jesus heard about the death of whom?', 
+    options: ["John the Baptist", "Joseph", "Lazarus", "Herod"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'In which context did Jesus say "Get behind me, Satan!" to Peter?', 
+    options: ["After the Transfiguration", "After Peter confessed He was the Messiah", "During the Last Supper", "After the resurrection"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The verse "The truth will set you free" was spoken by Jesus during which discussion?', 
+    options: ["With Nicodemus", "With the Samaritan woman", "With the Jews who believed in Him", "With Pilate"], 
+    answer: 2 
+  },
+
+  { 
+    question: 'Paul wrote "I have learned to be content whatever the circumstances" while in what situation?', 
+    options: ["During house arrest in Rome", "In prison", "While on missionary journey", "After being shipwrecked"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The conversion of the Ethiopian eunuch took place while he was reading which prophet?', 
+    options: ["Jeremiah", "Ezekiel", "Isaiah", "Daniel"], 
+    answer: 2 
+  },
+
+  { 
+    question: 'In which context did Jesus say "My kingdom is not of this world"?', 
+    options: ["During the Sermon on the Mount", "When speaking to Pilate", "At the Last Supper", "While teaching in the temple"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The parable of the Lost Sheep, Lost Coin, and Prodigal Son were told together to answer what criticism?', 
+    options: ["That Jesus ate with sinners", "That Jesus broke the Sabbath", "That Jesus claimed to be God", "That Jesus ignored the law"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'Paul said "To live is Christ and to die is gain" in which letter?', 
+    options: ["Romans", "Philippians", "Ephesians", "Colossians"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The verse "We know that in all things God works for the good of those who love him" was written in which context?', 
+    options: ["Suffering and future glory", "Justification by faith", "Spiritual gifts", "The return of Christ"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'Jesus washed the disciples’ feet during which event?', 
+    options: ["The feeding of the 5000", "The Last Supper", "The Transfiguration", "After the resurrection"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The verse "The Lord is my shepherd, I shall not want" was written by David in which context?', 
+    options: ["After killing Goliath", "During his flight from Saul", "As a reflection on God’s care", "After becoming king"], 
+    answer: 2 
+  },
+
+  { 
+    question: 'God told Moses "I AM WHO I AM" in which major event?', 
+    options: ["Crossing the Red Sea", "At the burning bush", "On Mount Sinai", "During the plagues"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The parting of the Red Sea happened immediately after which event?', 
+    options: ["The Passover", "The ten plagues", "The death of the firstborn", "Pharaoh chasing the Israelites"], 
+    answer: 3 
+  },
+
+  { 
+    question: 'Joshua commanded the sun and moon to stand still during the battle against which kings?', 
+    options: ["The kings of Canaan", "The five Amorite kings", "The Philistines", "The Moabites"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'David danced with all his might before the Lord while bringing what into Jerusalem?', 
+    options: ["The Tabernacle", "The Ark of the Covenant", "The golden altar", "Solomon’s throne"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In 2 Chronicles 7, God appeared to Solomon at night after the dedication of what?', 
+    options: ["The palace", "The temple", "The city walls", "The altar"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'King Hezekiah prayed and God added 15 years to his life after he was told he would die. This happened during the invasion by which king?', 
+    options: ["Sennacherib", "Nebuchadnezzar", "Shalmaneser", "Cyrus"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'The verse "If my people, who are called by my name, will humble themselves..." was spoken in which context?', 
+    options: ["To Moses at Sinai", "To Solomon after dedicating the temple", "To David after his sin", "To Josiah during revival"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In 2 Corinthians 12, Paul speaks about his "thorn in the flesh". What was his response to God’s answer?', 
+    options: ["He complained bitterly", "He rejoiced in his weakness", "He asked three times", "He stopped praying"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'Paul wrote "My grace is sufficient for you, for my power is made perfect in weakness" in which context?', 
+    options: ["While in prison", "After his thorn in the flesh", "During a shipwreck", "When writing to the Romans"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The verse "We walk by faith, not by sight" was written by Paul in which situation?', 
+    options: ["While facing death", "While encouraging the Corinthians", "During his first missionary journey", "After meeting the risen Christ"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In Ephesians 6, Paul describes the full armor of God in the context of what kind of battle?', 
+    options: ["Physical war", "Against flesh and blood", "Spiritual warfare", "Against Roman soldiers"], 
+    answer: 2 
   }
+   
 ];
 
 console.log(`✅ Questions.js loaded successfully with ${questions.length} questions`);
