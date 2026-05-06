@@ -323,24 +323,32 @@
   </main>
 
   <!-- ============================================ -->
-  <!-- FIREBASE SETUP -->
+  <!-- STEP 1: Firebase SDKs -->
   <!-- ============================================ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+  <!-- ============================================ -->
+  <!-- STEP 2: Initialize Firebase -->
+  <!-- ============================================ -->
   <script>
-    firebase.initializeApp({
-  apiKey: "AIzaSyCEmiQRwVR6TT3UpQHc6yIYAAq-E2E9W4w",
-  authDomain: "bible-quiz-36ba0.firebaseapp.com",
-  projectId: "bible-quiz-36ba0",
-  storageBucket: "bible-quiz-36ba0.firebasestorage.app",
-  messagingSenderId: "570860971209",
-  appId: "1:570860971209:web:f88225f800c0f5556f5918",
-  measurementId: "G-WD3YD9N6Y3"
-};
+    const firebaseConfig = {
+      apiKey: "AIzaSyCEmiQRwVR6TT3UpQHc6yIYAAq-E2E9W4w",
+      authDomain: "bible-quiz-36ba0.firebaseapp.com",
+      projectId: "bible-quiz-36ba0",
+      storageBucket: "bible-quiz-36ba0.firebasestorage.app",
+      messagingSenderId: "570860971209",
+      appId: "1:570860971209:web:f88225f800c0f5556f5918",
+      measurementId: "G-WD3YD9N6Y3"
+    };
+    firebase.initializeApp(firebaseConfig);
+    console.log("Firebase initialized with new config");
   </script>
 
+  <!-- ============================================ -->
+  <!-- STEP 3: Your app scripts -->
+  <!-- ============================================ -->
   <script src="questions.js"></script>
   <script src="firebase.js"></script>
   <script src="script.js"></script>
