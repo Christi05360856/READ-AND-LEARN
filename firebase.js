@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - firebase.js (STACK OVERFLOW FIXED)
+// BIBLE QUIZ - firebase.js (STACK OVERFLOW FIXED + WEEK LOGIC FIXED)
 // ============================================
 
 const db = firebase.firestore();
@@ -429,35 +429,46 @@ async function submitRewardClaim(network, phone) {
 }
 
 // ============================================
-// UTILITY FUNCTIONS
+// UTILITY FUNCTIONS (FIXED WEEK LOGIC)
 // ============================================
+
+// EPOCH: May 5, 2026 (when you launched) - Monday start
+const WEEK_EPOCH = new Date('2026-05-05T00:00:00');
 
 function getCurrentWeekId() {
   const now = new Date();
-  const year = now.getFullYear();
-  const week = getWeekNumber(now);
-  return year + '-W' + week;
-}
-
-function getWeekNumber(d) {
-  d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-  return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  const diffTime = now - WEEK_EPOCH;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const weekNumber = Math.floor(diffDays / 7) + 1;
+  return '2026-W' + weekNumber;
 }
 
 function getWeekStart() {
-  const d = new Date();
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff)).toISOString().split('T')[0];
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const weekNumber = Math.floor(diffDays / 7);
+  const start = new Date(WEEK_EPOCH);
+  start.setDate(start.getDate() + (weekNumber * 7));
+  return start.toISOString().split('T')[0];
 }
 
 function getWeekEnd() {
-  const d = new Date();
-  const day = d.getDay();
-  const diff = d.getDate() - day + 7;
-  return new Date(d.setDate(diff)).toISOString().split('T')[0];
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const weekNumber = Math.floor(diffDays / 7);
+  const end = new Date(WEEK_EPOCH);
+  end.setDate(end.getDate() + (weekNumber * 7) + 6);
+  return end.toISOString().split('T')[0];
+}
+
+function getDisplayWeek() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const weekNumber = Math.floor(diffDays / 7) + 1;
+  return weekNumber;
 }
 
 // ============================================
@@ -561,7 +572,7 @@ auth.onAuthStateChanged(user => {
     updateUIForLoggedInUser(user);
     loadUserDashboard();
     authModalShown = false;
-    
+
     // Hide auth modal if it's open
     hideAuthModal();
   } else {
