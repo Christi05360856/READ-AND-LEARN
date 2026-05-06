@@ -1,9 +1,43 @@
 // ============================================
-// BIBLE QUIZ - firebase.js (Complete Version)
+// BIBLE QUIZ - firebase.js (STACK OVERFLOW FIXED)
 // ============================================
 
 const db = firebase.firestore();
 const auth = firebase.auth();
+
+// Prevent modal from spam-opening
+let authModalShown = false;
+let currentScreen = 'landing';
+
+// ============================================
+// SCREEN NAVIGATION (SAFE - NO SIDE EFFECTS)
+// ============================================
+
+function showScreen(screenName) {
+  // Guard against recursive calls
+  if (screenName === currentScreen) return;
+  currentScreen = screenName;
+
+  const screens = ['landing-screen', 'quiz-screen', 'result-screen', 'leaderboard-screen', 'rewards-screen'];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+
+  const targetId = screenName === 'landing' ? 'landing-screen' : 
+                   screenName === 'quiz' ? 'quiz-screen' : 
+                   screenName === 'result' ? 'result-screen' :
+                   screenName === 'leaderboard' ? 'leaderboard-screen' :
+                   screenName === 'rewards' ? 'rewards-screen' : '';
+
+  const target = document.getElementById(targetId);
+  if (target) {
+    target.classList.remove('hidden');
+    window.scrollTo(0, 0);
+  }
+}
+
+window.showScreen = showScreen;
 
 // ============================================
 // AUTH FUNCTIONS
@@ -12,6 +46,7 @@ const auth = firebase.auth();
 function showAuthModal() {
   const modal = document.getElementById('auth-modal');
   if (modal) modal.classList.remove('hidden');
+  authModalShown = true;
 }
 
 function hideAuthModal() {
@@ -189,7 +224,7 @@ async function updateWeeklyLeaderboard(userId, userName, points) {
       entries[existingIndex].points += points;
       entries[existingIndex].name = userName;
     } else {
-      entries.push({ userId, name: userName, points });
+      entries.push({ userId: userId, name: userName, points: points });
     }
 
     entries.sort((a, b) => b.points - a.points);
@@ -235,16 +270,14 @@ function renderLeaderboardHTML(entries, containerId, userRankId) {
   entries.slice(0, 20).forEach((entry, index) => {
     const rank = index + 1;
     const isCurrentUser = user && entry.userId === user.uid;
-    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+    const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
     const rewardBadge = rank <= 3 ? '<span class="reward-badge">🏆 Prize</span>' : '';
 
-    html += `
-      <div class="leaderboard-row ${isCurrentUser ? 'current-user' : ''}">
-        <div class="leaderboard-rank">${medal}</div>
-        <div class="leaderboard-name">${entry.name} ${rewardBadge}</div>
-        <div class="leaderboard-points">${entry.points.toLocaleString()} pts</div>
-      </div>
-    `;
+    html += '<div class="leaderboard-row ' + (isCurrentUser ? 'current-user' : '') + '">' +
+      '<div class="leaderboard-rank">' + medal + '</div>' +
+      '<div class="leaderboard-name">' + entry.name + ' ' + rewardBadge + '</div>' +
+      '<div class="leaderboard-points">' + entry.points.toLocaleString() + ' pts</div>' +
+      '</div>';
   });
 
   container.innerHTML = html;
@@ -253,13 +286,11 @@ function renderLeaderboardHTML(entries, containerId, userRankId) {
   if (userRankEl && user) {
     const userIndex = entries.findIndex(e => e.userId === user.uid);
     if (userIndex >= 20) {
-      userRankEl.innerHTML = `
-        <div class="leaderboard-row current-user">
-          <div class="leaderboard-rank">#${userIndex + 1}</div>
-          <div class="leaderboard-name">${entries[userIndex].name}</div>
-          <div class="leaderboard-points">${entries[userIndex].points.toLocaleString()} pts</div>
-        </div>
-      `;
+      userRankEl.innerHTML = '<div class="leaderboard-row current-user">' +
+        '<div class="leaderboard-rank">#' + (userIndex + 1) + '</div>' +
+        '<div class="leaderboard-name">' + entries[userIndex].name + '</div>' +
+        '<div class="leaderboard-points">' + entries[userIndex].points.toLocaleString() + ' pts</div>' +
+        '</div>';
     } else {
       userRankEl.innerHTML = '';
     }
@@ -333,9 +364,9 @@ function updateRewardProgress(points) {
 
 function updateRewardTiers(points) {
   const tiers = [
-    { threshold: 5000, id: 'tier-5000', label: '1GB Data' },
-    { threshold: 10000, id: 'tier-10000', label: '2GB Data' },
-    { threshold: 25000, id: 'tier-25000', label: '5GB Data' }
+    { threshold: 5000, id: 'tier-5000' },
+    { threshold: 10000, id: 'tier-10000' },
+    { threshold: 25000, id: 'tier-25000' }
   ];
 
   tiers.forEach(tier => {
@@ -430,39 +461,6 @@ function getWeekEnd() {
 }
 
 // ============================================
-// SCREEN NAVIGATION
-// ============================================
-
-function showScreen(screenName) {
-  const screens = ['landing-screen', 'quiz-screen', 'result-screen', 'leaderboard-screen', 'rewards-screen'];
-  screens.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('hidden');
-  });
-
-  const target = document.getElementById(
-    screenName === 'landing' ? 'landing-screen' : 
-    screenName === 'quiz' ? 'quiz-screen' : 
-    screenName === 'result' ? 'result-screen' :
-    screenName === 'leaderboard' ? 'leaderboard-screen' :
-    screenName === 'rewards' ? 'rewards-screen' : ''
-  );
-  if (target) target.classList.remove('hidden');
-
-  if (screenName === 'leaderboard') {
-    renderLeaderboard();
-  }
-  if (screenName === 'rewards') {
-    loadUserDashboard();
-  }
-  if (screenName === 'result') {
-    renderReviewLeaderboard();
-  }
-}
-
-window.showScreen = showScreen;
-
-// ============================================
 // DOM READY & EVENT LISTENERS
 // ============================================
 
@@ -479,6 +477,7 @@ function attachEventListeners() {
   if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
   if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
 
+  // Welcome screen buttons
   const beginTestBtn = document.getElementById('begin-test-btn');
   const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
   const viewRewardsBtn = document.getElementById('view-rewards-btn');
@@ -486,22 +485,25 @@ function attachEventListeners() {
   if (beginTestBtn) {
     beginTestBtn.addEventListener('click', () => {
       showScreen('quiz');
-      if (typeof startQuiz === 'function') startQuiz();
+      if (typeof window.startQuiz === 'function') window.startQuiz();
     });
   }
 
   if (viewLeaderboardBtn) {
     viewLeaderboardBtn.addEventListener('click', () => {
       showScreen('leaderboard');
+      renderLeaderboard();
     });
   }
 
   if (viewRewardsBtn) {
     viewRewardsBtn.addEventListener('click', () => {
       showScreen('rewards');
+      loadUserDashboard();
     });
   }
 
+  // Leaderboard screen buttons
   const backFromLeaderboard = document.getElementById('back-from-leaderboard');
   const takeQuizFromLeaderboard = document.getElementById('take-quiz-from-leaderboard');
 
@@ -511,10 +513,11 @@ function attachEventListeners() {
   if (takeQuizFromLeaderboard) {
     takeQuizFromLeaderboard.addEventListener('click', () => {
       showScreen('quiz');
-      if (typeof startQuiz === 'function') startQuiz();
+      if (typeof window.startQuiz === 'function') window.startQuiz();
     });
   }
 
+  // Rewards screen buttons
   const backFromRewards = document.getElementById('back-from-rewards');
   const takeQuizFromRewards = document.getElementById('take-quiz-from-rewards');
 
@@ -524,10 +527,11 @@ function attachEventListeners() {
   if (takeQuizFromRewards) {
     takeQuizFromRewards.addEventListener('click', () => {
       showScreen('quiz');
-      if (typeof startQuiz === 'function') startQuiz();
+      if (typeof window.startQuiz === 'function') window.startQuiz();
     });
   }
 
+  // Reward claim
   const rewardForm = document.getElementById('reward-form');
   const claimRewardBtn = document.getElementById('claim-reward-btn');
 
@@ -548,23 +552,34 @@ function attachEventListeners() {
 }
 
 // ============================================
-// AUTH STATE LISTENER
+// AUTH STATE LISTENER (FIXED - NO RECURSION)
 // ============================================
 
 auth.onAuthStateChanged(user => {
   if (user) {
+    // User logged in
     updateUIForLoggedInUser(user);
     loadUserDashboard();
+    authModalShown = false;
+    
+    // Hide auth modal if it's open
+    hideAuthModal();
   } else {
+    // User logged out
     const authSection = document.getElementById('auth-section');
     const welcomeSection = document.getElementById('welcome-section');
 
     if (authSection) authSection.classList.remove('hidden');
     if (welcomeSection) welcomeSection.classList.add('hidden');
 
-    setTimeout(() => {
-      showAuthModal();
-    }, 500);
+    // Only show auth modal once per session, and verify still logged out
+    if (!authModalShown) {
+      setTimeout(() => {
+        if (!auth.currentUser && currentScreen === 'landing') {
+          showAuthModal();
+        }
+      }, 800);
+    }
   }
 });
 
