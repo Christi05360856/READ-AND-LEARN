@@ -96,6 +96,24 @@
 
   </main>
 
+  <!-- Firebase SDK (add these BEFORE your existing scripts) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBfbfiegIFLbbwgiY8HEiRMiJw98aDsSM",
+    authDomain: "my-bible-quiz-e6971.firebaseapp.com",
+    projectId: "my-bible-quiz-e6971",
+    storageBucket: "my-bible-quiz-e6971.appspot.com",
+    messagingSenderId: "259439267912",
+    appId: "1:259439267912:web:c8558e38feeb7f21d7087d",
+    measurementId: "G-44YQ6K3LZS"
+  };
+  firebase.initializeApp(firebaseConfig);
+</script>
+
   <script src="questions.js"></script>
   <script src="script.js"></script>
 </body>
