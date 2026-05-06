@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - script.js (Firebase Integrated)
+// BIBLE QUIZ - script.js (New Flow)
 // ============================================
 
 const landingScreen = document.getElementById('landing-screen');
@@ -36,7 +36,6 @@ const pointsEarnedEl   = document.getElementById('points-earned');
 const studyTipEl       = document.getElementById('study-tip');
 const resultChartCtx   = document.getElementById('resultChart').getContext('2d');
 const rewardSection    = document.getElementById('reward-section');
-const claimRewardBtn   = document.getElementById('claim-reward-btn');
 
 let currentIndex = 0;
 let userAnswers  = {};
@@ -59,22 +58,46 @@ function getRandomEmoji(isCorrect) {
 }
 
 function init() {
-  showScreen('landing');
-  startBtn.addEventListener('click', handleStart);
+  // Don't auto-start anything - wait for user to click "Begin Test"
   prevBtn.addEventListener('click', () => navigate(-1));
   nextBtn.addEventListener('click', () => navigate(1));
   submitBtn.addEventListener('click', openSubmitModal);
   cancelSubmitBtn.addEventListener('click', closeSubmitModal);
   confirmSubmitBtn.addEventListener('click', submitQuiz);
+}
 
-  if (claimRewardBtn) {
-    claimRewardBtn.addEventListener('click', () => {
-      document.getElementById('reward-modal').classList.remove('hidden');
-    });
+function startQuiz() {
+  // Get name from logged in user or input
+  const user = firebase.auth().currentUser;
+  if (user) {
+    candidateName = user.displayName || user.email;
+  } else {
+    candidateName = usernameInput.value.trim();
   }
+
+  displayNameEl.textContent = candidateName;
+
+  selectedQuestions = shuffleArray(questions).slice(0, TOTAL_QUESTIONS);
+
+  currentIndex = 0;
+  userAnswers = {};
+  timeLeft = 20 * 60;
+  quizSubmitted = false;
+  isWaitingForNext = false;
+
+  renderQuestion();
+  updateNavButtons();
+  startTimer();
 }
 
 function showScreen(screenName) {
+  // Use the global showScreen from firebase.js if available
+  if (typeof window.showScreen === 'function') {
+    window.showScreen(screenName);
+    return;
+  }
+
+  // Fallback
   landingScreen.classList.add('hidden');
   quizScreen.classList.add('hidden');
   resultScreen.classList.add('hidden');
@@ -91,31 +114,6 @@ function shuffleArray(array) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
-}
-
-function handleStart() {
-  const name = usernameInput.value.trim();
-  if (name.length < 3) {
-    alert('Please enter your full name (at least 3 characters).');
-    usernameInput.focus();
-    return;
-  }
-
-  candidateName = name;
-  displayNameEl.textContent = name;
-
-  selectedQuestions = shuffleArray(questions).slice(0, TOTAL_QUESTIONS);
-
-  currentIndex = 0;
-  userAnswers = {};
-  timeLeft = 20 * 60;
-  quizSubmitted = false;
-  isWaitingForNext = false;
-
-  renderQuestion();
-  updateNavButtons();
-  startTimer();
-  showScreen('quiz');
 }
 
 function startTimer() {
@@ -289,11 +287,10 @@ function calculateScore() {
 
 function calculatePoints(score) {
   const percentage = score / TOTAL_QUESTIONS;
-  let points = score * 10; // 10 points per correct answer
+  let points = score * 10;
 
-  // Bonuses
-  if (percentage >= 0.9) points += 100; // 90%+ bonus
-  if (Object.keys(userAnswers).length === TOTAL_QUESTIONS) points += 50; // Completion bonus
+  if (percentage >= 0.9) points += 100;
+  if (Object.keys(userAnswers).length === TOTAL_QUESTIONS) points += 50;
 
   return points;
 }
@@ -328,11 +325,11 @@ async function showResults(correctCount, points) {
   if (typeof loadUserDashboard === 'function') {
     await loadUserDashboard();
   }
-  if (typeof renderLeaderboard === 'function') {
-    await renderLeaderboard();
+  if (typeof renderReviewLeaderboard === 'function') {
+    await renderReviewLeaderboard();
   }
 
-  // Check if user is in top 3 for reward
+  // Check reward eligibility
   await checkRewardEligibility();
 }
 
@@ -379,6 +376,9 @@ function renderChart(correct, incorrect) {
     }
   });
 }
+
+// Make startQuiz global so firebase.js can call it
+window.startQuiz = startQuiz;
 
 // Start the app
 init();
