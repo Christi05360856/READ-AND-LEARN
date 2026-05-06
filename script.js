@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - script.js (STACK OVERFLOW FIXED)
+// BIBLE QUIZ - script.js (STACK OVERFLOW FIXED + WEEK DISPLAY FIXED)
 // ============================================
 
 const quizScreen    = document.getElementById('quiz-screen');
