@@ -1,14 +1,9 @@
 // ============================================
-// BIBLE QUIZ - firebase.js (Fixed Version)
+// BIBLE QUIZ - firebase.js (Complete Version)
 // ============================================
 
-console.log('🔥 firebase.js loaded');
-
-// Firebase is already initialized in index.html, so just get the services
 const db = firebase.firestore();
 const auth = firebase.auth();
-
-console.log('✅ Firebase services ready');
 
 // ============================================
 // AUTH FUNCTIONS
@@ -77,7 +72,7 @@ async function handleRegister(e) {
     });
 
     hideAuthModal();
-    alert('Account created successfully!');
+    updateUIForLoggedInUser(userCred.user);
   } catch (err) {
     console.error('Registration error:', err);
     if (errorEl) errorEl.textContent = err.message;
@@ -91,8 +86,9 @@ async function handleLogin(e) {
   const errorEl = document.getElementById('auth-error');
 
   try {
-    await auth.signInWithEmailAndPassword(email, password);
+    const userCred = await auth.signInWithEmailAndPassword(email, password);
     hideAuthModal();
+    updateUIForLoggedInUser(userCred.user);
   } catch (err) {
     console.error('Login error:', err);
     if (errorEl) errorEl.textContent = err.message;
@@ -102,6 +98,25 @@ async function handleLogin(e) {
 async function handleLogout() {
   await auth.signOut();
   location.reload();
+}
+
+// ============================================
+// UI UPDATES
+// ============================================
+
+function updateUIForLoggedInUser(user) {
+  // Hide auth section, show welcome section
+  const authSection = document.getElementById('auth-section');
+  const welcomeSection = document.getElementById('welcome-section');
+  const welcomeName = document.getElementById('welcome-name');
+
+  if (authSection) authSection.classList.add('hidden');
+  if (welcomeSection) welcomeSection.classList.remove('hidden');
+  if (welcomeName) welcomeName.textContent = user.displayName || 'Champion';
+
+  // Update rewards screen name
+  const rewardsUserName = document.getElementById('rewards-user-name');
+  if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
 }
 
 // ============================================
@@ -207,15 +222,14 @@ async function fetchLeaderboard() {
   }
 }
 
-async function renderLeaderboard() {
-  const entries = await fetchLeaderboard();
-  const container = document.getElementById('leaderboard-list');
+function renderLeaderboardHTML(entries, containerId, userRankId) {
+  const container = document.getElementById(containerId);
   const user = auth.currentUser;
 
   if (!container) return;
 
   if (entries.length === 0) {
-    container.innerHTML = '<p class="empty-state">No scores yet this week. Be the first!</p>';
+    container.innerHTML = '<p class="empty-state">No scores yet this week. Be the first to take the quiz!</p>';
     return;
   }
 
@@ -237,7 +251,8 @@ async function renderLeaderboard() {
 
   container.innerHTML = html;
 
-  const userRankEl = document.getElementById('user-rank');
+  // Show user rank if not in top 20
+  const userRankEl = userRankId ? document.getElementById(userRankId) : null;
   if (userRankEl && user) {
     const userIndex = entries.findIndex(e => e.userId === user.uid);
     if (userIndex >= 20) {
@@ -248,12 +263,24 @@ async function renderLeaderboard() {
           <div class="leaderboard-points">${entries[userIndex].points.toLocaleString()} pts</div>
         </div>
       `;
+    } else {
+      userRankEl.innerHTML = '';
     }
   }
 }
 
+async function renderLeaderboard() {
+  const entries = await fetchLeaderboard();
+  renderLeaderboardHTML(entries, 'leaderboard-list', 'leaderboard-user-rank');
+}
+
+async function renderReviewLeaderboard() {
+  const entries = await fetchLeaderboard();
+  renderLeaderboardHTML(entries, 'review-leaderboard-list', null);
+}
+
 // ============================================
-// USER DASHBOARD
+// USER DASHBOARD & REWARDS
 // ============================================
 
 async function loadUserDashboard() {
@@ -271,9 +298,68 @@ async function loadUserDashboard() {
     if (el('dash-best')) el('dash-best').textContent = (data.bestScore || 0) + '%';
     if (el('dash-points')) el('dash-points').textContent = (data.totalPoints || 0).toLocaleString();
     if (el('dash-streak')) el('dash-streak').textContent = (data.currentStreak || 0) + ' days';
+
+    // Update rewards screen
+    if (el('reward-current-points')) {
+      el('reward-current-points').textContent = (data.totalPoints || 0).toLocaleString();
+    }
+
+    // Update progress bar
+    updateRewardProgress(data.totalPoints || 0);
+
+    // Update tier statuses
+    updateRewardTiers(data.totalPoints || 0);
+
   } catch (err) {
     console.error('Dashboard error:', err);
   }
+}
+
+function updateRewardProgress(points) {
+  const fill = document.getElementById('reward-progress-fill');
+  const nextMilestoneEl = document.getElementById('reward-next-milestone');
+  if (!fill) return;
+
+  // Determine next milestone
+  let nextMilestone = 5000;
+  if (points >= 5000) nextMilestone = 10000;
+  if (points >= 10000) nextMilestone = 25000;
+  if (points >= 25000) nextMilestone = 50000;
+
+  // Calculate progress percentage
+  let prevMilestone = 0;
+  if (points >= 5000) prevMilestone = 5000;
+  if (points >= 10000) prevMilestone = 10000;
+  if (points >= 25000) prevMilestone = 25000;
+
+  const progress = Math.min(100, ((points - prevMilestone) / (nextMilestone - prevMilestone)) * 100);
+  fill.style.width = progress + '%';
+
+  if (nextMilestoneEl) {
+    nextMilestoneEl.textContent = nextMilestone.toLocaleString();
+  }
+}
+
+function updateRewardTiers(points) {
+  const tiers = [
+    { threshold: 5000, id: 'tier-5000', label: '1GB Data' },
+    { threshold: 10000, id: 'tier-10000', label: '2GB Data' },
+    { threshold: 25000, id: 'tier-25000', label: '5GB Data' }
+  ];
+
+  tiers.forEach(tier => {
+    const el = document.getElementById(tier.id);
+    if (el) {
+      if (points >= tier.threshold) {
+        el.textContent = 'Unlocked ✅';
+        el.classList.add('unlocked');
+        el.parentElement.classList.add('tier-unlocked');
+      } else {
+        const remaining = tier.threshold - points;
+        el.textContent = `${remaining.toLocaleString()} pts to go 🔒`;
+      }
+    }
+  });
 }
 
 // ============================================
@@ -293,7 +379,7 @@ async function submitRewardClaim(network, phone) {
     const rank = leaderboard.findIndex(e => e.userId === user.uid) + 1;
 
     if (rank === 0 || rank > 3) {
-      alert('Only top 3 can claim rewards!');
+      alert('Only top 3 can claim weekly rewards!');
       return;
     }
 
@@ -353,26 +439,111 @@ function getWeekEnd() {
 }
 
 // ============================================
+// SCREEN NAVIGATION
+// ============================================
+
+function showScreen(screenName) {
+  const screens = ['landing-screen', 'quiz-screen', 'result-screen', 'leaderboard-screen', 'rewards-screen'];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+
+  const target = document.getElementById(screenName === 'landing' ? 'landing-screen' : 
+                                          screenName === 'quiz' ? 'quiz-screen' : 
+                                          screenName === 'result' ? 'result-screen' :
+                                          screenName === 'leaderboard' ? 'leaderboard-screen' :
+                                          screenName === 'rewards' ? 'rewards-screen' : '');
+  if (target) target.classList.remove('hidden');
+
+  // Load data for specific screens
+  if (screenName === 'leaderboard') {
+    renderLeaderboard();
+  }
+  if (screenName === 'rewards') {
+    loadUserDashboard();
+  }
+  if (screenName === 'result') {
+    renderReviewLeaderboard();
+  }
+}
+
+// Make showScreen global
+window.showScreen = showScreen;
+
+// ============================================
 // DOM READY & EVENT LISTENERS
 // ============================================
 
 function attachEventListeners() {
+  // Auth modal
   const authBtn = document.getElementById('auth-btn');
-  const logoutBtn = document.getElementById('logout-btn');
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
   const loginTab = document.getElementById('login-tab');
   const registerTab = document.getElementById('register-tab');
-  const closeAuth = document.getElementById('close-auth');
-  const rewardForm = document.getElementById('reward-form');
 
   if (authBtn) authBtn.addEventListener('click', showAuthModal);
-  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
   if (loginForm) loginForm.addEventListener('submit', handleLogin);
   if (registerForm) registerForm.addEventListener('submit', handleRegister);
   if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
   if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
-  if (closeAuth) closeAuth.addEventListener('click', hideAuthModal);
+
+  // Welcome screen buttons
+  const beginTestBtn = document.getElementById('begin-test-btn');
+  const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
+  const viewRewardsBtn = document.getElementById('view-rewards-btn');
+
+  if (beginTestBtn) {
+    beginTestBtn.addEventListener('click', () => {
+      showScreen('quiz');
+      if (typeof startQuiz === 'function') startQuiz();
+    });
+  }
+
+  if (viewLeaderboardBtn) {
+    viewLeaderboardBtn.addEventListener('click', () => {
+      showScreen('leaderboard');
+    });
+  }
+
+  if (viewRewardsBtn) {
+    viewRewardsBtn.addEventListener('click', () => {
+      showScreen('rewards');
+    });
+  }
+
+  // Leaderboard screen buttons
+  const backFromLeaderboard = document.getElementById('back-from-leaderboard');
+  const takeQuizFromLeaderboard = document.getElementById('take-quiz-from-leaderboard');
+
+  if (backFromLeaderboard) {
+    backFromLeaderboard.addEventListener('click', () => showScreen('landing'));
+  }
+  if (takeQuizFromLeaderboard) {
+    takeQuizFromLeaderboard.addEventListener('click', () => {
+      showScreen('quiz');
+      if (typeof startQuiz === 'function') startQuiz();
+    });
+  }
+
+  // Rewards screen buttons
+  const backFromRewards = document.getElementById('back-from-rewards');
+  const takeQuizFromRewards = document.getElementById('take-quiz-from-rewards');
+
+  if (backFromRewards) {
+    backFromRewards.addEventListener('click', () => showScreen('landing'));
+  }
+  if (takeQuizFromRewards) {
+    takeQuizFromRewards.addEventListener('click', () => {
+      showScreen('quiz');
+      if (typeof startQuiz === 'function') startQuiz();
+    });
+  }
+
+  // Reward claim
+  const rewardForm = document.getElementById('reward-form');
+  const claimRewardBtn = document.getElementById('claim-reward-btn');
 
   if (rewardForm) {
     rewardForm.addEventListener('submit', e => {
@@ -382,6 +553,12 @@ function attachEventListeners() {
       submitRewardClaim(network, phone);
     });
   }
+
+  if (claimRewardBtn) {
+    claimRewardBtn.addEventListener('click', () => {
+      document.getElementById('reward-modal').classList.remove('hidden');
+    });
+  }
 }
 
 // ============================================
@@ -389,18 +566,22 @@ function attachEventListeners() {
 // ============================================
 
 auth.onAuthStateChanged(user => {
-  const authBtn = document.getElementById('auth-btn');
-  const userInfo = document.getElementById('user-info');
-  const userName = document.getElementById('user-name');
-
   if (user) {
-    if (authBtn) authBtn.classList.add('hidden');
-    if (userInfo) userInfo.classList.remove('hidden');
-    if (userName) userName.textContent = user.displayName || user.email;
+    // User is logged in - show welcome, hide auth
+    updateUIForLoggedInUser(user);
     loadUserDashboard();
   } else {
-    if (authBtn) authBtn.classList.remove('hidden');
-    if (userInfo) userInfo.classList.add('hidden');
+    // User is logged out - show auth modal immediately
+    const authSection = document.getElementById('auth-section');
+    const welcomeSection = document.getElementById('welcome-section');
+
+    if (authSection) authSection.classList.remove('hidden');
+    if (welcomeSection) welcomeSection.classList.add('hidden');
+
+    // Show auth modal after short delay
+    setTimeout(() => {
+      showAuthModal();
+    }, 500);
   }
 });
 
