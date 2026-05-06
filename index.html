@@ -196,24 +196,40 @@
 
   </main>
 
-  <!-- Firebase SDK -->
+  <!-- ============================================ -->
+  <!-- STEP 1: Firebase SDKs -->
+  <!-- ============================================ -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+  <!-- ============================================ -->
+  <!-- STEP 2: Initialize Firebase (MUST be before firebase.js) -->
+  <!-- ============================================ -->
   <script>
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCEmiQRwVR6TT3UpQHc6yIYAAq-E2E9W4w",
-  authDomain: "bible-quiz-36ba0.firebaseapp.com",
-  projectId: "bible-quiz-36ba0",
-  storageBucket: "bible-quiz-36ba0.firebasestorage.app",
-  messagingSenderId: "570860971209",
-  appId: "1:570860971209:web:f88225f800c0f5556f5918",
-  measurementId: "G-WD3YD9N6Y3"
-};
+    // REPLACE THESE VALUES with your actual Firebase config from the console
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfbfiegIFLbbwgiY8HEiRMiJw98aDsSM",
+      authDomain: "my-bible-quiz-e6971.firebaseapp.com",
+      projectId: "my-bible-quiz-e6971",
+      storageBucket: "my-bible-quiz-e6971.appspot.com",
+      messagingSenderId: "259439267912",
+      appId: "1:259439267912:web:c8558e38feeb7f21d7087d",
+      measurementId: "G-44YQ6K3LZS"
+    };
+
+    // Initialize Firebase
+    try {
+      firebase.initializeApp(firebaseConfig);
+      console.log('✅ Firebase initialized successfully in HTML');
+    } catch (e) {
+      console.error('❌ Firebase init error in HTML:', e.message);
+    }
   </script>
 
+  <!-- ============================================ -->
+  <!-- STEP 3: Your app scripts -->
+  <!-- ============================================ -->
   <script src="questions.js"></script>
   <script src="firebase.js"></script>
   <script src="script.js"></script>
