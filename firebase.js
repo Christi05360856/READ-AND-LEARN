@@ -1,42 +1,29 @@
 // ============================================
-// BIBLE QUIZ - firebase.js (DEBUG VERSION)
+// BIBLE QUIZ - firebase.js (Fixed Version)
 // ============================================
 
 console.log('🔥 firebase.js loaded');
-console.log('Firebase object exists:', typeof firebase !== 'undefined');
 
-if (typeof firebase === 'undefined') {
-  console.error('❌ Firebase SDK not loaded! Check script tags in HTML.');
-}
+// Firebase is already initialized in index.html, so just get the services
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-let db, auth;
-
-try {
-  db = firebase.firestore();
-  auth = firebase.auth();
-  console.log('✅ Firebase initialized successfully');
-} catch (e) {
-  console.error('❌ Firebase init failed:', e.message);
-}
+console.log('✅ Firebase services ready');
 
 // ============================================
 // AUTH FUNCTIONS
 // ============================================
 
 function showAuthModal() {
-  console.log('👉 showAuthModal called');
   const modal = document.getElementById('auth-modal');
-  if (modal) {
-    modal.classList.remove('hidden');
-    console.log('✅ Auth modal shown');
-  } else {
-    console.error('❌ auth-modal element not found in DOM');
-  }
+  if (modal) modal.classList.remove('hidden');
 }
 
 function hideAuthModal() {
   const modal = document.getElementById('auth-modal');
   if (modal) modal.classList.add('hidden');
+  const errorEl = document.getElementById('auth-error');
+  if (errorEl) errorEl.textContent = '';
 }
 
 function switchAuthTab(tab) {
@@ -60,8 +47,6 @@ function switchAuthTab(tab) {
 
 async function handleRegister(e) {
   e.preventDefault();
-  console.log('👉 handleRegister called');
-
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
@@ -77,12 +62,8 @@ async function handleRegister(e) {
   }
 
   try {
-    console.log('Creating user with email:', email);
     const userCred = await auth.createUserWithEmailAndPassword(email, password);
-    console.log('✅ User created:', userCred.user.uid);
-
     await userCred.user.updateProfile({ displayName: name });
-    console.log('✅ Profile updated with name:', name);
 
     await db.collection('users').doc(userCred.user.uid).set({
       name: name,
@@ -94,31 +75,26 @@ async function handleRegister(e) {
       longestStreak: 0,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    console.log('✅ User document created in Firestore');
 
     hideAuthModal();
     alert('Account created successfully!');
   } catch (err) {
-    console.error('❌ Registration error:', err);
+    console.error('Registration error:', err);
     if (errorEl) errorEl.textContent = err.message;
   }
 }
 
 async function handleLogin(e) {
   e.preventDefault();
-  console.log('👉 handleLogin called');
-
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   const errorEl = document.getElementById('auth-error');
 
   try {
-    console.log('Logging in:', email);
     await auth.signInWithEmailAndPassword(email, password);
-    console.log('✅ Login successful');
     hideAuthModal();
   } catch (err) {
-    console.error('❌ Login error:', err);
+    console.error('Login error:', err);
     if (errorEl) errorEl.textContent = err.message;
   }
 }
@@ -134,10 +110,7 @@ async function handleLogout() {
 
 async function saveQuizResult(score, totalQuestions, timeLeft, points) {
   const user = auth.currentUser;
-  if (!user) {
-    console.log('No user logged in, skipping save');
-    return;
-  }
+  if (!user) return;
 
   try {
     const userRef = db.collection('users').doc(user.uid);
@@ -182,9 +155,8 @@ async function saveQuizResult(score, totalQuestions, timeLeft, points) {
     });
 
     await updateWeeklyLeaderboard(user.uid, user.displayName || userData.name || 'User', points);
-    console.log('✅ Quiz result saved');
   } catch (err) {
-    console.error('❌ Save quiz error:', err);
+    console.error('Save quiz error:', err);
   }
 }
 
@@ -214,9 +186,8 @@ async function updateWeeklyLeaderboard(userId, userName, points) {
       weekEnd: getWeekEnd(),
       entries: entries
     });
-    console.log('✅ Leaderboard updated');
   } catch (err) {
-    console.error('❌ Leaderboard error:', err);
+    console.error('Leaderboard error:', err);
   }
 }
 
@@ -231,21 +202,17 @@ async function fetchLeaderboard() {
     if (!doc.exists) return [];
     return doc.data().entries || [];
   } catch (err) {
-    console.error('❌ Fetch leaderboard error:', err);
+    console.error('Fetch leaderboard error:', err);
     return [];
   }
 }
 
 async function renderLeaderboard() {
-  console.log('👉 renderLeaderboard called');
   const entries = await fetchLeaderboard();
   const container = document.getElementById('leaderboard-list');
   const user = auth.currentUser;
 
-  if (!container) {
-    console.error('❌ leaderboard-list element not found');
-    return;
-  }
+  if (!container) return;
 
   if (entries.length === 0) {
     container.innerHTML = '<p class="empty-state">No scores yet this week. Be the first!</p>';
@@ -291,21 +258,13 @@ async function renderLeaderboard() {
 
 async function loadUserDashboard() {
   const user = auth.currentUser;
-  if (!user) {
-    console.log('No user logged in, skipping dashboard');
-    return;
-  }
+  if (!user) return;
 
   try {
     const doc = await db.collection('users').doc(user.uid).get();
-    if (!doc.exists) {
-      console.log('User document not found');
-      return;
-    }
+    if (!doc.exists) return;
 
     const data = doc.data();
-    console.log('User data loaded:', data);
-
     const el = (id) => document.getElementById(id);
     if (el('dash-name')) el('dash-name').textContent = data.name || 'User';
     if (el('dash-quizzes')) el('dash-quizzes').textContent = data.quizzesTaken || 0;
@@ -313,7 +272,7 @@ async function loadUserDashboard() {
     if (el('dash-points')) el('dash-points').textContent = (data.totalPoints || 0).toLocaleString();
     if (el('dash-streak')) el('dash-streak').textContent = (data.currentStreak || 0) + ' days';
   } catch (err) {
-    console.error('❌ Dashboard error:', err);
+    console.error('Dashboard error:', err);
   }
 }
 
@@ -356,7 +315,7 @@ async function submitRewardClaim(network, phone) {
     alert('🎉 Reward claim submitted! You will receive your data within 24 hours.');
     document.getElementById('reward-modal').classList.add('hidden');
   } catch (err) {
-    console.error('❌ Reward claim error:', err);
+    console.error('Reward claim error:', err);
     alert('Error submitting claim: ' + err.message);
   }
 }
@@ -398,11 +357,7 @@ function getWeekEnd() {
 // ============================================
 
 function attachEventListeners() {
-  console.log('👉 Attaching event listeners...');
-
   const authBtn = document.getElementById('auth-btn');
-  const userInfo = document.getElementById('user-info');
-  const userName = document.getElementById('user-name');
   const logoutBtn = document.getElementById('logout-btn');
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
@@ -411,49 +366,13 @@ function attachEventListeners() {
   const closeAuth = document.getElementById('close-auth');
   const rewardForm = document.getElementById('reward-form');
 
-  if (authBtn) {
-    authBtn.addEventListener('click', () => {
-      console.log('Auth button clicked');
-      showAuthModal();
-    });
-    console.log('✅ auth-btn listener attached');
-  } else {
-    console.error('❌ auth-btn not found');
-  }
-
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', handleLogout);
-    console.log('✅ logout-btn listener attached');
-  }
-
-  if (loginForm) {
-    loginForm.addEventListener('submit', handleLogin);
-    console.log('✅ login-form listener attached');
-  } else {
-    console.error('❌ login-form not found');
-  }
-
-  if (registerForm) {
-    registerForm.addEventListener('submit', handleRegister);
-    console.log('✅ register-form listener attached');
-  } else {
-    console.error('❌ register-form not found');
-  }
-
-  if (loginTab) {
-    loginTab.addEventListener('click', () => switchAuthTab('login'));
-    console.log('✅ login-tab listener attached');
-  }
-
-  if (registerTab) {
-    registerTab.addEventListener('click', () => switchAuthTab('register'));
-    console.log('✅ register-tab listener attached');
-  }
-
-  if (closeAuth) {
-    closeAuth.addEventListener('click', hideAuthModal);
-    console.log('✅ close-auth listener attached');
-  }
+  if (authBtn) authBtn.addEventListener('click', showAuthModal);
+  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+  if (loginForm) loginForm.addEventListener('submit', handleLogin);
+  if (registerForm) registerForm.addEventListener('submit', handleRegister);
+  if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
+  if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
+  if (closeAuth) closeAuth.addEventListener('click', hideAuthModal);
 
   if (rewardForm) {
     rewardForm.addEventListener('submit', e => {
@@ -462,7 +381,6 @@ function attachEventListeners() {
       const phone = document.getElementById('reward-phone').value;
       submitRewardClaim(network, phone);
     });
-    console.log('✅ reward-form listener attached');
   }
 }
 
@@ -470,27 +388,21 @@ function attachEventListeners() {
 // AUTH STATE LISTENER
 // ============================================
 
-if (typeof auth !== 'undefined') {
-  auth.onAuthStateChanged(user => {
-    console.log('Auth state changed:', user ? 'LOGGED IN' : 'LOGGED OUT');
+auth.onAuthStateChanged(user => {
+  const authBtn = document.getElementById('auth-btn');
+  const userInfo = document.getElementById('user-info');
+  const userName = document.getElementById('user-name');
 
-    const authBtn = document.getElementById('auth-btn');
-    const userInfo = document.getElementById('user-info');
-    const userName = document.getElementById('user-name');
-
-    if (user) {
-      if (authBtn) authBtn.classList.add('hidden');
-      if (userInfo) userInfo.classList.remove('hidden');
-      if (userName) userName.textContent = user.displayName || user.email;
-      loadUserDashboard();
-    } else {
-      if (authBtn) authBtn.classList.remove('hidden');
-      if (userInfo) userInfo.classList.add('hidden');
-    }
-  });
-} else {
-  console.error('❌ Auth not available for state listener');
-}
+  if (user) {
+    if (authBtn) authBtn.classList.add('hidden');
+    if (userInfo) userInfo.classList.remove('hidden');
+    if (userName) userName.textContent = user.displayName || user.email;
+    loadUserDashboard();
+  } else {
+    if (authBtn) authBtn.classList.remove('hidden');
+    if (userInfo) userInfo.classList.add('hidden');
+  }
+});
 
 // ============================================
 // INITIALIZE
@@ -502,4 +414,4 @@ if (document.readyState === 'loading') {
   attachEventListeners();
 }
 
-console.log('🔥 firebase.js fully loaded and initialized');
+console.log('🔥 firebase.js fully loaded');
