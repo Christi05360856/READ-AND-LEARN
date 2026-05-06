@@ -105,7 +105,6 @@ async function handleLogout() {
 // ============================================
 
 function updateUIForLoggedInUser(user) {
-  // Hide auth section, show welcome section
   const authSection = document.getElementById('auth-section');
   const welcomeSection = document.getElementById('welcome-section');
   const welcomeName = document.getElementById('welcome-name');
@@ -114,7 +113,6 @@ function updateUIForLoggedInUser(user) {
   if (welcomeSection) welcomeSection.classList.remove('hidden');
   if (welcomeName) welcomeName.textContent = user.displayName || 'Champion';
 
-  // Update rewards screen name
   const rewardsUserName = document.getElementById('rewards-user-name');
   if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
 }
@@ -251,7 +249,6 @@ function renderLeaderboardHTML(entries, containerId, userRankId) {
 
   container.innerHTML = html;
 
-  // Show user rank if not in top 20
   const userRankEl = userRankId ? document.getElementById(userRankId) : null;
   if (userRankEl && user) {
     const userIndex = entries.findIndex(e => e.userId === user.uid);
@@ -299,15 +296,11 @@ async function loadUserDashboard() {
     if (el('dash-points')) el('dash-points').textContent = (data.totalPoints || 0).toLocaleString();
     if (el('dash-streak')) el('dash-streak').textContent = (data.currentStreak || 0) + ' days';
 
-    // Update rewards screen
     if (el('reward-current-points')) {
       el('reward-current-points').textContent = (data.totalPoints || 0).toLocaleString();
     }
 
-    // Update progress bar
     updateRewardProgress(data.totalPoints || 0);
-
-    // Update tier statuses
     updateRewardTiers(data.totalPoints || 0);
 
   } catch (err) {
@@ -320,13 +313,11 @@ function updateRewardProgress(points) {
   const nextMilestoneEl = document.getElementById('reward-next-milestone');
   if (!fill) return;
 
-  // Determine next milestone
   let nextMilestone = 5000;
   if (points >= 5000) nextMilestone = 10000;
   if (points >= 10000) nextMilestone = 25000;
   if (points >= 25000) nextMilestone = 50000;
 
-  // Calculate progress percentage
   let prevMilestone = 0;
   if (points >= 5000) prevMilestone = 5000;
   if (points >= 10000) prevMilestone = 10000;
@@ -356,7 +347,7 @@ function updateRewardTiers(points) {
         el.parentElement.classList.add('tier-unlocked');
       } else {
         const remaining = tier.threshold - points;
-        el.textContent = `${remaining.toLocaleString()} pts to go 🔒`;
+        el.textContent = remaining.toLocaleString() + ' pts to go 🔒';
       }
     }
   });
@@ -414,7 +405,7 @@ function getCurrentWeekId() {
   const now = new Date();
   const year = now.getFullYear();
   const week = getWeekNumber(now);
-  return `${year}-W${week}`;
+  return year + '-W' + week;
 }
 
 function getWeekNumber(d) {
@@ -449,14 +440,15 @@ function showScreen(screenName) {
     if (el) el.classList.add('hidden');
   });
 
-  const target = document.getElementById(screenName === 'landing' ? 'landing-screen' : 
-                                          screenName === 'quiz' ? 'quiz-screen' : 
-                                          screenName === 'result' ? 'result-screen' :
-                                          screenName === 'leaderboard' ? 'leaderboard-screen' :
-                                          screenName === 'rewards' ? 'rewards-screen' : '');
+  const target = document.getElementById(
+    screenName === 'landing' ? 'landing-screen' : 
+    screenName === 'quiz' ? 'quiz-screen' : 
+    screenName === 'result' ? 'result-screen' :
+    screenName === 'leaderboard' ? 'leaderboard-screen' :
+    screenName === 'rewards' ? 'rewards-screen' : ''
+  );
   if (target) target.classList.remove('hidden');
 
-  // Load data for specific screens
   if (screenName === 'leaderboard') {
     renderLeaderboard();
   }
@@ -468,7 +460,6 @@ function showScreen(screenName) {
   }
 }
 
-// Make showScreen global
 window.showScreen = showScreen;
 
 // ============================================
@@ -476,7 +467,6 @@ window.showScreen = showScreen;
 // ============================================
 
 function attachEventListeners() {
-  // Auth modal
   const authBtn = document.getElementById('auth-btn');
   const loginForm = document.getElementById('login-form');
   const registerForm = document.getElementById('register-form');
@@ -489,7 +479,6 @@ function attachEventListeners() {
   if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
   if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
 
-  // Welcome screen buttons
   const beginTestBtn = document.getElementById('begin-test-btn');
   const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
   const viewRewardsBtn = document.getElementById('view-rewards-btn');
@@ -513,7 +502,6 @@ function attachEventListeners() {
     });
   }
 
-  // Leaderboard screen buttons
   const backFromLeaderboard = document.getElementById('back-from-leaderboard');
   const takeQuizFromLeaderboard = document.getElementById('take-quiz-from-leaderboard');
 
@@ -527,7 +515,6 @@ function attachEventListeners() {
     });
   }
 
-  // Rewards screen buttons
   const backFromRewards = document.getElementById('back-from-rewards');
   const takeQuizFromRewards = document.getElementById('take-quiz-from-rewards');
 
@@ -541,7 +528,6 @@ function attachEventListeners() {
     });
   }
 
-  // Reward claim
   const rewardForm = document.getElementById('reward-form');
   const claimRewardBtn = document.getElementById('claim-reward-btn');
 
@@ -567,18 +553,15 @@ function attachEventListeners() {
 
 auth.onAuthStateChanged(user => {
   if (user) {
-    // User is logged in - show welcome, hide auth
     updateUIForLoggedInUser(user);
     loadUserDashboard();
   } else {
-    // User is logged out - show auth modal immediately
     const authSection = document.getElementById('auth-section');
     const welcomeSection = document.getElementById('welcome-section');
 
     if (authSection) authSection.classList.remove('hidden');
     if (welcomeSection) welcomeSection.classList.add('hidden');
 
-    // Show auth modal after short delay
     setTimeout(() => {
       showAuthModal();
     }, 500);
