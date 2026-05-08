@@ -107,6 +107,11 @@
       background: var(--primary-hover);
     }
 
+    .login-card button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .login-error {
       color: var(--danger);
       font-size: 14px;
@@ -583,6 +588,37 @@
     .filter-select:focus {
       border-color: var(--primary);
     }
+
+    /* Debug Console */
+    .debug-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .debug-panel h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: var(--text-muted);
+    }
+
+    .debug-log {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .debug-log .error { color: var(--danger); }
+    .debug-log .success { color: var(--success); }
+    .debug-log .info { color: var(--info); }
   </style>
 <base target="_blank">
 </head>
@@ -596,7 +632,7 @@
       <p>Bible Quiz Platform</p>
       <input type="email" id="admin-email" placeholder="Admin Email" value="">
       <input type="password" id="admin-password" placeholder="Password" value="">
-      <button onclick="adminLogin()">Sign In</button>
+      <button id="login-btn" onclick="adminLogin()">Sign In</button>
       <div id="login-error" class="login-error"></div>
     </div>
   </div>
@@ -622,7 +658,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-users">0</div>
+              <div class="stat-value" id="stat-users">-</div>
               <div class="stat-label">Total Users</div>
             </div>
             <div class="stat-icon blue"><i class="fas fa-users"></i></div>
@@ -631,7 +667,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-quizzes">0</div>
+              <div class="stat-value" id="stat-quizzes">-</div>
               <div class="stat-label">Quizzes Taken</div>
             </div>
             <div class="stat-icon green"><i class="fas fa-clipboard-check"></i></div>
@@ -640,7 +676,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-claims">0</div>
+              <div class="stat-value" id="stat-claims">-</div>
               <div class="stat-label">Reward Claims</div>
             </div>
             <div class="stat-icon gold"><i class="fas fa-gift"></i></div>
@@ -649,7 +685,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-pending">0</div>
+              <div class="stat-value" id="stat-pending">-</div>
               <div class="stat-label">Pending Claims</div>
             </div>
             <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
@@ -658,7 +694,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-avg">0%</div>
+              <div class="stat-value" id="stat-avg">-</div>
               <div class="stat-label">Avg Score</div>
             </div>
             <div class="stat-icon purple"><i class="fas fa-chart-line"></i></div>
@@ -667,7 +703,7 @@
         <div class="stat-card">
           <div class="stat-header">
             <div>
-              <div class="stat-value" id="stat-week">W1</div>
+              <div class="stat-value" id="stat-week">W-</div>
               <div class="stat-label">Current Week</div>
             </div>
             <div class="stat-icon red"><i class="fas fa-calendar-week"></i></div>
@@ -817,6 +853,12 @@
           </div>
         </div>
       </div>
+
+      <!-- Debug Panel -->
+      <div class="debug-panel">
+        <h3><i class="fas fa-bug"></i> Debug Console</h3>
+        <div id="debug-log" class="debug-log">Admin dashboard loaded. Waiting for data...</div>
+      </div>
     </div>
   </div>
 
@@ -846,28 +888,58 @@
     const auth = firebase.auth();
 
     let currentTab = 'leaderboard';
+    let isLoggingIn = false;
 
     // EPOCH: May 5, 2026 (Monday) - Week 1 starts here
     const WEEK_EPOCH = new Date('2026-05-05T00:00:00');
 
+    // ========== DEBUG LOGGING ==========
+    function logDebug(msg, type = 'info') {
+      const logEl = document.getElementById('debug-log');
+      const timestamp = new Date().toLocaleTimeString();
+      const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+      const line = `[${timestamp}] <span class="${className}">${msg}</span>
+`;
+      if (logEl) {
+        logEl.innerHTML += line;
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+      console.log(`[Admin] ${msg}`);
+    }
+
     // ========== AUTH ==========
-    function adminLogin() {
+    async function adminLogin() {
+      if (isLoggingIn) return;
+      isLoggingIn = true;
+
       const email = document.getElementById('admin-email').value.trim();
       const password = document.getElementById('admin-password').value;
       const errorEl = document.getElementById('login-error');
+      const btn = document.getElementById('login-btn');
 
-      auth.signInWithEmailAndPassword(email, password)
-        .then(userCred => {
-          const user = userCred.user;
-          showDashboard();
-        })
-        .catch(err => {
-          errorEl.textContent = err.message;
-        });
+      btn.disabled = true;
+      btn.textContent = 'Signing in...';
+      if (errorEl) errorEl.textContent = '';
+
+      logDebug(`Attempting login for: ${email}`);
+
+      try {
+        const userCred = await auth.signInWithEmailAndPassword(email, password);
+        logDebug(`Login successful: ${userCred.user.email}`, 'success');
+        showDashboard();
+      } catch (err) {
+        logDebug(`Login failed: ${err.message}`, 'error');
+        if (errorEl) errorEl.textContent = err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        isLoggingIn = false;
+      }
     }
 
     function adminLogout() {
       auth.signOut().then(() => {
+        logDebug('Logged out', 'info');
         location.reload();
       });
     }
@@ -875,13 +947,17 @@
     function showDashboard() {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('dashboard').style.display = 'block';
+      logDebug('Dashboard shown, loading data...', 'info');
       loadAllData();
     }
 
     // Check if already logged in
     auth.onAuthStateChanged(user => {
       if (user) {
+        logDebug(`Auth state: logged in as ${user.email}`, 'success');
         showDashboard();
+      } else {
+        logDebug('Auth state: logged out', 'info');
       }
     });
 
@@ -943,21 +1019,30 @@
     }
 
     async function loadStats() {
+      logDebug('Loading stats...', 'info');
       try {
         // Total users
+        logDebug('Fetching users collection...', 'info');
         const usersSnap = await db.collection('users').get();
+        logDebug(`Users fetched: ${usersSnap.size}`, 'success');
         document.getElementById('stat-users').textContent = usersSnap.size;
 
         // Total quizzes
+        logDebug('Fetching quizAttempts collection...', 'info');
         const quizzesSnap = await db.collection('quizAttempts').get();
+        logDebug(`Quizzes fetched: ${quizzesSnap.size}`, 'success');
         document.getElementById('stat-quizzes').textContent = quizzesSnap.size;
 
         // Total claims
+        logDebug('Fetching rewardClaims collection...', 'info');
         const claimsSnap = await db.collection('rewardClaims').get();
+        logDebug(`Claims fetched: ${claimsSnap.size}`, 'success');
         document.getElementById('stat-claims').textContent = claimsSnap.size;
 
         // Pending claims
+        logDebug('Fetching pending claims...', 'info');
         const pendingSnap = await db.collection('rewardClaims').where('status', '==', 'pending').get();
+        logDebug(`Pending claims: ${pendingSnap.size}`, 'success');
         document.getElementById('stat-pending').textContent = pendingSnap.size;
 
         // Average score
@@ -971,13 +1056,16 @@
           }
         });
         const avg = count > 0 ? Math.round(totalScore / count) : 0;
+        logDebug(`Average score calculated: ${avg}% (${count} attempts)`, 'info');
         document.getElementById('stat-avg').textContent = avg + '%';
 
         // Current week (FIXED)
         const weekNum = getDisplayWeek();
+        logDebug(`Current week: W${weekNum}`, 'info');
         document.getElementById('stat-week').textContent = 'W' + weekNum;
 
       } catch (err) {
+        logDebug(`Stats error: ${err.message}`, 'error');
         console.error('Stats error:', err);
       }
     }
@@ -989,14 +1077,17 @@
 
       try {
         const weekId = getCurrentWeekId();
+        logDebug(`Loading leaderboard for ${weekId}...`, 'info');
         const doc = await db.collection('leaderboard').doc(weekId).get();
 
         if (!doc.exists) {
+          logDebug(`No leaderboard data for ${weekId}`, 'info');
           tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-trophy"></i><br>No leaderboard data for this week</td></tr>';
           return;
         }
 
         const entries = doc.data().entries || [];
+        logDebug(`Leaderboard entries: ${entries.length}`, 'success');
 
         if (entries.length === 0) {
           tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-trophy"></i><br>No entries yet</td></tr>';
@@ -1027,6 +1118,7 @@
 
         tbody.innerHTML = html;
       } catch (err) {
+        logDebug(`Leaderboard error: ${err.message}`, 'error');
         console.error('Leaderboard error:', err);
         tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading data</td></tr>';
       }
@@ -1044,7 +1136,9 @@
           query = query.where('status', '==', filter);
         }
 
+        logDebug(`Loading claims with filter: ${filter}...`, 'info');
         const snap = await query.get();
+        logDebug(`Claims loaded: ${snap.size}`, 'success');
 
         if (snap.empty) {
           tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-gift"></i><br>No claims found</td></tr>';
@@ -1096,23 +1190,40 @@
 
         tbody.innerHTML = html;
       } catch (err) {
+        logDebug(`Claims error: ${err.message}`, 'error');
         console.error('Claims error:', err);
         tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading claims</td></tr>';
       }
     }
 
     async function updateClaimStatus(claimId, status) {
+      logDebug(`Updating claim ${claimId} to status: ${status}...`, 'info');
       try {
-        await db.collection('rewardClaims').doc(claimId).update({
+        // Check if document exists first
+        const docRef = db.collection('rewardClaims').doc(claimId);
+        const docSnap = await docRef.get();
+
+        if (!docSnap.exists) {
+          logDebug(`Claim document ${claimId} does not exist!`, 'error');
+          showToast('Error: Claim not found', 'error');
+          return;
+        }
+
+        logDebug(`Document exists. Current data: ${JSON.stringify(docSnap.data())}`, 'info');
+
+        await docRef.update({
           status: status,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+
+        logDebug(`Claim ${claimId} updated to ${status}`, 'success');
         showToast(`Claim marked as ${status}`, 'success');
         loadClaims();
         loadStats();
       } catch (err) {
+        logDebug(`Update error for ${claimId}: ${err.message}`, 'error');
         console.error('Update error:', err);
-        showToast('Error updating claim', 'error');
+        showToast(`Error: ${err.message}`, 'error');
       }
     }
 
@@ -1122,7 +1233,9 @@
       tbody.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fas fa-spinner"></i> Loading...</td></tr>';
 
       try {
+        logDebug('Loading users...', 'info');
         const snap = await db.collection('users').orderBy('createdAt', 'desc').get();
+        logDebug(`Users loaded: ${snap.size}`, 'success');
 
         if (snap.empty) {
           tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-users"></i><br>No users registered</td></tr>';
@@ -1154,6 +1267,7 @@
 
         tbody.innerHTML = html;
       } catch (err) {
+        logDebug(`Users error: ${err.message}`, 'error');
         console.error('Users error:', err);
         tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading users</td></tr>';
       }
@@ -1165,7 +1279,9 @@
       tbody.innerHTML = '<tr class="loading-row"><td colspan="6"><i class="fas fa-spinner"></i> Loading...</td></tr>';
 
       try {
+        logDebug('Loading quiz attempts...', 'info');
         const snap = await db.collection('quizAttempts').orderBy('timestamp', 'desc').limit(100).get();
+        logDebug(`Quizzes loaded: ${snap.size}`, 'success');
 
         if (snap.empty) {
           tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-history"></i><br>No quiz attempts yet</td></tr>';
@@ -1197,6 +1313,7 @@
 
         tbody.innerHTML = html;
       } catch (err) {
+        logDebug(`Quizzes error: ${err.message}`, 'error');
         console.error('Quizzes error:', err);
         tbody.innerHTML = '<tr><td colspan="6" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading quizzes</td></tr>';
       }
