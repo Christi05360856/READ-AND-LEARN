@@ -332,6 +332,7 @@ async function checkRewardEligibility() {
   if (!user || !rewardSection) return;
 
   try {
+    // Only show top 3 banner if user is actually in top 3
     const entries = await fetchLeaderboard();
     const rank = entries.findIndex(e => e.userId === user.uid) + 1;
 
@@ -342,7 +343,7 @@ async function checkRewardEligibility() {
     }
   } catch (err) {
     console.error('Reward eligibility check error:', err);
-    rewardSection.classList.add('hidden');
+    if (rewardSection) rewardSection.classList.add('hidden');
   }
 }
 
