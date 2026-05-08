@@ -216,8 +216,42 @@ function updateUIForLoggedInUser(user) {
   const rewardsUserName = document.getElementById('rewards-user-name');
   if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
 
+  // Add logout button near welcome name
+  addLogoutButton();
+
   // Update week badges dynamically
   updateWeekBadges();
+
+  // Mandatory notification check
+  setTimeout(() => checkNotificationStatus(), 1000);
+
+  // Check daily quiz limit
+  setTimeout(async () => {
+    const limitCheck = await checkDailyQuizLimit();
+    if (limitCheck && limitCheck.blocked) {
+      showDailyLimitMessage(limitCheck);
+    }
+  }, 500);
+}
+
+function addLogoutButton() {
+  const welcomeSection = document.getElementById('welcome-section');
+  if (!welcomeSection) return;
+
+  // Remove existing logout button if any
+  const existing = document.getElementById('logout-btn');
+  if (existing) existing.remove();
+
+  const logoutBtn = document.createElement('button');
+  logoutBtn.id = 'logout-btn';
+  logoutBtn.className = 'text-btn';
+  logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+  logoutBtn.style.cssText = 'position: absolute; top: 16px; right: 16px; background: #fee2e2; color: #991b1b; padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 13px; border: 1px solid #fca5a5; cursor: pointer;';
+  logoutBtn.onclick = handleLogout;
+
+  // Make welcome section relative for positioning
+  welcomeSection.style.position = 'relative';
+  welcomeSection.appendChild(logoutBtn);
 }
 
 function updateWeekBadges() {
@@ -420,14 +454,14 @@ function updateRewardProgress(points) {
   const nextMilestoneEl = document.getElementById('reward-next-milestone');
   if (!fill) return;
 
-  // UPDATED THRESHOLDS: 10K, 20K, 50K
-  let nextMilestone = 10000;
+  // THRESHOLDS: 5K (1GB), 10K (2.5GB), 20K (5GB)
+  let nextMilestone = 5000;
+  if (points >= 5000) nextMilestone = 10000;
   if (points >= 10000) nextMilestone = 20000;
-  if (points >= 20000) nextMilestone = 50000;
 
   let prevMilestone = 0;
+  if (points >= 5000) prevMilestone = 5000;
   if (points >= 10000) prevMilestone = 10000;
-  if (points >= 20000) prevMilestone = 20000;
 
   const progress = Math.min(100, ((points - prevMilestone) / (nextMilestone - prevMilestone)) * 100);
   fill.style.width = progress + '%';
@@ -438,11 +472,11 @@ function updateRewardProgress(points) {
 }
 
 function updateRewardTiers(points) {
-  // UPDATED TIERS
+  // TIERS: 5K (1GB), 10K (2.5GB), 20K (5GB)
   const tiers = [
-    { threshold: 10000, reward: '500MB', id: 'tier-10000' },
-    { threshold: 20000, reward: '1GB', id: 'tier-20000' },
-    { threshold: 50000, reward: '5GB', id: 'tier-50000' }
+    { threshold: 5000, reward: '1GB', id: 'tier-5000' },
+    { threshold: 10000, reward: '2.5GB', id: 'tier-10000' },
+    { threshold: 20000, reward: '5GB', id: 'tier-20000' }
   ];
 
   tiers.forEach(tier => {
@@ -460,16 +494,6 @@ function updateRewardTiers(points) {
   });
 }
 
-// ============================================
-// REWARD CLAIM
-// ============================================
-
-async function submitRewardClaim(network, phone) {
-  const user = auth.currentUser;
-  if (!user) {
-    alert('Please log in first');
-    return;
-  }
 
   try {
     const weekId = getCurrentWeekId();
@@ -618,24 +642,7 @@ function attachEventListeners() {
     });
   }
 
-  // Reward claim
-  const rewardForm = document.getElementById('reward-form');
-  const claimRewardBtn = document.getElementById('claim-reward-btn');
-
-  if (rewardForm) {
-    rewardForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const network = document.getElementById('reward-network').value;
-      const phone = document.getElementById('reward-phone').value;
-      submitRewardClaim(network, phone);
-    });
-  }
-
-  if (claimRewardBtn) {
-    claimRewardBtn.addEventListener('click', () => {
-      document.getElementById('reward-modal').classList.remove('hidden');
-    });
-  }
+  // Reward claim removed — admin handles all reward distribution at week end
 }
 
 // ============================================
@@ -644,33 +651,228 @@ function attachEventListeners() {
 
 auth.onAuthStateChanged(user => {
   if (user) {
-    // User logged in
+    // User just logged in (not auto from persistence)
     updateUIForLoggedInUser(user);
     loadUserDashboard();
     authModalShown = false;
     hideAuthModal();
   } else {
-    // User logged out
+    // User logged out or no session
     const authSection = document.getElementById('auth-section');
     const welcomeSection = document.getElementById('welcome-section');
 
     if (authSection) authSection.classList.remove('hidden');
     if (welcomeSection) welcomeSection.classList.add('hidden');
 
-    // Only show auth modal once per session, and verify still logged out
+    // Always show auth modal when logged out
     if (!authModalShown) {
       setTimeout(() => {
         if (!auth.currentUser && currentScreen === 'landing') {
           showAuthModal();
         }
-      }, 800);
+      }, 500);
     }
   }
 });
 
 // ============================================
+// NOTIFICATIONS (MANDATORY)
+// ============================================
+
+function checkNotificationStatus() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  // Check if already granted
+  if (Notification.permission === 'granted') {
+    scheduleDailyReminder();
+    return;
+  }
+
+  // Show mandatory notification modal
+  showNotificationModal();
+}
+
+function showNotificationModal() {
+  let modal = document.getElementById('notification-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'notification-modal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+      <div class="modal-content" style="max-width: 420px;">
+        <div class="modal-icon">🔔</div>
+        <h3>Enable Daily Reminders</h3>
+        <p style="color: #64748b; margin-bottom: 20px; font-size: 15px;">
+          Stay on top of your Bible study! Get notified when it's time to take your daily quiz and when someone overtakes you on the leaderboard.
+        </p>
+        <button id="enable-notify-btn" class="primary-btn" style="width: 100%; margin-bottom: 10px;">
+          Enable Notifications
+        </button>
+        <p style="font-size: 12px; color: #94a3b8; margin-top: 8px;">
+          This is required to continue using the platform.
+        </p>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('enable-notify-btn').addEventListener('click', async () => {
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        await saveNotificationPreference(true);
+        scheduleDailyReminder();
+        modal.classList.add('hidden');
+        showToast('✅ Notifications enabled!', 'success');
+      } else {
+        // Keep showing until they allow
+        alert('⚠️ Please allow notifications in your browser settings to continue.');
+      }
+    });
+  }
+  modal.classList.remove('hidden');
+}
+
+async function saveNotificationPreference(enabled) {
+  const user = auth.currentUser;
+  if (!user) return;
+  try {
+    await db.collection('users').doc(user.uid).update({
+      notificationsEnabled: enabled,
+      notificationUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  } catch (err) {
+    console.error('Save notification pref error:', err);
+  }
+}
+
+function scheduleDailyReminder() {
+  if (!('serviceWorker' in navigator)) return;
+
+  // Register service worker for notifications
+  navigator.serviceWorker.register('sw.js').then(reg => {
+    console.log('Service Worker registered for notifications');
+  }).catch(err => {
+    console.error('SW registration failed:', err);
+  });
+
+  // Show test notification after 3 seconds
+  setTimeout(() => {
+    showBrowserNotification('📖 Bible Quiz', 'You're all set! We'll remind you daily at 9 AM.');
+  }, 3000);
+}
+
+function showBrowserNotification(title, body) {
+  if (Notification.permission === 'granted') {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification(title, {
+        body: body,
+        icon: '📖',
+        badge: '📖',
+        tag: 'bible-quiz-daily',
+        requireInteraction: false
+      });
+    });
+  }
+}
+
+// Daily quiz limit check
+async function checkDailyQuizLimit() {
+  const user = auth.currentUser;
+  if (!user) return false;
+
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    const data = doc.data() || {};
+    const lastQuiz = data.lastQuizDate ? data.lastQuizDate.toDate() : null;
+
+    if (!lastQuiz) return false; // Never taken, allow
+
+    const now = new Date();
+    const lastQuizDay = new Date(lastQuiz.getFullYear(), lastQuiz.getMonth(), lastQuiz.getDate());
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    if (lastQuizDay.getTime() === today.getTime()) {
+      // Already taken today
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const msUntilMidnight = tomorrow - now;
+      return {
+        blocked: true,
+        nextQuizTime: tomorrow,
+        msUntilMidnight: msUntilMidnight
+      };
+    }
+
+    return false; // Not taken today, allow
+  } catch (err) {
+    console.error('Daily limit check error:', err);
+    return false;
+  }
+}
+
+function showDailyLimitMessage(timeData) {
+  const welcomeSection = document.getElementById('welcome-section');
+  const actionsDiv = welcomeSection.querySelector('.welcome-actions');
+
+  // Replace buttons with countdown
+  const hours = Math.floor(timeData.msUntilMidnight / (1000 * 60 * 60));
+  const minutes = Math.floor((timeData.msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeData.msUntilMidnight % (1000 * 60)) / 1000);
+
+  actionsDiv.innerHTML = `
+    <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 16px; padding: 24px; text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
+      <h3 style="color: #92400e; margin-bottom: 8px;">You've taken today's quiz!</h3>
+      <p style="color: #a16207; font-size: 14px; margin-bottom: 16px;">
+        Come back tomorrow for a fresh set of questions.
+      </p>
+      <div style="font-size: 32px; font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums;" id="countdown-timer">
+        ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}
+      </div>
+      <p style="font-size: 12px; color: #a16207; margin-top: 8px;">until next quiz</p>
+    </div>
+    <button onclick="showScreen('leaderboard'); renderLeaderboard();" class="secondary-btn" style="margin-top: 12px;">🏆 View Leaderboard</button>
+    <button onclick="showScreen('rewards'); loadUserDashboard();" class="secondary-btn" style="margin-top: 8px;">🎁 My Rewards</button>
+  `;
+
+  // Start countdown
+  startCountdown(timeData.msUntilMidnight);
+}
+
+let countdownInterval = null;
+function startCountdown(msRemaining) {
+  clearInterval(countdownInterval);
+  let remaining = msRemaining;
+
+  countdownInterval = setInterval(() => {
+    remaining -= 1000;
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      location.reload(); // Refresh to unlock quiz
+      return;
+    }
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    const timerEl = document.getElementById('countdown-timer');
+    if (timerEl) {
+      timerEl.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    }
+  }, 1000);
+}
+
+// ============================================
 // INITIALIZE
 // ============================================
+
+// DISABLE auto-login: set persistence to NONE
+auth.setPersistence(firebase.auth.Auth.Persistence.NONE).then(() => {
+  console.log('🔒 Auth persistence set to NONE (login required every session)');
+}).catch(err => {
+  console.error('Auth persistence error:', err);
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', attachEventListeners);
