@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - firebase.js (STACK OVERFLOW FIXED + WEEK LOGIC FIXED)
+// BIBLE QUIZ - firebase.js (FULLY FIXED)
 // ============================================
 
 const db = firebase.firestore();
@@ -8,13 +8,13 @@ const auth = firebase.auth();
 // Prevent modal from spam-opening
 let authModalShown = false;
 let currentScreen = 'landing';
+let isProcessingAuth = false;
 
 // ============================================
 // SCREEN NAVIGATION (SAFE - NO SIDE EFFECTS)
 // ============================================
 
 function showScreen(screenName) {
-  // Guard against recursive calls
   if (screenName === currentScreen) return;
   currentScreen = screenName;
 
@@ -75,19 +75,51 @@ function switchAuthTab(tab) {
   }
 }
 
+function setAuthLoading(isLoading, button, originalText) {
+  if (!button) return;
+  button.disabled = isLoading;
+  button.textContent = isLoading ? (originalText.includes('Creating') ? 'Creating account...' : 'Signing in...') : originalText;
+  button.style.opacity = isLoading ? '0.7' : '1';
+}
+
+function showAuthSuccess(msg) {
+  const errorEl = document.getElementById('auth-error');
+  if (errorEl) {
+    errorEl.textContent = msg;
+    errorEl.style.color = '#22c55e';
+  }
+}
+
 async function handleRegister(e) {
   e.preventDefault();
+  if (isProcessingAuth) return;
+  isProcessingAuth = true;
+
+  const form = e.target;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.textContent : 'Create Account';
+
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
   const errorEl = document.getElementById('auth-error');
 
+  setAuthLoading(true, submitBtn, originalText);
+  if (errorEl) {
+    errorEl.textContent = '';
+    errorEl.style.color = '#ef4444';
+  }
+
   if (name.length < 2) {
     if (errorEl) errorEl.textContent = 'Please enter your full name';
+    setAuthLoading(false, submitBtn, originalText);
+    isProcessingAuth = false;
     return;
   }
   if (password.length < 6) {
     if (errorEl) errorEl.textContent = 'Password must be at least 6 characters';
+    setAuthLoading(false, submitBtn, originalText);
+    isProcessingAuth = false;
     return;
   }
 
@@ -106,27 +138,60 @@ async function handleRegister(e) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    hideAuthModal();
-    updateUIForLoggedInUser(userCred.user);
+    showAuthSuccess('✅ Account created successfully!');
+    setTimeout(() => {
+      hideAuthModal();
+      updateUIForLoggedInUser(userCred.user);
+      setAuthLoading(false, submitBtn, originalText);
+      isProcessingAuth = false;
+    }, 1200);
   } catch (err) {
     console.error('Registration error:', err);
-    if (errorEl) errorEl.textContent = err.message;
+    if (errorEl) {
+      errorEl.style.color = '#ef4444';
+      errorEl.textContent = err.message;
+    }
+    setAuthLoading(false, submitBtn, originalText);
+    isProcessingAuth = false;
   }
 }
 
 async function handleLogin(e) {
   e.preventDefault();
+  if (isProcessingAuth) return;
+  isProcessingAuth = true;
+
+  const form = e.target;
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.textContent : 'Login';
+
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
   const errorEl = document.getElementById('auth-error');
 
+  setAuthLoading(true, submitBtn, originalText);
+  if (errorEl) {
+    errorEl.textContent = '';
+    errorEl.style.color = '#ef4444';
+  }
+
   try {
     const userCred = await auth.signInWithEmailAndPassword(email, password);
-    hideAuthModal();
-    updateUIForLoggedInUser(userCred.user);
+    showAuthSuccess('✅ Login successful!');
+    setTimeout(() => {
+      hideAuthModal();
+      updateUIForLoggedInUser(userCred.user);
+      setAuthLoading(false, submitBtn, originalText);
+      isProcessingAuth = false;
+    }, 800);
   } catch (err) {
     console.error('Login error:', err);
-    if (errorEl) errorEl.textContent = err.message;
+    if (errorEl) {
+      errorEl.style.color = '#ef4444';
+      errorEl.textContent = err.message;
+    }
+    setAuthLoading(false, submitBtn, originalText);
+    isProcessingAuth = false;
   }
 }
 
@@ -150,6 +215,17 @@ function updateUIForLoggedInUser(user) {
 
   const rewardsUserName = document.getElementById('rewards-user-name');
   if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
+
+  // Update week badges dynamically
+  updateWeekBadges();
+}
+
+function updateWeekBadges() {
+  const weekNum = getDisplayWeek();
+  const badges = document.querySelectorAll('#leaderboard-week-badge, #week-badge');
+  badges.forEach(badge => {
+    if (badge) badge.textContent = 'Week ' + weekNum;
+  });
 }
 
 // ============================================
@@ -344,15 +420,14 @@ function updateRewardProgress(points) {
   const nextMilestoneEl = document.getElementById('reward-next-milestone');
   if (!fill) return;
 
-  let nextMilestone = 5000;
-  if (points >= 5000) nextMilestone = 10000;
-  if (points >= 10000) nextMilestone = 25000;
-  if (points >= 25000) nextMilestone = 50000;
+  // UPDATED THRESHOLDS: 10K, 20K, 50K
+  let nextMilestone = 10000;
+  if (points >= 10000) nextMilestone = 20000;
+  if (points >= 20000) nextMilestone = 50000;
 
   let prevMilestone = 0;
-  if (points >= 5000) prevMilestone = 5000;
   if (points >= 10000) prevMilestone = 10000;
-  if (points >= 25000) prevMilestone = 25000;
+  if (points >= 20000) prevMilestone = 20000;
 
   const progress = Math.min(100, ((points - prevMilestone) / (nextMilestone - prevMilestone)) * 100);
   fill.style.width = progress + '%';
@@ -363,22 +438,23 @@ function updateRewardProgress(points) {
 }
 
 function updateRewardTiers(points) {
+  // UPDATED TIERS
   const tiers = [
-    { threshold: 5000, id: 'tier-5000' },
-    { threshold: 10000, id: 'tier-10000' },
-    { threshold: 25000, id: 'tier-25000' }
+    { threshold: 10000, reward: '500MB', id: 'tier-10000' },
+    { threshold: 20000, reward: '1GB', id: 'tier-20000' },
+    { threshold: 50000, reward: '5GB', id: 'tier-50000' }
   ];
 
   tiers.forEach(tier => {
     const el = document.getElementById(tier.id);
     if (el) {
       if (points >= tier.threshold) {
-        el.textContent = 'Unlocked ✅';
+        el.textContent = 'Unlocked ✅ (' + tier.reward + ')';
         el.classList.add('unlocked');
         el.parentElement.classList.add('tier-unlocked');
       } else {
         const remaining = tier.threshold - points;
-        el.textContent = remaining.toLocaleString() + ' pts to go 🔒';
+        el.textContent = remaining.toLocaleString() + ' pts to go 🔒 (' + tier.reward + ')';
       }
     }
   });
@@ -572,8 +648,6 @@ auth.onAuthStateChanged(user => {
     updateUIForLoggedInUser(user);
     loadUserDashboard();
     authModalShown = false;
-
-    // Hide auth modal if it's open
     hideAuthModal();
   } else {
     // User logged out
