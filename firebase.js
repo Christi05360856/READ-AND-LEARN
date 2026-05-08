@@ -494,40 +494,6 @@ function updateRewardTiers(points) {
   });
 }
 
-
-  try {
-    const weekId = getCurrentWeekId();
-    const leaderboard = await fetchLeaderboard();
-    const rank = leaderboard.findIndex(e => e.userId === user.uid) + 1;
-
-    if (rank === 0 || rank > 3) {
-      alert('Only top 3 can claim weekly rewards!');
-      return;
-    }
-
-    const rewardType = rank === 1 ? '2GB' : rank === 2 ? '1GB' : '500MB';
-
-    await db.collection('rewardClaims').add({
-      userId: user.uid,
-      userName: user.displayName || 'User',
-      email: user.email,
-      phone: phone,
-      network: network,
-      rewardType: rewardType,
-      rank: rank,
-      week: weekId,
-      status: 'pending',
-      claimedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-    alert('🎉 Reward claim submitted! You will receive your data within 24 hours.');
-    document.getElementById('reward-modal').classList.add('hidden');
-  } catch (err) {
-    console.error('Reward claim error:', err);
-    alert('Error submitting claim: ' + err.message);
-  }
-}
-
 // ============================================
 // UTILITY FUNCTIONS (FIXED WEEK LOGIC)
 // ============================================
