@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - script.js (STACK OVERFLOW FIXED + WEEK DISPLAY FIXED)
+// BIBLE QUIZ - script.js (FULLY FIXED)
 // ============================================
 
 const quizScreen    = document.getElementById('quiz-screen');
@@ -62,6 +62,13 @@ function init() {
 }
 
 function startQuiz() {
+  // Defensive check: ensure questions array exists
+  if (typeof questions === 'undefined' || !Array.isArray(questions) || questions.length === 0) {
+    alert('Error: Questions failed to load. Please refresh the page.');
+    console.error('questions.js not loaded or empty');
+    return;
+  }
+
   const user = firebase.auth().currentUser;
   if (user) {
     candidateName = user.displayName || user.email;
@@ -311,6 +318,12 @@ async function showResults(correctCount, points) {
     await renderReviewLeaderboard();
   }
 
+  // Update week badge on result screen
+  if (typeof getDisplayWeek === 'function') {
+    const weekBadge = document.getElementById('week-badge');
+    if (weekBadge) weekBadge.textContent = 'Week ' + getDisplayWeek();
+  }
+
   await checkRewardEligibility();
 }
 
@@ -318,12 +331,17 @@ async function checkRewardEligibility() {
   const user = firebase.auth().currentUser;
   if (!user || !rewardSection) return;
 
-  const entries = await fetchLeaderboard();
-  const rank = entries.findIndex(e => e.userId === user.uid) + 1;
+  try {
+    const entries = await fetchLeaderboard();
+    const rank = entries.findIndex(e => e.userId === user.uid) + 1;
 
-  if (rank > 0 && rank <= 3) {
-    rewardSection.classList.remove('hidden');
-  } else {
+    if (rank > 0 && rank <= 3) {
+      rewardSection.classList.remove('hidden');
+    } else {
+      rewardSection.classList.add('hidden');
+    }
+  } catch (err) {
+    console.error('Reward eligibility check error:', err);
     rewardSection.classList.add('hidden');
   }
 }
