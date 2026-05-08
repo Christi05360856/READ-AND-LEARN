@@ -723,7 +723,7 @@ function scheduleDailyReminder() {
 
   // Show test notification after 3 seconds
   setTimeout(() => {
-    showBrowserNotification('📖 Bible Quiz', 'You're all set! We'll remind you daily at 9 AM.');
+    showBrowserNotification("📖 Bible Quiz", "You're all set! We'll remind you daily at 9 AM.");
   }, 3000);
 }
 
