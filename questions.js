@@ -11,7 +11,6 @@ const questions = [
     answer: 2
   },
   
-  // Test Question 2
   { 
     question: "According to John 18:3, what three items did the band of officers and servants bring with them when they came to arrest Jesus?",
     options: ["Swords, staves, and shields", "Lanterns, torches, and weapons", "Trumpets, spears, and nets", "Chains, ropes, and clubs"],
@@ -32,7 +31,7 @@ const questions = [
   
   { 
     question: "According to John 19:30, what were the final words Jesus spoke from the cross?",
-    options: ["Father, into thy hands I commend my spirit", "It is finished", "My God, my God, why hast thou forsaken me", "Today shalt thou be with me in paradise"],
+    options: ["Into thy hands I commend my spirit", "It is finished", "My God, my God, why hast thou forsaken me", "Thou shalt be with me in paradise"],
     answer: 1
   },
   
@@ -49,7 +48,7 @@ const questions = [
   },
   
   { 
-     question: "According to Matthew 27:58, Mark 15:43, Luke 23:50-52, and John 19:38, who begged Pilate for the body of Jesus?",
+    question: "According to Matthew 27:58, who begged Pilate for the body of Jesus?",
     options: ["Joseph of Arimathaea", "Nicodemus", "Mary Magdalene", "John the beloved disciple"],
     answer: 0
   },
@@ -73,7 +72,7 @@ const questions = [
   },
   
   { 
-   question: "According to John 20:19, what were the first words Jesus spoke to His disciples when He appeared to them after His resurrection?",
+    question: "According to John 20:19, what were the first words Jesus spoke to His disciples when He appeared to them after His resurrection?",
     options: ["Fear not, for I am with you", "Peace be unto you", "Why are you troubled?", "Receive ye the Holy Ghost"],
     answer: 1
   },
@@ -1181,19 +1180,7 @@ const questions = [
     options: ["Demetrius", "Demetrious", "Demetrius", "Demetriuss"], 
     answer: 3 
   },
-
-  { 
-    question: "Who was the proconsul of Cyprus that Paul converted?", 
-    options: ["Sergius Paulus", "Sergius Paul", "Sergius Paullus", "Sergius Paulus"], 
-    answer: 3 
-  },
   
-  { 
-    question: "What was the name of the sorcerer struck blind by Paul?", 
-    options: ["Elymas", "Elymass", "Elimas", "Elymus"], 
-    answer: 3 
-  },
-
   { 
     question: "In which passage did Jesus give the two greatest commandments?", 
     options: ["Matthew 22:34-40", "Matthew 22:35-41", "Mark 12:28-34", "Luke 10:25-28"], 
@@ -1629,8 +1616,8 @@ const questions = [
 
   {
     question: "According to Numbers 13:30, which spy among the twelve quieted the people and said, 'Let us go up at once and possess the land'?",
-    answers: ["Joshua the son of Nun", "Caleb the son of Jephunneh", "Moses", "Aaron"],
-    correct: 1
+    options: ["Joshua the son of Nun", "Caleb the son of Jephunneh", "Moses", "Aaron"],
+    answer: 1
   },
 
   { 
