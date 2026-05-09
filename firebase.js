@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - firebase.js (FULLY FIXED)
+// BIBLE QUIZ - firebase.js (CORRECTED)
 // ============================================
 
 const db = firebase.firestore();
@@ -9,6 +9,58 @@ const auth = firebase.auth();
 let authModalShown = false;
 let currentScreen = 'landing';
 let isProcessingAuth = false;
+
+// ============================================
+// TOAST UTILITY (was missing — caused ReferenceError)
+// ============================================
+
+function showToast(message, type = 'info') {
+  // Remove existing toast
+  const existing = document.getElementById('app-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'app-toast';
+  toast.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    animation: fadeInUp 0.3s ease;
+    max-width: 90vw;
+    text-align: center;
+  `;
+
+  if (type === 'success') {
+    toast.style.background = '#dcfce7';
+    toast.style.color = '#166534';
+    toast.style.border = '1px solid #86efac';
+  } else if (type === 'error') {
+    toast.style.background = '#fee2e2';
+    toast.style.color = '#991b1b';
+    toast.style.border = '1px solid #fca5a5';
+  } else {
+    toast.style.background = '#f0f9ff';
+    toast.style.color = '#0369a1';
+    toast.style.border = '1px solid #bae6fd';
+  }
+
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    if (toast.parentNode) toast.remove();
+  }, 3000);
+}
+
+window.showToast = showToast;
 
 // ============================================
 // SCREEN NAVIGATION (SAFE - NO SIDE EFFECTS)
@@ -250,7 +302,7 @@ function updateUIForLoggedInUser(user) {
   // Check daily quiz limit
   setTimeout(async () => {
     const limitCheck = await checkDailyQuizLimit();
-    if (limitCheck && limitCheck.blocked) {
+    if (limitCheck.blocked) {
       showDailyLimitMessage(limitCheck);
     } else {
       showQuizAttemptsLeft(limitCheck.remaining);
@@ -568,6 +620,170 @@ function getDisplayWeek() {
 }
 
 // ============================================
+// DAILY QUIZ LIMIT (FAIL-CLOSED)
+// ============================================
+
+async function checkDailyQuizLimit() {
+  const user = auth.currentUser;
+  if (!user) {
+    return { blocked: true, remaining: 0, takenToday: 0, reason: 'not_logged_in' };
+  }
+
+  try {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+    const snap = await db.collection('quizAttempts')
+      .where('userId', '==', user.uid)
+      .where('timestamp', '>=', todayStart)
+      .where('timestamp', '<', tomorrowStart)
+      .get();
+
+    const takenToday = snap.size;
+    const maxPerDay = 2;
+    const remaining = Math.max(0, maxPerDay - takenToday);
+
+    if (remaining <= 0) {
+      const msUntilMidnight = tomorrowStart - now;
+      return {
+        blocked: true,
+        nextQuizTime: tomorrowStart,
+        msUntilMidnight: msUntilMidnight,
+        takenToday: takenToday,
+        remaining: 0
+      };
+    }
+
+    return {
+      blocked: false,
+      takenToday: takenToday,
+      remaining: remaining
+    };
+  } catch (err) {
+    console.error('Daily limit check error:', err);
+    // FAIL CLOSED: if anything goes wrong (missing index, network, etc.), BLOCK the quiz
+    return {
+      blocked: true,
+      remaining: 0,
+      takenToday: 0,
+      reason: 'check_failed',
+      error: err.message
+    };
+  }
+}
+
+function showDailyLimitMessage(timeData) {
+  const welcomeSection = document.getElementById('welcome-section');
+  const actionsDiv = welcomeSection ? welcomeSection.querySelector('.welcome-actions') : null;
+  if (!actionsDiv) return;
+
+  // If the check failed (missing index, etc.), show a different message
+  if (timeData.reason === 'check_failed') {
+    actionsDiv.innerHTML = `
+      <div style="background: #fee2e2; border: 2px solid #fca5a5; border-radius: 16px; padding: 24px; text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 12px;">🛡️</div>
+        <h3 style="color: #991b1b; margin-bottom: 8px;">Daily Limit Check Unavailable</h3>
+        <p style="color: #b91c1c; font-size: 14px; margin-bottom: 16px;">
+          We couldn't verify your daily quiz count. Please try again in a moment.
+        </p>
+        <button onclick="location.reload()" class="primary-btn" style="width: 100%;">Retry</button>
+      </div>
+    `;
+    return;
+  }
+
+  const hours = Math.floor(timeData.msUntilMidnight / (1000 * 60 * 60));
+  const minutes = Math.floor((timeData.msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeData.msUntilMidnight % (1000 * 60)) / 1000);
+
+  actionsDiv.innerHTML = `
+    <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 16px; padding: 24px; text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
+      <h3 style="color: #92400e; margin-bottom: 8px;">You've taken your 2 quizzes today!</h3>
+      <p style="color: #a16207; font-size: 14px; margin-bottom: 16px;">
+        You can take up to 2 quizzes per day. Come back tomorrow!
+      </p>
+      <div style="font-size: 32px; font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums;" id="countdown-timer">
+        ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}
+      </div>
+      <p style="font-size: 12px; color: #a16207; margin-top: 8px;">until next quiz</p>
+    </div>
+  `;
+
+  startCountdown(timeData.msUntilMidnight);
+}
+
+let countdownInterval = null;
+
+function showQuizAttemptsLeft(attempts) {
+  const el = document.getElementById('quiz-attempts-left');
+  if (!el) return;
+
+  // Guard against undefined/null
+  const safeAttempts = typeof attempts === 'number' ? attempts : 0;
+
+  if (safeAttempts > 0) {
+    el.textContent = '🎯 ' + safeAttempts + ' of 2 quiz attempts left today';
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function startCountdown(msRemaining) {
+  clearInterval(countdownInterval);
+  let remaining = msRemaining;
+
+  countdownInterval = setInterval(() => {
+    remaining -= 1000;
+    if (remaining <= 0) {
+      clearInterval(countdownInterval);
+      location.reload();
+      return;
+    }
+
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+    const timerEl = document.getElementById('countdown-timer');
+    if (timerEl) {
+      timerEl.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+    }
+  }, 1000);
+}
+
+// ============================================
+// BEGIN QUIZ GATEKEEPER (all entry points use this)
+// ============================================
+
+async function handleBeginQuiz() {
+  const btn = document.getElementById('begin-test-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Checking limit...';
+  }
+
+  const limitCheck = await checkDailyQuizLimit();
+
+  if (limitCheck.blocked) {
+    showDailyLimitMessage(limitCheck);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '📝 Begin Test';
+    }
+    return;
+  }
+
+  showScreen('quiz');
+  if (typeof window.startQuiz === 'function') window.startQuiz();
+}
+
+window.handleBeginQuiz = handleBeginQuiz;
+
+// ============================================
 // DOM READY & EVENT LISTENERS
 // ============================================
 
@@ -584,16 +800,13 @@ function attachEventListeners() {
   if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
   if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
 
-  // Welcome screen buttons
+  // Welcome screen buttons — ALL use handleBeginQuiz now
   const beginTestBtn = document.getElementById('begin-test-btn');
   const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
   const viewRewardsBtn = document.getElementById('view-rewards-btn');
 
   if (beginTestBtn) {
-    beginTestBtn.addEventListener('click', () => {
-      showScreen('quiz');
-      if (typeof window.startQuiz === 'function') window.startQuiz();
-    });
+    beginTestBtn.addEventListener('click', handleBeginQuiz);
   }
 
   if (viewLeaderboardBtn) {
@@ -618,10 +831,7 @@ function attachEventListeners() {
     backFromLeaderboard.addEventListener('click', () => showScreen('landing'));
   }
   if (takeQuizFromLeaderboard) {
-    takeQuizFromLeaderboard.addEventListener('click', () => {
-      showScreen('quiz');
-      if (typeof window.startQuiz === 'function') window.startQuiz();
-    });
+    takeQuizFromLeaderboard.addEventListener('click', handleBeginQuiz);
   }
 
   // Rewards screen buttons
@@ -632,13 +842,8 @@ function attachEventListeners() {
     backFromRewards.addEventListener('click', () => showScreen('landing'));
   }
   if (takeQuizFromRewards) {
-    takeQuizFromRewards.addEventListener('click', () => {
-      showScreen('quiz');
-      if (typeof window.startQuiz === 'function') window.startQuiz();
-    });
+    takeQuizFromRewards.addEventListener('click', handleBeginQuiz);
   }
-
-  // Reward claim removed — admin handles all reward distribution at week end
 }
 
 // ============================================
@@ -769,121 +974,11 @@ function showBrowserNotification(title, body) {
     navigator.serviceWorker.ready.then(reg => {
       reg.showNotification(title, {
         body: body,
-        icon: '📖',
-        badge: '📖',
         tag: 'bible-quiz-daily',
         requireInteraction: false
       });
     });
   }
-}
-
-// Daily quiz limit check
-async function checkDailyQuizLimit() {
-  const user = auth.currentUser;
-  if (!user) return false;
-
-  try {
-    // Count quizzes taken today
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrowStart = new Date(todayStart);
-    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-
-    const snap = await db.collection('quizAttempts')
-      .where('userId', '==', user.uid)
-      .where('timestamp', '>=', todayStart)
-      .where('timestamp', '<', tomorrowStart)
-      .get();
-
-    const takenToday = snap.size;
-    const maxPerDay = 2;
-    const remaining = maxPerDay - takenToday;
-
-    if (remaining <= 0) {
-      // Max reached for today
-      const msUntilMidnight = tomorrowStart - now;
-      return {
-        blocked: true,
-        nextQuizTime: tomorrowStart,
-        msUntilMidnight: msUntilMidnight,
-        takenToday: takenToday,
-        remaining: 0
-      };
-    }
-
-    return {
-      blocked: false,
-      takenToday: takenToday,
-      remaining: remaining
-    };
-  } catch (err) {
-    console.error('Daily limit check error:', err);
-    return false;
-  }
-}
-
-function showDailyLimitMessage(timeData) {
-  const welcomeSection = document.getElementById('welcome-section');
-  const actionsDiv = welcomeSection.querySelector('.welcome-actions');
-
-  // Replace buttons with countdown
-  const hours = Math.floor(timeData.msUntilMidnight / (1000 * 60 * 60));
-  const minutes = Math.floor((timeData.msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeData.msUntilMidnight % (1000 * 60)) / 1000);
-
-  actionsDiv.innerHTML = `
-    <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 16px; padding: 24px; text-align: center;">
-      <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
-      <h3 style="color: #92400e; margin-bottom: 8px;">You've taken your 2 quizzes today!</h3>
-      <p style="color: #a16207; font-size: 14px; margin-bottom: 16px;">
-        You can take up to 2 quizzes per day. Come back tomorrow!
-      </p>
-      <div style="font-size: 32px; font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums;" id="countdown-timer">
-        ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}
-      </div>
-      <p style="font-size: 12px; color: #a16207; margin-top: 8px;">until next quiz</p>
-    </div>
-  `;
-
-  // Start countdown
-  startCountdown(timeData.msUntilMidnight);
-}
-
-let countdownInterval = null;
-function showQuizAttemptsLeft(attempts) {
-  const el = document.getElementById('quiz-attempts-left');
-  if (!el) return;
-
-  if (attempts > 0) {
-    el.textContent = '🎯 ' + attempts + ' of 2 quiz attempts left today';
-    el.classList.remove('hidden');
-  } else {
-    el.classList.add('hidden');
-  }
-}
-
-function startCountdown(msRemaining) {
-  clearInterval(countdownInterval);
-  let remaining = msRemaining;
-
-  countdownInterval = setInterval(() => {
-    remaining -= 1000;
-    if (remaining <= 0) {
-      clearInterval(countdownInterval);
-      location.reload(); // Refresh to unlock quiz
-      return;
-    }
-
-    const hours = Math.floor(remaining / (1000 * 60 * 60));
-    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-
-    const timerEl = document.getElementById('countdown-timer');
-    if (timerEl) {
-      timerEl.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-    }
-  }, 1000);
 }
 
 // ============================================
