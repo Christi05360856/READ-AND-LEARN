@@ -1369,3 +1369,20 @@ button:active {
 .profile-actions {
   margin-top: 8px;
 }
+
+/* ===== QUIZ ATTEMPTS LEFT ===== */
+.attempts-left {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 8px;
+  padding: 8px 16px;
+  background: #f0f9ff;
+  border-radius: 10px;
+  border: 1px solid #bae6fd;
+}
+
+.attempts-left.hidden {
+  display: none !important;
+}
