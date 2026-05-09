@@ -7,14 +7,14 @@ const questions = [
   // Test Question 1
   { 
     question: "According to John 18:1, the garden where Jesus prayed and was later betrayed was located over the brook of what name?",
-    option: ["Brook Kidron", "Brook Kedron", "Brook Cedron", "Brook Jordan"],
+    options: ["Brook Kidron", "Brook Kedron", "Brook Cedron", "Brook Jordan"],
     answer: 2
   },
   
   // Test Question 2
   { 
     question: "According to John 18:3, what three items did the band of officers and servants bring with them when they came to arrest Jesus?",
-    option: ["Swords, staves, and shields", "Lanterns, torches, and weapons", "Trumpets, spears, and nets", "Chains, ropes, and clubs"],
+    options: ["Swords, staves, and shields", "Lanterns, torches, and weapons", "Trumpets, spears, and nets", "Chains, ropes, and clubs"],
     answer: 1
   },
 
@@ -32,7 +32,7 @@ const questions = [
   
   { 
     question: "According to John 19:30, what were the final words Jesus spoke from the cross?",
-    option: ["Father, into thy hands I commend my spirit", "It is finished", "My God, my God, why hast thou forsaken me", "Today shalt thou be with me in paradise"],
+    options: ["Father, into thy hands I commend my spirit", "It is finished", "My God, my God, why hast thou forsaken me", "Today shalt thou be with me in paradise"],
     answer: 1
   },
   
@@ -50,14 +50,14 @@ const questions = [
   
   { 
      question: "According to Matthew 27:58, Mark 15:43, Luke 23:50-52, and John 19:38, who begged Pilate for the body of Jesus?",
-    answers: ["Joseph of Arimathaea", "Nicodemus", "Mary Magdalene", "John the beloved disciple"],
-    correct: 0
+    options: ["Joseph of Arimathaea", "Nicodemus", "Mary Magdalene", "John the beloved disciple"],
+    answer: 0
   },
   
   { 
     question: "According to John 19:39, who brought a mixture of myrrh and aloes, about an hundred pound weight, for the burial of Jesus?",
-    answers: ["Mary Magdalene and Mary the mother of James", "Joseph of Arimathaea and Gamaliel", "Nicodemus", "Peter and John"],
-    correct: 2
+    options: ["Mary Magdalene and Mary the mother of James", "Joseph of Arimathaea and Gamaliel", "Nicodemus", "Peter and John"],
+    answer: 2
   },
   
   { 
@@ -68,8 +68,8 @@ const questions = [
   
   { 
     question: "According to John 19:17, Golgotha was the Hebrew name for what location?",
-    answers: ["The place of weeping", "The place of prayer", "The place of a skull", "The place of suffering"],
-    correct: 2
+    options: ["The place of weeping", "The place of prayer", "The place of a skull", "The place of suffering"],
+    answer: 2
   },
   
   { 
@@ -1558,7 +1558,7 @@ const questions = [
   {
     question: "According to Acts 9:33, at Lydda Peter healed a man named Aeneas who had been afflicted with what condition for eight years?",
     options: ["Blindness", "Deafness", "Palsy (paralysis)", "Leprosy"],
-    answers: 2
+    answer: 2
   },
 
   {
@@ -1761,8 +1761,424 @@ const questions = [
     question: "In what context did Jesus curse the fig tree?", 
     options: ["It had no fruit though it was full of leaves", "It had withered from the roots", "It was planted in bad soil", "The Pharisees hid behind it"], 
     answer: 0 
+  },
+
+  { 
+    question: 'In what context did Jesus say "Foxes have holes and birds of the air have nests, but the Son of Man has no place to lay his head"?', 
+    options: ["When a teacher of the law wanted to follow Him", "During the Sermon on the Mount", "While teaching in the synagogue", "At the home of Martha and Mary"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'Jesus told the parable of the Unforgiving Servant after Peter asked Him a question about what?', 
+    options: ["The kingdom of God", "How many times to forgive", "Who is the greatest", "Signs of the end times"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In what situation did Jesus say "It is not the healthy who need a doctor, but the sick"?', 
+    options: ["When healing the paralytic", "When eating with tax collectors and sinners", "When criticized for healing on the Sabbath", "During the feeding of the 5000"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The parable of the Ten Virgins was told by Jesus in the context of what?', 
+    options: ["The signs of the end times", "The coming of the kingdom", "Prayer and persistence", "Forgiveness"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In which context did Jesus say "Render to Caesar what is Caesar’s and to God what is God’s"?', 
+    options: ["When asked about paying taxes", "During the trial before Pilate", "When speaking to the Pharisees about the Sabbath", "While teaching about the greatest commandment"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'What event immediately preceded Jesus driving out the money changers from the temple?', 
+    options: ["His triumphal entry into Jerusalem", "The raising of Lazarus", "The Last Supper", "The feeding of the 5000"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'In what context did Jesus say "My kingdom is not of this world"?', 
+    options: ["During the Sermon on the Mount", "When speaking to Pilate", "At the Last Supper", "While teaching in the temple"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'The conversion of Saul on the road to Damascus happened while he was going to do what?', 
+    options: ["Preach the gospel", "Arrest Christians", "Visit the high priest", "Attend the synagogue"], 
+    answer: 1 
+  },
+
+  { 
+    question: 'In what context did Peter heal the lame man at the Beautiful Gate?', 
+    options: ["While going up to the temple at the hour of prayer", "During a prayer meeting", "After escaping from prison", "While preaching to Cornelius"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'Ananias and Sapphira were judged after doing what?', 
+    options: ["Lying about the price of land they sold", "Refusing to share their property", "Stealing from the church funds", "Blaspheming the Holy Spirit"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'In what context did Paul and Silas sing praises in prison at midnight?', 
+    options: ["After being beaten and put in stocks", "During a shipwreck", "While writing to the Philippians", "After their release from prison"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'The church at Antioch sent relief to Judea because of what prophesied event?', 
+    options: ["A great famine", "Persecution by Saul", "The death of Stephen", "The imprisonment of Peter"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'In what context did Paul preach at the Areopagus in Athens?', 
+    options: ["He saw the city full of idols and an altar to the Unknown God", "He was arrested by the Jews", "He was invited by the philosophers", "During a riot in the city"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'What situation caused Priscilla and Aquila to explain the way of God more accurately to Apollos?', 
+    options: ["They heard him teaching in the synagogue at Ephesus", "He visited them in Corinth", "He wrote a letter to them", "He disputed with the Jews in Jerusalem"], 
+    answer: 0 
+  },
+
+  { 
+    question: 'In what context did Paul say "I have become all things to all people so that by all possible means I might save some"?', 
+    options: ["While defending his apostleship", "When writing to the Corinthians", "During his trial before Agrippa", "While in prison in Rome"], 
+    answer: 1 
+  },
+
+  {
+    question: "For the weapons of our warfare are not carnal, but mighty through God to the pulling down of strong holds; casting down imaginations..... — Which book of the Bible is this verse from?",
+    options: ["2 Corinthians", "Ephesians", "Galatians", "Colossians"],
+    answer: 0
+  },
+  {
+    question: "Quench not the Spirit. Despise not prophesyings. Prove all things; hold fast that which is good. Abstain from all appearance of evil — Which book of the Bible is this verse from?",
+    options: ["Romans", "1 Thessalonians", "2 Timothy", "Titus"],
+    answer: 1
+  },
+  {
+    question: "The Lord is not slack concerning his promise, as some men count slackness...... — Which book of the Bible is this verse from?",
+    options: ["1 Peter", "Jude", "2 Peter", "Hebrews"],
+    answer: 2
+  },
+  {
+    question: "All things are lawful unto me, but all things are not expedient: all things are lawful for me.... — Which book of the Bible is this verse from?",
+    options: ["Romans", "Galatians", "Philippians", "1 Corinthians"],
+    answer: 3
+  },
+  {
+    question: "But without faith it is impossible to please him: for he that cometh to God must believe that he is....— Which book of the Bible is this verse from?",
+    options: ["Hebrews", "James", "1 Peter", "Romans"],
+    answer: 0
+  },
+  {
+    question: "Be ye angry, and sin not: let not the sun go down upon your wrath: neither give place to the devil — Which book of the Bible is this verse from?",
+    options: ["Colossians", "Ephesians", "Philippians", "Galatians"],
+    answer: 1
+  },
+  {
+    question: "For we wrestle not against flesh and blood, but against principalities, against powers... — Which book of the Bible is this verse from?",
+    options: ["2 Corinthians", "Colossians", "Ephesians", "1 Peter"],
+    answer: 2
+  },
+  {
+    question: "Let your conversation be without covetousness; and be content with such things as ye have... — Which book of the Bible is this verse from?",
+    options: ["Philippians", "1 Timothy", "James", "Hebrews"],
+    answer: 3
+  },
+  {
+    question: "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind — Which book of the Bible is this verse from?",
+    options: ["2 Timothy", "1 Timothy", "Titus", "Philemon"],
+    answer: 0
+  },
+  {
+    question: "I can do all things through Christ which strengtheneth me — Which book of the Bible is this verse from?",
+    options: ["Colossians", "Philippians", "Ephesians", "Galatians"],
+    answer: 1
+  },
+  {
+    question: "And we know that all things work together for good to them that love God, to them who are the called according to his purpose — Which book of the Bible is this verse from?",
+    options: ["1 Corinthians", "Galatians", "Romans", "Ephesians"],
+    answer: 2
+  },
+  {
+    question: "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God: not of works... — Which book of the Bible is this verse from?",
+    options: ["Romans", "Galatians", "Colossians", "Ephesians"],
+    answer: 3
+  },
+  {
+    question: "Trust in the Lord with all thine heart; and lean not unto thine own understanding.. — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Psalms", "Ecclesiastes", "Song of Solomon"],
+    answer: 0
+  },
+  {
+    question: "For I know the thoughts that I think toward you, saith the Lord... — Which book of the Bible is this verse from?",
+    options: ["Isaiah", "Jeremiah", "Lamentations", "Ezekiel"],
+    answer: 1
+  },
+  {
+    question: "The Lord is my shepherd; I shall not want. — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Job", "Psalms", "Ecclesiastes"],
+    answer: 2
+  },
+  {
+    question: "Come unto me, all ye that labour and are heavy laden, and I will give you rest... — Which book of the Bible is this verse from?",
+    options: ["Mark", "Luke", "John", "Matthew"],
+    answer: 3
+  },
+  {
+    question: "But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you — Which book of the Bible is this verse from?",
+    options: ["Matthew", "Mark", "Luke", "John"],
+    answer: 0
+  },
+  {
+    question: "For God so loved the world, that he gave his only begotten Son... — Which book of the Bible is this verse from?",
+    options: ["Matthew", "John", "Luke", "Mark"],
+    answer: 1
+  },
+  {
+    question: "Jesus saith unto him, I am the way, the truth, and the life: no man cometh unto the Father, but by me — Which book of the Bible is this verse from?",
+    options: ["Matthew", "Mark", "John", "Luke"],
+    answer: 2
+  },
+  {
+    question: "The same was in the beginning with God. All things were made by him; and without him was not any thing made that was made — Which book of the Bible is this verse from?",
+    options: ["Genesis", "Hebrews", "Revelation", "John"],
+    answer: 3
+  },
+  {
+    question: "And we have known and believed the love that God hath to us. God is love; and he that dwelleth in love dwelleth in God, and God in him — Which book of the Bible is this verse from?",
+    options: ["1 John", "John", "2 John", "3 John"],
+    answer: 0
+  },
+  {
+    question: "There is no fear in love; but perfect love casteth out fear: because fear hath torment. He that feareth is not made perfect in love — Which book of the Bible is this verse from?",
+    options: ["John", "1 John", "2 John", "Romans"],
+    answer: 1
+  },
+  {
+    question: "Be still, and know that I am God: I will be exalted among the heathen, I will be exalted in the earth — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Isaiah", "Psalms", "Jeremiah"],
+    answer: 2
+  },
+  {
+    question: "Create in me a clean heart, O God, Cast me not away from thy presence; and take not thy holy spirit from me — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Ecclesiastes", "Lamentations", "Psalms"],
+    answer: 3
+  },
+  {
+    question: "The effectual fervent prayer of a righteous man availeth much.... — Which book of the Bible is this verse from?",
+    options: ["James", "1 Peter", "Hebrews", "Jude"],
+    answer: 0
+  },
+  {
+    question: "Submit yourselves therefore to God. Resist the devil, and he will flee from you.... — Which book of the Bible is this verse from?",
+    options: ["1 Peter", "James", "Hebrews", "1 John"],
+    answer: 1
+  },
+  {
+    question: "Wherefore seeing we also are compassed about with so great a cloud of witnesses, let us lay aside every weight, and the sin which doth so easily beset us.. — Which book of the Bible is this verse from?",
+    options: ["Romans", "Philippians", "Hebrews", "Colossians"],
+    answer: 2
+  },
+  {
+    question: "Now faith is the substance of things hoped for, the evidence of things not seen... — Which book of the Bible is this verse from?",
+    options: ["Romans", "Galatians", "James", "Hebrews"],
+    answer: 3
+  },
+  {
+    question: "But my God shall supply all your need according to his riches in glory by Christ Jesus — Which book of the Bible is this verse from?",
+    options: ["Philippians", "Colossians", "Ephesians", "2 Corinthians"],
+    answer: 0
+  },
+  {
+    question: "Rejoice in the Lord alway: and again I say, Rejoice. Let your moderation be known unto all men... — Which book of the Bible is this verse from?",
+    options: ["Colossians", "Philippians", "Galatians", "Ephesians"],
+    answer: 1
+  },
+  {
+    question: "Finally, brethren, whatsoever things are true, whatsoever things are honest, whatsoever things are just, whatsoever things are pure..— Which book of the Bible is this verse from?",
+    options: ["Colossians", "Ephesians", "Philippians", "Galatians"],
+    answer: 2
+  },
+  {
+    question: "And be not conformed to this world: but be ye transformed by the renewing of your mind, that ye may prove what is that good... — Which book of the Bible is this verse from?",
+    options: ["1 Corinthians", "Galatians", "Ephesians", "Romans"],
+    answer: 3
+  },
+  {
+    question: "For the wages of sin is death; but the gift of God is eternal life through Jesus Christ our Lord — Which book of the Bible is this verse from?",
+    options: ["Romans", "1 Corinthians", "Galatians", "Ephesians"],
+    answer: 0
+  },
+  {
+    question: "There is therefore now no condemnation to them which are in Christ Jesus.... — Which book of the Bible is this verse from?",
+    options: ["Galatians", "Romans", "Ephesians", "Colossians"],
+    answer: 1
+  },
+  {
+    question: "And we know that all things work together for good to them that love God...— Which book of the Bible is this verse from?",
+    options: ["Ephesians", "Colossians", "Romans", "Philippians"],
+    answer: 2
+  },
+  {
+    question: "What shall we then say to these things? If God be for us, who can be against us?.. — Which book of the Bible is this verse from?",
+    options: ["1 Corinthians", "2 Corinthians", "Galatians", "Romans"],
+    answer: 3
+  },
+  {
+    question: "Neither death, nor life, nor angels, nor principalities, nor powers...,shall be able to separate us from the love of God, which is in Christ Jesus our Lord — Which book of the Bible is this verse from?",
+    options: ["Romans", "1 Corinthians", "Ephesians", "Philippians"],
+    answer: 0
+  },
+  {
+    question: "But they that wait upon the Lord shall renew their strength; they shall mount up with wings as eagles...— Which book of the Bible is this verse from?",
+    options: ["Jeremiah", "Isaiah", "Ezekiel", "Daniel"],
+    answer: 1
+  },
+  {
+    question: "For unto us a child is born, unto us a son is given: and the government shall be upon his shoulder..— Which book of the Bible is this verse from?",
+    options: ["Jeremiah", "Micah", "Isaiah", "Zechariah"],
+    answer: 2
+  },
+  {
+    question: "Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee... — Which book of the Bible is this verse from?",
+    options: ["Jeremiah", "Ezekiel", "Daniel", "Isaiah"],
+    answer: 3
+  },
+  {
+    question: "Blessed is the man that walketh not in the counsel of the ungodly, nor standeth in the way of sinners, nor sitteth in the seat of the scornful...— Which book of the Bible is this verse from?",
+    options: ["Psalms", "Proverbs", "Ecclesiastes", "Job"],
+    answer: 0
+  },
+  {
+    question: "Thy word is a lamp unto my feet, and a light unto my path — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Psalms", "Ecclesiastes", "Job"],
+    answer: 1
+  },
+  {
+    question: "I will lift up mine eyes unto the hills, from whence cometh my help. My help cometh from the Lord, which made heaven and earth — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Isaiah", "Jeremiah", "Psalms"],
+    answer: 3
+  },
+  {
+    question: "But the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness... against such there is no law — Which book of the Bible is this verse from?",
+    options: ["Galatians", "Romans", "Ephesians", "Colossians"],
+    answer: 0
+  },
+  {
+    question: "This I say then, Walk in the Spirit, and ye shall not fulfil the lust of the flesh. For the flesh lusteth against the Spirit.. — Which book of the Bible is this verse from?",
+    options: ["Romans", "Galatians", "Ephesians", "Philippians"],
+    answer: 1
+  },
+  {
+    question: "I am crucified with Christ: nevertheless I live; yet not I, but Christ liveth in me.. — Which book of the Bible is this verse from?",
+    options: ["Romans", "Ephesians", "Galatians", "Colossians"],
+    answer: 2
+  },
+  {
+    question: "Let no corrupt communication proceed out of your mouth, but that which is good to the use of edifying..— Which book of the Bible is this verse from?",
+    options: ["Ephesians", "Colossians", "Philippians", "Galatians"],
+    answer: 0
+  },
+
+   {
+    question: "Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the Lord thy God is with thee whithersoever thou goest.. — Which book of the Bible is this verse from?",
+    options: ["Deuteronomy", "Judges", "1 Samuel", "Joshua"],
+    answer: 3
+  },
+
+   {
+    question: "Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.— Which book of the Bible is this verse from?",
+    options: ["2 Corinthians", "1 Corinthians", "Galatians", "Ephesians"],
+    answer: 0
+  },
+
+  {
+    question: "Death and life are in the power of the tongue: and they that love it shall eat the fruit thereof.. — Which book of the Bible is this verse from?",
+    options: ["Proverbs", "Psalms", "Ecclesiastes", "Song of Solomon"],
+    answer: 0
+  },
+
+  {
+    question: "If we confess our sins, he is faithful and just to forgive us our sins — Which book of the Bible is this verse from?",
+    options: ["John", "2 John", "3 John", "1 John"],
+    answer: 3
+  },
+
+   {
+    question: "It is of the Lord's mercies that we are not consumed, because his compassions fail not.. — Which book of the Bible is this verse from?",
+    options: ["Psalms", "Lamentations", "Jeremiah", "Ecclesiastes"],
+    answer: 1
+  },
+
+   {
+    question: "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known.. — Which book of the Bible is this verse from?",
+    options: ["Colossians", "Ephesians", "Galatians", "Philippians"],
+    answer: 3
+  },
+
+  {
+    question: "Casting all your care upon him; for he careth for you..— Which book of the Bible is this verse from?",
+    options: ["2 Peter", "1 Peter", "James", "Jude"],
+    answer: 1
+  },
+
+   {
+    question: "Jesus Christ the same yesterday, and to day, and for ever..— Which book of the Bible is this verse from?",
+    options: ["Romans", "James", "1 Peter", "Hebrews"],
+    answer: 3
+  },
+
+   {
+    question: "\"Where two or three are gathered together in my name, there...\" ?",
+    options: ["shall my Spirit be", "will I hear their prayer", "shall they find peace", "am I in the midst of them"],
+    answer: 3
+  },
+
+  {
+    question: "\"A soft answer turneth away...\" ",
+    options: ["wrath", "anger", "strife", "evil"],
+    answer: 0
+  },
+
+    {
+    question: "\"Iron sharpeneth iron; so a man...\" ",
+    options: ["strengtheneth his brother", "sharpeneth the countenance of his friend", "buildeth up his neighbour", "encourageth his companion"],
+    answer: 1
+  },
+
+  {
+    question: "\"Blessed are the meek: for they shall...\" ",
+    options: ["see God", "be comforted", "be filled", "inherit the earth"],
+    answer: 3
+  },
+
+   {
+    question: "\"O death, where is thy sting? O grave, where is thy...\" ",
+    options: ["power", "strength", "victory", "dominion"],
+    answer: 2
+  },
+
+   {
+    question: "\"Whether therefore ye eat, or drink, or whatsoever ye do, do all to the...\" ",
+    options: ["glory of God", "honour of God", "praise of God", "service of God"],
+    answer: 0
+  },
+
+   {
+    question: "\"Beloved, let us love one another: for love is of God; and every one that loveth is born of God, and...\" ",
+    options: ["loveth God", "knoweth God", "seeth God", "dwelleth in God"],
+    answer: 1
   }
-  
+
 ];
 
 console.log(`✅ Questions.js loaded successfully with ${questions.length} questions`);
