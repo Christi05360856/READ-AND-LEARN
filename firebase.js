@@ -252,6 +252,8 @@ function updateUIForLoggedInUser(user) {
     const limitCheck = await checkDailyQuizLimit();
     if (limitCheck && limitCheck.blocked) {
       showDailyLimitMessage(limitCheck);
+    } else {
+      showQuizAttemptsLeft(limitCheck.remaining);
     }
   }, 500);
 }
@@ -782,29 +784,39 @@ async function checkDailyQuizLimit() {
   if (!user) return false;
 
   try {
-    const doc = await db.collection('users').doc(user.uid).get();
-    const data = doc.data() || {};
-    const lastQuiz = data.lastQuizDate ? data.lastQuizDate.toDate() : null;
-
-    if (!lastQuiz) return false; // Never taken, allow
-
+    // Count quizzes taken today
     const now = new Date();
-    const lastQuizDay = new Date(lastQuiz.getFullYear(), lastQuiz.getMonth(), lastQuiz.getDate());
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
 
-    if (lastQuizDay.getTime() === today.getTime()) {
-      // Already taken today
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const msUntilMidnight = tomorrow - now;
+    const snap = await db.collection('quizAttempts')
+      .where('userId', '==', user.uid)
+      .where('timestamp', '>=', todayStart)
+      .where('timestamp', '<', tomorrowStart)
+      .get();
+
+    const takenToday = snap.size;
+    const maxPerDay = 2;
+    const remaining = maxPerDay - takenToday;
+
+    if (remaining <= 0) {
+      // Max reached for today
+      const msUntilMidnight = tomorrowStart - now;
       return {
         blocked: true,
-        nextQuizTime: tomorrow,
-        msUntilMidnight: msUntilMidnight
+        nextQuizTime: tomorrowStart,
+        msUntilMidnight: msUntilMidnight,
+        takenToday: takenToday,
+        remaining: 0
       };
     }
 
-    return false; // Not taken today, allow
+    return {
+      blocked: false,
+      takenToday: takenToday,
+      remaining: remaining
+    };
   } catch (err) {
     console.error('Daily limit check error:', err);
     return false;
@@ -823,17 +835,15 @@ function showDailyLimitMessage(timeData) {
   actionsDiv.innerHTML = `
     <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 16px; padding: 24px; text-align: center;">
       <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
-      <h3 style="color: #92400e; margin-bottom: 8px;">You've taken today's quiz!</h3>
+      <h3 style="color: #92400e; margin-bottom: 8px;">You've taken your 2 quizzes today!</h3>
       <p style="color: #a16207; font-size: 14px; margin-bottom: 16px;">
-        Come back tomorrow for a fresh set of questions.
+        You can take up to 2 quizzes per day. Come back tomorrow!
       </p>
       <div style="font-size: 32px; font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums;" id="countdown-timer">
         ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}
       </div>
       <p style="font-size: 12px; color: #a16207; margin-top: 8px;">until next quiz</p>
     </div>
-    <button onclick="showScreen('leaderboard'); renderLeaderboard();" class="secondary-btn" style="margin-top: 12px;">🏆 View Leaderboard</button>
-    <button onclick="showScreen('rewards'); loadUserDashboard();" class="secondary-btn" style="margin-top: 8px;">🎁 My Rewards</button>
   `;
 
   // Start countdown
@@ -841,6 +851,18 @@ function showDailyLimitMessage(timeData) {
 }
 
 let countdownInterval = null;
+function showQuizAttemptsLeft(attempts) {
+  const el = document.getElementById('quiz-attempts-left');
+  if (!el) return;
+
+  if (attempts > 0) {
+    el.textContent = '🎯 ' + attempts + ' of 2 quiz attempts left today';
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
 function startCountdown(msRemaining) {
   clearInterval(countdownInterval);
   let remaining = msRemaining;
