@@ -6,36 +6,34 @@
 const questions = [
   // Test Question 1
   { 
-    question: "In Acts, who was the first gentile that got converted?", 
-    options: ["Cornelius", "Ethopian Eunuch", "Lydia", "Priscillia"], 
-    answer: 1 
+    question: "According to John 18:1, the garden where Jesus prayed and was later betrayed was located over the brook of what name?",
+    option: ["Brook Kidron", "Brook Kedron", "Brook Cedron", "Brook Jordan"],
+    answer: 2
   },
   
   // Test Question 2
   { 
-    question: "What was the name of the high priest’s servant whose ear Peter cut off?", 
-    options: ["Malchus", "Annas", "Caiaphas", "Barabbas"], 
-    answer: 0 
+    question: "According to John 18:3, what three items did the band of officers and servants bring with them when they came to arrest Jesus?",
+    option: ["Swords, staves, and shields", "Lanterns, torches, and weapons", "Trumpets, spears, and nets", "Chains, ropes, and clubs"],
+    answer: 1
   },
 
-  // Add more questions here later...
-  // Exodus
   { 
-    question: "What were the names of the two Hebrew midwives who feared God?", 
-    options: ["Miriam and Zipporah", "Shiphrah and Puah", "Jochebed and Elisheba", "Rahab and Deborah"], 
-    answer: 1 
+    question: "During which event in John 19:26 did Jesus say to His mother, 'Woman, behold thy son'?",
+    options: ["During the trial before Pilate", "During His crucifixion", "During the Last Supper", "During the triumphal entry"],
+    answer: 1
   },
   
   { 
-    question: "What was the name of Moses’ second son?", 
-    options: ["Gershom", "Eliezer", "Manasseh", "Ephraim"], 
-    answer: 1 
+   question: "According to the Gospel accounts, what were among the first words Jesus spoke from the cross?",
+    options: ["Woman, behold thy son", "Father, into thy hands I commend my spirit", "My God, my God, why hast thou forsaken me", "Father, forgive them; for they know not what they do"],
+    answer: 3
   },
   
   { 
-    question: "Which plague was not announced to Pharaoh before it happened?", 
-    options: ["Hail", "Locusts", "Darkness", "Death of the firstborn"], 
-    answer: 3 
+    question: "According to John 19:30, what were the final words Jesus spoke from the cross?",
+    option: ["Father, into thy hands I commend my spirit", "It is finished", "My God, my God, why hast thou forsaken me", "Today shalt thou be with me in paradise"],
+    answer: 1
   },
   
   { 
@@ -45,21 +43,21 @@ const questions = [
   },
   
   { 
-    question: "What was the length of each acacia board used for the Tabernacle?", 
-    options: ["8 cubits", "10 cubits", "12 cubits", "15 cubits"], 
-    answer: 1 
+    question: "According to John 19:29, what was given to Jesus when He said 'I thirst'?",
+    options: ["Wine mingled with myrrh", "Water from a sponge", "Vinegar on hyssop", "Sour wine on a reed"],
+    answer: 2 
   },
   
   { 
-    question: "How much fine flour was required with the daily burnt offering of one lamb?", 
-    options: ["1/10 ephah", "2/10 ephah", "3/10 ephah", "1/2 ephah"], 
-    answer: 0 
+     question: "According to Matthew 27:58, Mark 15:43, Luke 23:50-52, and John 19:38, who begged Pilate for the body of Jesus?",
+    answers: ["Joseph of Arimathaea", "Nicodemus", "Mary Magdalene", "John the beloved disciple"],
+    correct: 0
   },
   
   { 
-    question: "Which two sons of Aaron served as priests after Nadab and Abihu died?", 
-    options: ["Eleazar and Ithamar", "Korah and Dathan", "Phinehas and Joshua", "Moses and Joshua"], 
-    answer: 0 
+    question: "According to John 19:39, who brought a mixture of myrrh and aloes, about an hundred pound weight, for the burial of Jesus?",
+    answers: ["Mary Magdalene and Mary the mother of James", "Joseph of Arimathaea and Gamaliel", "Nicodemus", "Peter and John"],
+    correct: 2
   },
   
   { 
@@ -69,21 +67,21 @@ const questions = [
   },
   
   { 
-    question: "How many loops were on each set of the Tabernacle curtains?", 
-    options: ["40", "50", "56", "100"], 
-    answer: 1 
+    question: "According to John 19:17, Golgotha was the Hebrew name for what location?",
+    answers: ["The place of weeping", "The place of prayer", "The place of a skull", "The place of suffering"],
+    correct: 2
   },
   
   { 
-    question: "What kind of wood was used to make the Ark of the Covenant?", 
-    options: ["Cedar", "Oak", "Acacia", "Olive"], 
-    answer: 2 
+   question: "According to John 20:19, what were the first words Jesus spoke to His disciples when He appeared to them after His resurrection?",
+    options: ["Fear not, for I am with you", "Peace be unto you", "Why are you troubled?", "Receive ye the Holy Ghost"],
+    answer: 1
   },
   
   { 
-    question: "What was the punishment for a false witness in a capital case according to Deuteronomy?", 
-    options: ["Lashes", "Exile", "Do to him as he intended to do", "Fines"], 
-    answer: 2 
+    question: "In John 20:19 and 20:26, how many times did Jesus say unto His disciples 'Peace be unto you' in these post-resurrection appearances?",
+    options: ["Once", "Twice", "Thrice", "Seven times"],
+    answer: 1
   },
   
   { 
@@ -99,9 +97,9 @@ const questions = [
   },
   
   { 
-    question: "How many cities of refuge were established in total?", 
-    options: ["3", "6", "9", "12"], 
-    answer: 1 
+    question: "According to John 20:19-24, which of the twelve disciples was NOT present when Jesus first appeared to the disciples after His resurrection?",
+    options: ["Judas Iscariot", "Thomas called Didymus", "Both Judas and Thomas", "Philip"],
+    answer: 1
   },
   
   { 
@@ -111,45 +109,45 @@ const questions = [
   },
   
   { 
-    question: "How many days was Miriam shut out of the camp due to leprosy?", 
-    options: ["3", "7", "14", "40"], 
-    answer: 1 
+    question: "According to John 21:2, how many disciples were together at the Sea of Tiberias when Jesus showed Himself to them there?",
+    options: ["Five", "Six", "Seven", "Eleven"],
+    answer: 2
   },
   
   { 
-    question: "Who did God appoint as Moses’ successor?", 
-    options: ["Caleb", "Eleazar", "Joshua", "Phinehas"], 
-    answer: 2 
+    question: "The dialogue where Jesus asks Peter ' Simon, son of Jonas, lovest thou me more than these?' can be found in which chapter of John?",
+    options: ["John 18:15", "John 20:5", "John 21:15", "John 19:26"],
+    answer: 2
   },
   
   { 
-    question: "What was the name of Balaam’s donkey?", 
-    options: ["Not named", "Shalman", "Pethor", "Balak"], 
-    answer: 0 
+    question: "According to John 21:15-17, what was Jesus' response to Peter's affirmation that he loved Him?",
+    options: ["Follow me", "Feed my lambs", "Feed my sheep", "Both B and C"],
+    answer: 3
   },
   
   { 
-    question: "How many times did Balaam bless Israel instead of cursing them?", 
-    options: ["2", "3", "4", "7"], 
-    answer: 1 
+    question: "According to Acts 1:1, to whom was the book of Acts addressed as the 'former treatise'?",
+    options: ["Theophilus", "Timothy", "Titus", "Philemon"],
+    answer: 0
   },
   
   { 
-    question: "Which prophet was commanded to marry a prostitute as a sign?", 
-    options: ["Isaiah", "Jeremiah", "Hosea", "Ezekiel"], 
-    answer: 2 
+    question: "According to Acts 1:10-11, who spoke to the disciples saying, 'Ye men of Galilee, why stand ye gazing up into heaven?'",
+    options: ["An angel of the Lord", "Two men in white apparel", "The Holy Spirit", "A voice from heaven"],
+    answer: 1
   },
 
   { 
-    question: "Who hid the two spies sent by Joshua to Jericho?", 
-    options: ["Deborah", "Rahab", "Jael", "Huldah"], 
-    answer: 1 
+    question: "According to Acts 1:13, how many apostles were gathered together in the upper room after Jesus' ascension?",
+    options: ["Ten", "Eleven", "Twelve", "One hundred and twenty"],
+    answer: 1
   },
   
   { 
-    question: "What did Rahab tie in her window as a sign for the spies?", 
-    options: ["A red cloth", "A scarlet cord", "A blue ribbon", "A white flag"], 
-    answer: 1 
+    question: "According to Acts 1:23, which two men were appointed as candidates to replace Judas Iscariot?",
+    options: ["Joseph called Barsabas, who was surnamed Justus, and Matthias", "Barnabas and Silas", "Stephen and Philip", "Timothy and Titus"],
+    answer: 0
   },
   
   { 
@@ -177,27 +175,27 @@ const questions = [
   },
   
   { 
-    question: "What was Joshua’s original name before Moses renamed him?", 
-    options: ["Hoshea", "Caleb", "Othniel", "Ehud"], 
-    answer: 0 
+    question: "Upon whom did the lot fall when the apostles cast lots to choose a replacement for Judas Iscariot, according to Acts 1:26?",
+    options: ["Joseph called Barsabas", "Matthias", "Barnabas", "Paul"],
+    answer: 1
   },
   
   { 
-    question: "How old was Joshua when he died?", 
-    options: ["100", "110", "120", "130"], 
+    question: "According to Acts 1:24-26, how was Judas Iscariot's replacement chosen?",
+    options: ["Peter Decision", "Vote of all the disciples", "By casting lots", "By drawing names from a vessel"],
+    answer: 2 
+  },
+  
+  { 
+    question: "According to Acts 2:16, which Old Testament prophet did Peter quote when he said, 'This is that which was spoken by the prophet'?",
+    options: ["Isaiah", "Joel", "Jeremiah", "Ezekiel"],
     answer: 1 
   },
   
   { 
-    question: "Who killed 600 Philistines with an oxgoad?", 
-    options: ["Ehud", "Shamgar", "Othniel", "Gideon"], 
-    answer: 1 
-  },
-  
-  { 
-    question: "What weapon did Jael use to kill Sisera?", 
-    options: ["Sword", "Tent peg and hammer", "Dagger", "Stone"], 
-    answer: 1 
+    question: "According to Acts 2:34, Peter quotes the words 'The LORD said unto my Lord' which were originally spoken by whom and found in what book?",
+    options: ["Moses in Deuteronomy", "David in Psalms", "Isaiah in his prophecy", "Jeremiah in Lamentations"],
+    answer: 1
   },
 
   { 
@@ -213,21 +211,21 @@ const questions = [
   },
   
   { 
-    question: "How many stones did David pick from the brook before facing Goliath? (1 Samuel 17:40)", 
-    options: ["3", "5", "7", "12"], 
-    answer: 1 
+    question: "According to Acts 4:6, who were the four mentioned as being part of the high priest's family or associates?",
+    options: ["Caiaphas, John, Alexander, and Annas", "Annas, Caiaphas, Gamaliel, and Nicodemus", "Pontius Pilate, Herod, Caiaphas, and Annas", "Peter, James, John, and Andrew"],
+    answer: 0
   },
   
   { 
-    question: "What weapon did David use to kill Goliath?", 
-    options: ["Sword", "Sling and stone", "Spear", "Bow"], 
-    answer: 1 
-  },
-  
-  { 
-    question: "Who became David’s close friend and Jonathan’s sister-in-law?", 
-    options: ["Michal", "Abigail", "Bathsheba", "Ahinoam"], 
+    question: "According to Acts 4:19, who responded to the Jewish leaders saying, 'Whether it be right in the sight of God to hearken unto you more than unto God, judge ye'?",
+    options: ["Peter and John", "Stephen and Philip", "Paul and Barnabas", "All the apostles"],
     answer: 0 
+  },
+  
+  { 
+    question: "According to Acts 4:36-37, who was first introduced as a companion of the apostles known for his generous gift?",
+    options: ["Barnabas", "Matthias", "Stephen", "Philip"],
+    answer: 0
   },
   
   { 
@@ -237,7 +235,7 @@ const questions = [
   },
   
   { 
-    question: "What was the name of the witch Saul consulted at Endor? (1 Samuel 28)",
+    question: "Who did Saul consulted at Endor? (1 Samuel 28)",
     options: ["Hildia", "Medium of Endor", "Not named", "Witch of Endor"], 
     answer: 3 
   },
@@ -267,9 +265,9 @@ const questions = [
   },
   
   { 
-    question: "Which prophet foretold that a virgin would conceive? (Isaiah 7:14)", 
-    options: ["Jeremiah", "Isaiah", "Micah", "Zechariah"], 
-    answer: 1 
+    question: "According to Acts 4:36, who is described as 'the son of consolation'?",
+    options: ["Timothy", "Silas", "Barnabas", "Luke"],
+    answer: 2
   },
   
   { 
@@ -321,9 +319,9 @@ const questions = [
   },
   
   { 
-    question: "According to Proverbs 6:6, what insect is used as an example of wisdom and diligence?", 
-    options: ["Bee", "Ant", "Locust", "Spider"], 
-    answer: 1 
+    question: "According to Acts 5:7, how much time elapsed between Ananias' death and when his wife Sapphira came in?",
+    options: ["About one hour", "About three hours", "About six hours", "About twelve hours"],
+    answer: 1
   },
   
   { 
@@ -405,9 +403,9 @@ const questions = [
   },
   
   { 
-    question: "Approximately how many souls were added to the church on the Day of Pentecost? (Acts 2:41)", 
-    options: ["About 120", "About 3,000", "About 5,000", "About 10,000"], 
-    answer: 1 
+    question: "According to Acts 5:17-18, which sect was filled with indignation and had the apostles put in prison?",
+    options: ["The sect of the Pharisees", "The sect of the Sadducees", "The sect of the Zealots", "The sect of the Herodians"],
+    answer: 1
   },
   
   { 
@@ -453,15 +451,15 @@ const questions = [
   },
   
   { 
-    question: "In 1 Corinthians 15, how many brothers saw the risen Christ at one time according to Paul?", 
-    options: ["More than 100", "More than 200", "More than 500", "More than 1000"], 
-    answer: 2 
+    question: "According to Acts 5:29, where is the verse found that states, 'We ought to obey God rather than men'?",
+    options: ["Acts 4:19", "Acts 5:29", "Acts 6:1", "Acts 7:51"],
+    answer: 1
   },
   
   { 
-    question: "What did Paul say he would rather do than speak in tongues without love? (1 Corinthians 13:1)", 
-    options: ["Become a martyr", "Be a clanging cymbal", "Write many epistles", "Plant many churches"], 
-    answer: 1 
+    question: "According to Acts 5:34, which Pharisee in the council was a doctor of the law who counseled restraint toward the apostles?",
+    options: ["Gamaliel", "Nicodemus", "Joseph of Arimathaea", "Saul of Tarsus"],
+    answer: 0
   },
   
   { 
@@ -471,9 +469,9 @@ const questions = [
   },
   
   { 
-    question: "In Galatians 2, who did Paul publicly oppose because he was wrong about Gentile fellowship?", 
-    options: ["Barnabas", "Peter", "John", "James"], 
-    answer: 1 
+    question: "According to Acts 5:36, who did Gamaliel refer to as having boasted himself to be somebody, with about 400 followers who were all slain?",
+    options: ["Barabbas", "Theudas", "Judas of Galilee", "Simon Magnus"],
+    answer: 1
   },
 
   { 
@@ -525,9 +523,9 @@ const questions = [
   },
 
   { 
-    question: "According to James 2:25, who was considered righteous by her actions in hiding the spies?", 
-    options: ["Deborah", "Rahab", "Jael", "Esther"], 
-    answer: 1 
+     question: "According to Gamaliel in Acts 5:37, who rose up after Theudas in the days of the taxing and drew away much people after him?",
+    options: ["Judas of Galilee", "Barabbas", "The Egyptian", "Jesus of Nazareth"],
+    answer: 0
   },
 
   { 
@@ -597,9 +595,9 @@ const questions = [
   },
   
   { 
-    question: "In 2 Corinthians 12:7, what did Paul call the thorn given to him in the flesh?", 
-    options: ["A messenger of Satan", "An angel of light", "A spirit of infirmity", "A demon of depression"], 
-    answer: 0 
+    question: "According to Gamaliel's advice in Acts 5:38-39, what should the council do regarding the apostles' work?",
+    options: ["Punish them severely as blasphemers", "Wait to see if their work was of God or of men", "Cast them out of the temple", "Force them to stop preaching"],
+    answer: 1  
   },
   
   { 
@@ -663,9 +661,9 @@ const questions = [
   },
   
   { 
-    question: "How many elders are seated around the throne in Revelation 4?", 
-    options: ["12", "24", "7", "144,000"], 
-    answer: 1 
+     question: "According to Acts 6:1, what was the complaint of the Grecians (Greek-speaking Jews) against the Hebrews?",
+    options: ["Their widows were neglected in the daily ministration", "They were not allowed to pray in the temple", "They had to pay higher taxes", "They could not understand the Hebrew language"],
+    answer: 0
   },
 
   { 
@@ -759,9 +757,9 @@ const questions = [
   },
 
   { 
-    question: "Which book and chapter records the feeding of the 5000?", 
-    options: ["Matthew 14", "Mark 6", "Luke 9", "John 6"], 
-    answer: 0 
+    question: "According to Genesis 45:1, on which visit to Egypt did Joseph make himself known to his brethren?",
+    options: ["Upon the first visit", "Upon the second visit", "Upon the third visit", "He never revealed himself"],
+    answer: 1
   },
   
   { 
@@ -885,9 +883,9 @@ const questions = [
   },
 
   { 
-    question: "How many questions did God ask Job in the whirlwind speeches?", 
-    options: ["38", "52", "77", "Over 100"], 
-    answer: 3 
+    question: "According to Genesis 45:16 and 50:7, during which visit did Joseph present his brethren to Pharaoh?",
+    options: ["Upon the first visit", "Upon the second visit", "Upon the third visit", "They were never presented"],
+    answer: 1
   },
   
   { 
@@ -909,9 +907,9 @@ const questions = [
   },
 
   { 
-    question: "What does Paul say believers should not be regarding those who have 'fallen asleep' in 1 Thessalonians 4?", 
-    options: ["Ignorant", "Sorrowful", "Anxious", "Overconfident"], 
-    answer: 0 
+    question: "According to Acts 7:2-50, which disciple delivered the full summary of Israel's history from Abraham to the prophets?",
+    options: ["Peter", "Stephen", "Philip", "Paul"],
+    answer: 1
   },
   
   { 
@@ -939,9 +937,9 @@ const questions = [
   },
   
   { 
-    question: "Who gives power, throne, and great authority to the Beast from the sea?", 
-    options: ["The Dragon", "The False Prophet", "Babylon the Great", "Michael the Archangel"], 
-    answer: 0 
+    question: "According to Acts 8:5, which of the seven deacons went down to the city of Samaria to preach Christ?",
+    options: ["Stephen", "Philip", "Prochorus", "Nicanor"],
+    answer: 1
   },
   
   { 
@@ -1555,8 +1553,216 @@ const questions = [
     question: 'In Ephesians 6, Paul describes the full armor of God in the context of what kind of battle?', 
     options: ["Physical war", "Against flesh and blood", "Spiritual warfare", "Against Roman soldiers"], 
     answer: 2 
+  },
+
+  {
+    question: "According to Acts 9:33, at Lydda Peter healed a man named Aeneas who had been afflicted with what condition for eight years?",
+    options: ["Blindness", "Deafness", "Palsy (paralysis)", "Leprosy"],
+    answers: 2
+  },
+
+  {
+    question: "According to Acts 9:36-41, whom did Peter raise from the dead in Joppa?",
+    options: ["Lydia of Thyatira", "Dorcas (also called Tabitha)", "Mary the mother of Mark", "Priscilla"],
+    answer: 1
+  },
+
+  {
+    question: "In Acts 10:9-16, what kind of animal was specifically NOT included in the sheet let down from heaven?",
+    options: ["Four-footed beasts", "Creeping things", "Fish of the sea", "Fowls of the air"],
+    answer: 2
+  },
+
+  {
+    question: "According to Acts 12:6-7, what fell from Peter's wrist when the angel smote him to awaken him in prison?",
+    options: ["His crown of thorns", "His cloak", "His chains", "His sandals"],
+    answer: 2
+  },
+
+  {
+    question: "According to Acts 13:9, what other name is given for the sorcerer Elymas who withstood Paul?",
+    options: ["Simon Magnus", "Bar-Jesus", "Atomos", "Demetrius"],
+    answer: 1
+  },
+
+  {
+    question: "According to Acts 14:8, at Lystra, what was the exact physical impairment of the man Paul perceived had faith to be healed?",
+    options: ["He was blind from birth", "He was a cripple from his mother's womb", "He was deaf and had a speech impediment", "He was lame for 38 years"],
+    answer: 1
+  },
+
+  {
+    question: "According to Acts 15:10, what did Peter describe as a yoke upon the neck of the disciples which neither their fathers nor they were able to bear?",
+    options: ["The law of Moses", "The traditions of the elders", "The temple tax", "The Sabbath restrictions"],
+    answer: 0
+  },
+
+  {
+    question: "According to Acts 15:20, which of these is NOT one of the four things James commanded the Gentiles to abstain from?",
+    options: ["Pollutions of idols", "Fornication", "Eating unleavened bread", "Things strangled"],
+    answer: 2
+  },
+
+  {
+    question: "According to Acts 15:37-39, who was the young man that Paul refused to take with him, causing a sharp contention with Barnabas?",
+    options: ["Titus", "Timothy", "John called Mark", "Luke"],
+    answer: 2
+  },
+
+  {
+    question: "According to Acts 17:23, what inscription did Paul see on the altar at Athens that he used as his starting point?",
+    options: ["To the Unknown God", "To Zeus the Saviour", "To Athena the Wise", "To the Pantheon"],
+    answer: 0
+  },
+
+  {
+    question: "According to Acts 19:13-16, the seven sons of whom attempted to cast out an evil spirit using the name of Jesus Paul preached?",
+    options: ["Annas the high priest", "Sceva, a Jew", "Caiaphas", "Gamaliel"],
+    answer: 1
+  },
+
+  {
+    question: "According to Exodus 17:12, who were the two men who held up Moses' hands during the battle with Amalek?",
+    options: ["Joshua and Caleb", "Aaron and Hur", "Nadab and Abihu", "Eleazar and Ithamar"],
+    answer: 1
+  },
+
+  {
+    question: "According to Numbers 13:30, which spy among the twelve quieted the people and said, 'Let us go up at once and possess the land'?",
+    answers: ["Joshua the son of Nun", "Caleb the son of Jephunneh", "Moses", "Aaron"],
+    correct: 1
+  },
+
+  { 
+    question: "What specific circumstance prompted God to place a mark on Cain after he killed Abel?", 
+    options: ["Lest anyone finding him should kill him", "To identify him as the first murderer", "To curse his descendants", "To mark him as eternally damned"], 
+    answer: 0 
+  },
+
+  { 
+    question: "In which specific location was Abraham sitting when the three angels appeared to announce the birth of Isaac?", 
+    options: ["By the oaks of Moreh", "By the terebinth trees of Mamre", "In the plains of Jordan", "By the well of Beer-sheba"], 
+    answer: 1 
+  },
+
+  { 
+    question: "What event was taking place when Lot's wife looked back and became a pillar of salt?", 
+    options: ["The destruction of Sodom and Gomorrah", "The parting of the Red Sea", "The confusion of tongues at Babel", "Noah's flood waters receding"], 
+    answer: 0 
+  },
+
+  { 
+    question: "During which occasion did Jacob wrestle with the angel until the breaking of day?", 
+    options: ["On the night before meeting Esau", "While fleeing from Laban", "When returning to Bethel", "During his vision of the ladder"], 
+    answer: 0 
+  },
+
+  { 
+    question: "What immediate circumstance led Joseph to reveal his identity to his brothers in Egypt?", 
+    options: ["Pharaoh's command", "Judah's plea for Benjamin", "The end of the famine", "His brothers recognized him first"], 
+    answer: 1 
+  },
+
+  { 
+    question: "In what context did Joseph place his silver cup in Benjamin's sack?", 
+    options: ["To punish them for selling him", "To test if they had changed", "To fulfill Pharaoh's dream", "To claim Benjamin as a slave"], 
+    answer: 1 
+  },
+
+  // Exodus
+  { 
+    question: "What convinced Moses that the voice at the burning bush was God?", 
+    options: ["The bush burned with fire but was not consumed", "A mighty wind split the mountain", "Lightning struck the ground", "The ground shook beneath his feet"], 
+    answer: 0 
+  },
+
+  { 
+    question: "During which plague did God protect the land of Goshen from the Egyptians?", 
+    options: ["Plague of locusts", "Plague of flies", "Plague of darkness", "Plague of hail"], 
+    answer: 1 
+  },
+
+  { 
+    question: "What situation caused Moses to strike the rock twice, leading to his exclusion from Canaan?", 
+    options: ["The people demanded meat", "The people demanded water", "The Amalekites attacked", "Aaron and Miriam challenged him"], 
+    answer: 1 
+  },
+
+  { 
+    question: "What triggered Moses to make a bronze serpent for healing the people?", 
+    options: ["Fiery serpents bit the people", "They worshipped the golden calf", "They refused to cross the Jordan", "During the battle with the Amorites"], 
+    answer: 0 
+  },
+
+  // Numbers & Deuteronomy
+  { 
+    question: "In what context did Balaam's donkey speak to him?", 
+    options: ["When the donkey saw the angel with a drawn sword", "When they reached Mount Peor", "When Balak offered sacrifices", "When Balaam refused payment"], 
+    answer: 0 
+  },
+
+  { 
+    question: "What situation caused Moses to appoint judges to help him?", 
+    options: ["Jethro saw him judging alone from morning till evening", "After Korah's rebellion", "When Eldad and Medad prophesied", "After the golden calf incident"], 
+    answer: 0 
+  },
+
+  // Kings & Chronicles
+  { 
+    question: "What situation caused David to flee from Absalom into the wilderness?", 
+    options: ["Absalom stole the hearts of Israel", "Absalom killed Amnon", "A prophet announced judgment", "The Philistines attacked"], 
+    answer: 0 
+  },
+
+  { 
+    question: "In what context did Solomon ask God for wisdom instead of riches?", 
+    options: ["At Gibeon in a dream", "At the dedication of the temple", "When the Queen of Sheba visited", "While building the temple"], 
+    answer: 0 
+  },
+
+  { 
+    question: "What immediate event caused the kingdom to split after Solomon's death?", 
+    options: ["Rehoboam refused to lighten the heavy yoke", "Solomon built high places for foreign gods", "Foreign invasion weakened the north", "Ahijah tore his garment"], 
+    answer: 0 
+  },
+
+  { 
+    question: "During which event did fire come down from heaven and consume Elijah's sacrifice?", 
+    options: ["When Elijah called fire on the soaked sacrifice", "When he prayed to shut the heavens", "When he ascended in a whirlwind", "When he struck the Jordan"], 
+    answer: 0 
+  },
+
+  // New Testament
+  { 
+    question: "In what setting did Jesus transfigure before Peter, James, and John?", 
+    options: ["On a high mountain apart", "In Gethsemane", "On the Mount of Olives", "At the feeding of the 5000"], 
+    answer: 0 
+  },
+
+  { 
+    question: "What situation caused Jesus to weep over Jerusalem?", 
+    options: ["He foresaw its destruction", "The Pharisees rejected Him", "His disciples failed to heal", "Lazarus had died"], 
+    answer: 0 
+  },
+
+  { 
+    question: "During which feast did Jesus cry out 'If anyone thirsts, let him come to me and drink'?", 
+    options: ["Passover", "Tabernacles", "Dedication", "Weeks"], 
+    answer: 1 
+  },
+
+  { 
+    question: "What caused the disciples to wake Jesus during the storm on the lake?", 
+    options: ["The boat was filling with water", "They saw a ghost on the water", "They caught no fish", "The Pharisees were chasing them"], 
+    answer: 0 
+  },
+
+  {
+    question: "In what context did Jesus curse the fig tree?", 
+    options: ["It had no fruit though it was full of leaves", "It had withered from the roots", "It was planted in bad soil", "The Pharisees hid behind it"], 
+    answer: 0 
   }
-   
+  
 ];
 
 console.log(`✅ Questions.js loaded successfully with ${questions.length} questions`);
