@@ -7,13 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <base target="_blank">
 </head>
 <body>
 
+  <!-- FIXED LOGOUT BUTTON (top-right, visible when logged in) -->
+  <button id="fixed-logout-btn" class="fixed-logout hidden" onclick="handleLogout()">
+    <i class="fas fa-sign-out-alt"></i>
+  </button>
+
   <main class="app">
 
-    <!-- ==================== LANDING SCREEN ==================== -->
+    <!-- ==================== LANDING / HOME SCREEN ==================== -->
     <section id="landing-screen" class="screen center">
       <div class="card landing-card">
         <div class="logo">📖</div>
@@ -35,7 +41,7 @@
             <p class="welcome-verse">"Study to show yourself approved..." — 2 Timothy 2:15</p>
           </div>
 
-          <div class="welcome-actions">
+          <div class="welcome-actions" id="welcome-actions">
             <button id="begin-test-btn" class="primary-btn begin-btn">📝 Begin Test</button>
             <button id="view-leaderboard-btn" class="secondary-btn">🏆 View Leaderboard</button>
             <button id="view-rewards-btn" class="secondary-btn">🎁 My Rewards</button>
@@ -43,6 +49,95 @@
         </div>
 
         <p class="footer">TechGuru Systems</p>
+      </div>
+    </section>
+
+    <!-- ==================== QUIZ SCREEN ==================== -->
+    <section id="quiz-screen" class="screen hidden">
+      <div class="quiz-wrapper">
+        <div class="top-bar">
+          <div class="progress">Question <span id="current-num">1</span> / 100</div>
+          <div id="timer" class="timer">20:00</div>
+          <div id="display-name" class="username-display"></div>
+        </div>
+
+        <div class="card question-card">
+          <div class="question-number">Question <span id="q-num">1</span></div>
+          <h2 id="question-text">Loading question...</h2>
+          <div id="options" class="options"></div>
+          <div id="feedback-area" class="feedback-area hidden">
+            <div class="feedback-emoji" id="feedback-emoji"></div>
+            <div class="feedback-message" id="feedback-message"></div>
+          </div>
+        </div>
+
+        <div class="nav-controls">
+          <button id="prev-btn" class="secondary-btn">Previous</button>
+          <button id="next-btn" class="primary-btn">Next</button>
+          <button id="submit-btn" class="danger-btn">Submit Exam</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== RESULT SCREEN ==================== -->
+    <section id="result-screen" class="screen center hidden">
+      <div class="card result-card">
+        <div class="result-header">
+          <div class="result-icon">🎓</div>
+          <h2>Result Summary</h2>
+          <p id="candidate-name"></p>
+        </div>
+
+        <div class="score-box">
+          <h1 id="score-display">0%</h1>
+          <p id="detailed-score">0 / 100</p>
+          <div class="score-badge" id="score-badge">Pass</div>
+          <p id="points-earned" class="points-earned">+0 points</p>
+        </div>
+
+        <div class="chart-area">
+          <canvas id="resultChart"></canvas>
+        </div>
+
+        <div id="study-tip" class="study-tip"></div>
+
+        <!-- User Dashboard -->
+        <div class="dashboard-section">
+          <h3>📊 Your Stats</h3>
+          <div class="dashboard-grid">
+            <div class="dash-card">
+              <div class="dash-value" id="dash-quizzes">0</div>
+              <div class="dash-label">Quizzes</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-value" id="dash-best">0%</div>
+              <div class="dash-label">Best Score</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-value" id="dash-points">0</div>
+              <div class="dash-label">Total Points</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-value" id="dash-streak">0</div>
+              <div class="dash-label">Streak</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Top 3 Notification (no instant claim) -->
+        <div id="reward-section" class="reward-section hidden">
+          <div class="reward-banner">
+            <span>🎉 You're currently in the top 3! Keep it up until Sunday night!</span>
+            <p style="font-size: 13px; color: #166534; margin-top: 8px; font-weight: 500;">
+              Winners are finalized at the end of each week. If you remain in the top 3, your data reward will be sent automatically — no need to claim.
+            </p>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button onclick="showScreen('rewards'); loadUserDashboard();" class="secondary-btn">🎁 My Rewards</button>
+          <button onclick="location.reload()" class="primary-btn">🔄 Take Again</button>
+        </div>
       </div>
     </section>
 
@@ -64,11 +159,6 @@
             <p class="loading">Loading leaderboard...</p>
           </div>
           <div id="leaderboard-user-rank"></div>
-        </div>
-
-        <div class="nav-controls">
-          <button id="back-from-leaderboard" class="secondary-btn">← Back</button>
-          <button id="take-quiz-from-leaderboard" class="primary-btn">📝 Take Quiz</button>
         </div>
       </div>
     </section>
@@ -155,111 +245,50 @@
             <p class="weekly-note">Top 3 at the end of each week (Sunday night) win automatically. No need to claim — rewards are sent directly by admin!</p>
           </div>
         </div>
-
-        <div class="nav-controls">
-          <button id="back-from-rewards" class="secondary-btn">← Back</button>
-          <button id="take-quiz-from-rewards" class="primary-btn">📝 Take Quiz</button>
-        </div>
       </div>
     </section>
 
-    <!-- ==================== QUIZ SCREEN ==================== -->
-    <section id="quiz-screen" class="screen hidden">
+    <!-- ==================== PROFILE SCREEN ==================== -->
+    <section id="profile-screen" class="screen hidden">
       <div class="quiz-wrapper">
         <div class="top-bar">
-          <div class="progress">Question <span id="current-num">1</span> / 100</div>
-          <div id="timer" class="timer">20:00</div>
-          <div id="display-name" class="username-display"></div>
+          <h2>👤 My Profile</h2>
         </div>
 
-        <div class="card question-card">
-          <div class="question-number">Question <span id="q-num">1</span></div>
-          <h2 id="question-text">Loading question...</h2>
-          <div id="options" class="options"></div>
-          <div id="feedback-area" class="feedback-area hidden">
-            <div class="feedback-emoji" id="feedback-emoji"></div>
-            <div class="feedback-message" id="feedback-message"></div>
-          </div>
-        </div>
-
-        <div class="nav-controls">
-          <button id="prev-btn" class="secondary-btn">Previous</button>
-          <button id="next-btn" class="primary-btn">Next</button>
-          <button id="submit-btn" class="danger-btn">Submit Exam</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ==================== RESULT SCREEN ==================== -->
-    <section id="result-screen" class="screen center hidden">
-      <div class="card result-card">
-        <div class="result-header">
-          <div class="result-icon">🎓</div>
-          <h2>Result Summary</h2>
-          <p id="candidate-name"></p>
-        </div>
-
-        <div class="score-box">
-          <h1 id="score-display">0%</h1>
-          <p id="detailed-score">0 / 100</p>
-          <div class="score-badge" id="score-badge">Pass</div>
-          <p id="points-earned" class="points-earned">+0 points</p>
-        </div>
-
-        <div class="chart-area">
-          <canvas id="resultChart"></canvas>
-        </div>
-
-        <div id="study-tip" class="study-tip"></div>
-
-        <!-- User Dashboard -->
-        <div class="dashboard-section">
-          <h3>📊 Your Stats</h3>
-          <div class="dashboard-grid">
-            <div class="dash-card">
-              <div class="dash-value" id="dash-quizzes">0</div>
-              <div class="dash-label">Quizzes</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-value" id="dash-best">0%</div>
-              <div class="dash-label">Best Score</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-value" id="dash-points">0</div>
-              <div class="dash-label">Total Points</div>
-            </div>
-            <div class="dash-card">
-              <div class="dash-value" id="dash-streak">0</div>
-              <div class="dash-label">Streak</div>
+        <div class="card profile-card">
+          <div class="profile-header">
+            <div class="profile-avatar" id="profile-avatar">?</div>
+            <div class="profile-info">
+              <h3 id="profile-name">User</h3>
+              <p id="profile-email">user@email.com</p>
+              <p id="profile-joined">Joined: -</p>
             </div>
           </div>
-        </div>
 
-        <!-- Leaderboard -->
-        <div class="leaderboard-section">
-          <div class="leaderboard-header">
-            <h3>🏆 Weekly Leaderboard</h3>
-            <span class="week-badge" id="week-badge">Week 1</span>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profile-quizzes">0</div>
+              <div class="profile-stat-label">Quizzes</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profile-best">0%</div>
+              <div class="profile-stat-label">Best Score</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profile-points">0</div>
+              <div class="profile-stat-label">Points</div>
+            </div>
+            <div class="profile-stat">
+              <div class="profile-stat-value" id="profile-streak">0</div>
+              <div class="profile-stat-label">Streak</div>
+            </div>
           </div>
-          <div id="review-leaderboard-list" class="leaderboard-list">
-            <p class="loading">Loading leaderboard...</p>
-          </div>
-        </div>
 
-        <!-- Weekly Top 3 Notification (no instant claim) -->
-        <div id="reward-section" class="reward-section hidden">
-          <div class="reward-banner">
-            <span>🎉 You're currently in the top 3! Keep it up until Sunday night!</span>
-            <p style="font-size: 13px; color: #166534; margin-top: 8px; font-weight: 500;">
-              Winners are finalized at the end of each week. If you remain in the top 3, your data reward will be sent automatically — no need to claim.
-            </p>
+          <div class="profile-actions">
+            <button onclick="handleLogout()" class="danger-btn" style="width: 100%;">
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
           </div>
-        </div>
-
-        <div class="result-actions">
-          <button onclick="showScreen('leaderboard'); renderLeaderboard();" class="secondary-btn">🏆 Leaderboard</button>
-          <button onclick="showScreen('rewards'); loadUserDashboard();" class="secondary-btn">🎁 My Rewards</button>
-          <button onclick="location.reload()" class="primary-btn">🔄 Take Again</button>
         </div>
       </div>
     </section>
@@ -301,9 +330,27 @@
       </div>
     </div>
 
-
-
   </main>
+
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <button class="nav-item active" data-nav="landing" onclick="navigateTo('landing')">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </button>
+    <button class="nav-item" data-nav="leaderboard" onclick="navigateTo('leaderboard')">
+      <i class="fas fa-trophy"></i>
+      <span>Leaderboard</span>
+    </button>
+    <button class="nav-item" data-nav="rewards" onclick="navigateTo('rewards')">
+      <i class="fas fa-gift"></i>
+      <span>Rewards</span>
+    </button>
+    <button class="nav-item" data-nav="profile" onclick="navigateTo('profile')">
+      <i class="fas fa-user"></i>
+      <span>Profile</span>
+    </button>
+  </nav>
 
   <!-- ============================================ -->
   <!-- STEP 1: Firebase SDKs -->
