@@ -18,7 +18,7 @@ function showScreen(screenName) {
   if (screenName === currentScreen) return;
   currentScreen = screenName;
 
-  const screens = ['landing-screen', 'quiz-screen', 'result-screen', 'leaderboard-screen', 'rewards-screen'];
+  const screens = ['landing-screen', 'quiz-screen', 'result-screen', 'leaderboard-screen', 'rewards-screen', 'profile-screen'];
   screens.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.add('hidden');
@@ -28,16 +28,37 @@ function showScreen(screenName) {
                    screenName === 'quiz' ? 'quiz-screen' : 
                    screenName === 'result' ? 'result-screen' :
                    screenName === 'leaderboard' ? 'leaderboard-screen' :
-                   screenName === 'rewards' ? 'rewards-screen' : '';
+                   screenName === 'rewards' ? 'rewards-screen' :
+                   screenName === 'profile' ? 'profile-screen' : '';
 
   const target = document.getElementById(targetId);
   if (target) {
     target.classList.remove('hidden');
     window.scrollTo(0, 0);
   }
+
+  // Update bottom nav active state
+  updateBottomNav(screenName);
+}
+
+function updateBottomNav(activeScreen) {
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.nav === activeScreen) {
+      item.classList.add('active');
+    }
+  });
+}
+
+function navigateTo(screenName) {
+  showScreen(screenName);
+  if (screenName === 'leaderboard') renderLeaderboard();
+  if (screenName === 'rewards') loadUserDashboard();
+  if (screenName === 'profile') loadProfile();
 }
 
 window.showScreen = showScreen;
+window.navigateTo = navigateTo;
 
 // ============================================
 // AUTH FUNCTIONS
@@ -208,16 +229,17 @@ function updateUIForLoggedInUser(user) {
   const authSection = document.getElementById('auth-section');
   const welcomeSection = document.getElementById('welcome-section');
   const welcomeName = document.getElementById('welcome-name');
+  const fixedLogout = document.getElementById('fixed-logout-btn');
+  const bottomNav = document.getElementById('bottom-nav');
 
   if (authSection) authSection.classList.add('hidden');
   if (welcomeSection) welcomeSection.classList.remove('hidden');
   if (welcomeName) welcomeName.textContent = user.displayName || 'Champion';
+  if (fixedLogout) fixedLogout.classList.remove('hidden');
+  if (bottomNav) bottomNav.classList.remove('hidden');
 
   const rewardsUserName = document.getElementById('rewards-user-name');
   if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
-
-  // Add logout button near welcome name
-  addLogoutButton();
 
   // Update week badges dynamically
   updateWeekBadges();
@@ -232,26 +254,6 @@ function updateUIForLoggedInUser(user) {
       showDailyLimitMessage(limitCheck);
     }
   }, 500);
-}
-
-function addLogoutButton() {
-  const welcomeSection = document.getElementById('welcome-section');
-  if (!welcomeSection) return;
-
-  // Remove existing logout button if any
-  const existing = document.getElementById('logout-btn');
-  if (existing) existing.remove();
-
-  const logoutBtn = document.createElement('button');
-  logoutBtn.id = 'logout-btn';
-  logoutBtn.className = 'text-btn';
-  logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
-  logoutBtn.style.cssText = 'position: absolute; top: 16px; right: 16px; background: #fee2e2; color: #991b1b; padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 13px; border: 1px solid #fca5a5; cursor: pointer;';
-  logoutBtn.onclick = handleLogout;
-
-  // Make welcome section relative for positioning
-  welcomeSection.style.position = 'relative';
-  welcomeSection.appendChild(logoutBtn);
 }
 
 function updateWeekBadges() {
@@ -449,6 +451,32 @@ async function loadUserDashboard() {
   }
 }
 
+async function loadProfile() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    if (!doc.exists) return;
+
+    const data = doc.data();
+    const joined = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : '-';
+
+    const el = (id) => document.getElementById(id);
+    if (el('profile-avatar')) el('profile-avatar').textContent = (data.name || 'U').charAt(0).toUpperCase();
+    if (el('profile-name')) el('profile-name').textContent = data.name || 'User';
+    if (el('profile-email')) el('profile-email').textContent = data.email || user.email;
+    if (el('profile-joined')) el('profile-joined').textContent = 'Joined: ' + joined;
+    if (el('profile-quizzes')) el('profile-quizzes').textContent = data.quizzesTaken || 0;
+    if (el('profile-best')) el('profile-best').textContent = (data.bestScore || 0) + '%';
+    if (el('profile-points')) el('profile-points').textContent = (data.totalPoints || 0).toLocaleString();
+    if (el('profile-streak')) el('profile-streak').textContent = (data.currentStreak || 0);
+
+  } catch (err) {
+    console.error('Profile error:', err);
+  }
+}
+
 function updateRewardProgress(points) {
   const fill = document.getElementById('reward-progress-fill');
   const nextMilestoneEl = document.getElementById('reward-next-milestone');
@@ -617,7 +645,7 @@ function attachEventListeners() {
 
 auth.onAuthStateChanged(user => {
   if (user) {
-    // User just logged in (not auto from persistence)
+    // User just logged in
     updateUIForLoggedInUser(user);
     loadUserDashboard();
     authModalShown = false;
@@ -626,17 +654,24 @@ auth.onAuthStateChanged(user => {
     // User logged out or no session
     const authSection = document.getElementById('auth-section');
     const welcomeSection = document.getElementById('welcome-section');
+    const fixedLogout = document.getElementById('fixed-logout-btn');
+    const bottomNav = document.getElementById('bottom-nav');
 
     if (authSection) authSection.classList.remove('hidden');
     if (welcomeSection) welcomeSection.classList.add('hidden');
+    if (fixedLogout) fixedLogout.classList.add('hidden');
+    if (bottomNav) bottomNav.classList.add('hidden');
+
+    // Reset to landing screen
+    showScreen('landing');
 
     // Always show auth modal when logged out
     if (!authModalShown) {
       setTimeout(() => {
-        if (!auth.currentUser && currentScreen === 'landing') {
+        if (!auth.currentUser) {
           showAuthModal();
         }
-      }, 500);
+      }, 300);
     }
   }
 });
