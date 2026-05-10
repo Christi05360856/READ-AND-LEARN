@@ -1231,11 +1231,21 @@ button:active {
   border-radius: 20px;
   background: #f1f5f9;
   color: #64748b;
+  min-width: 120px;
+  text-align: center;
 }
 
 .tier-status.unlocked {
   background: #dcfce7;
   color: #166534;
+}
+
+.tier-status button {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  width: auto;
+  margin: 0;
 }
 
 /* ===== WEEKLY REWARD INFO ===== */
