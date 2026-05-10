@@ -11,11 +11,10 @@ let currentScreen = 'landing';
 let isProcessingAuth = false;
 
 // ============================================
-// TOAST UTILITY (was missing — caused ReferenceError)
+// TOAST UTILITY
 // ============================================
 
 function showToast(message, type = 'info') {
-  // Remove existing toast
   const existing = document.getElementById('app-toast');
   if (existing) existing.remove();
 
@@ -63,7 +62,7 @@ function showToast(message, type = 'info') {
 window.showToast = showToast;
 
 // ============================================
-// SCREEN NAVIGATION (SAFE - NO SIDE EFFECTS)
+// SCREEN NAVIGATION
 // ============================================
 
 function showScreen(screenName) {
@@ -89,7 +88,6 @@ function showScreen(screenName) {
     window.scrollTo(0, 0);
   }
 
-  // Update bottom nav active state
   updateBottomNav(screenName);
 }
 
@@ -208,6 +206,10 @@ async function handleRegister(e) {
       bestScore: 0,
       currentStreak: 0,
       longestStreak: 0,
+      phoneNumber: '',
+      networkProvider: '',
+      profileComplete: false,
+      claimedMilestones: [],
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
@@ -274,10 +276,117 @@ async function handleLogout() {
 }
 
 // ============================================
+// PROFILE CONTACT (phone + network)
+// ============================================
+
+async function saveProfileContact() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const phoneEl = document.getElementById('profile-phone');
+  const networkEl = document.getElementById('profile-network');
+  const phone = phoneEl ? phoneEl.value.trim() : '';
+  const network = networkEl ? networkEl.value : '';
+
+  if (!phone || phone.length < 10) {
+    showToast('Please enter a valid phone number', 'error');
+    return;
+  }
+  if (!network) {
+    showToast('Please select your network provider', 'error');
+    return;
+  }
+
+  try {
+    await db.collection('users').doc(user.uid).update({
+      phoneNumber: phone,
+      networkProvider: network,
+      profileComplete: true
+    });
+    showToast('✅ Contact details saved!', 'success');
+    loadProfile();
+  } catch (err) {
+    console.error('Save contact error:', err);
+    showToast('Error saving contact details', 'error');
+  }
+}
+
+window.saveProfileContact = saveProfileContact;
+
+async function saveRequiredContact() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const phoneEl = document.getElementById('req-phone');
+  const networkEl = document.getElementById('req-network');
+  const phone = phoneEl ? phoneEl.value.trim() : '';
+  const network = networkEl ? networkEl.value : '';
+
+  if (!phone || phone.length < 10) {
+    showToast('Please enter a valid phone number', 'error');
+    return;
+  }
+  if (!network) {
+    showToast('Please select your network provider', 'error');
+    return;
+  }
+
+  try {
+    await db.collection('users').doc(user.uid).update({
+      phoneNumber: phone,
+      networkProvider: network,
+      profileComplete: true
+    });
+
+    const modal = document.getElementById('profile-required-modal');
+    if (modal) modal.classList.add('hidden');
+
+    showToast('✅ Profile complete! You can now take quizzes.', 'success');
+    loadProfile();
+  } catch (err) {
+    console.error('Save required contact error:', err);
+    showToast('Error saving details. Please try again.', 'error');
+  }
+}
+
+window.saveRequiredContact = saveRequiredContact;
+
+function showRequiredProfileModal() {
+  let modal = document.getElementById('profile-required-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'profile-required-modal';
+    modal.className = 'modal';
+    modal.innerHTML = `
+      <div class="modal-content" style="max-width: 420px;">
+        <div class="modal-icon">📱</div>
+        <h3>Complete Your Profile</h3>
+        <p style="color: #64748b; margin-bottom: 20px; font-size: 15px;">
+          Please add your phone number and network provider to receive weekly data rewards.
+        </p>
+        <input type="tel" id="req-phone" placeholder="Phone Number (e.g. 08012345678)" required
+          style="width: 100%; margin-bottom: 12px; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 15px; font-family: 'Inter', sans-serif; outline: none;">
+        <select id="req-network" required
+          style="width: 100%; margin-bottom: 16px; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; background: white;">
+          <option value="">Select Network Provider</option>
+          <option value="MTN">MTN</option>
+          <option value="Airtel">Airtel</option>
+          <option value="Glo">Glo</option>
+          <option value="9mobile">9mobile</option>
+        </select>
+        <button onclick="saveRequiredContact()" class="primary-btn" style="width: 100%;">Save & Continue</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  modal.classList.remove('hidden');
+}
+
+// ============================================
 // UI UPDATES
 // ============================================
 
-function updateUIForLoggedInUser(user) {
+async function updateUIForLoggedInUser(user) {
   const authSection = document.getElementById('auth-section');
   const welcomeSection = document.getElementById('welcome-section');
   const welcomeName = document.getElementById('welcome-name');
@@ -293,21 +402,32 @@ function updateUIForLoggedInUser(user) {
   const rewardsUserName = document.getElementById('rewards-user-name');
   if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
 
-  // Update week badges dynamically
   updateWeekBadges();
 
-  // Mandatory notification check
-  setTimeout(() => checkNotificationStatus(), 1000);
+  // Check if profile is complete
+  try {
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    const userData = userDoc.data() || {};
 
-  // Check daily quiz limit
-  setTimeout(async () => {
-    const limitCheck = await checkDailyQuizLimit();
-    if (limitCheck.blocked) {
-      showDailyLimitMessage(limitCheck);
+    if (!userData.phoneNumber || !userData.networkProvider) {
+      showRequiredProfileModal();
+      showToast('📱 Please complete your profile to continue', 'info');
     } else {
-      showQuizAttemptsLeft(limitCheck.remaining);
+      // Profile complete — check daily limit normally
+      setTimeout(async () => {
+        const limitCheck = await checkDailyQuizLimit();
+        if (limitCheck.blocked) {
+          showDailyLimitMessage(limitCheck);
+        } else {
+          showQuizAttemptsLeft(limitCheck.remaining);
+        }
+      }, 500);
     }
-  }, 500);
+  } catch (err) {
+    console.error('Profile check error:', err);
+  }
+
+  setTimeout(() => checkNotificationStatus(), 1000);
 }
 
 function updateWeekBadges() {
@@ -317,6 +437,82 @@ function updateWeekBadges() {
     if (badge) badge.textContent = 'Week ' + weekNum;
   });
 }
+
+// ============================================
+// SEEN QUESTIONS TRACKER (7-day cooldown)
+// ============================================
+
+async function getQuizQuestions(allQuestions) {
+  const user = auth.currentUser;
+  if (!user || !Array.isArray(allQuestions) || allQuestions.length === 0) {
+    // Fallback: just shuffle and return 50
+    const shuffled = [...allQuestions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, 50);
+  }
+
+  try {
+    const userRef = db.collection('users').doc(user.uid);
+    const userDoc = await userRef.get();
+    const userData = userDoc.data() || {};
+    const history = userData.questionHistory || [];
+
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    const recentlySeen = new Set();
+    const prunedHistory = [];
+
+    history.forEach(h => {
+      const ts = h.seenAt?.toDate ? h.seenAt.toDate() : new Date(h.seenAt);
+      if (ts > oneWeekAgo) {
+        recentlySeen.add(h.question);
+        prunedHistory.push(h);
+      }
+    });
+
+    let available = allQuestions.filter(q => !recentlySeen.has(q.question));
+
+    // If pool exhausted, reset and use all
+    if (available.length < 50) {
+      available = allQuestions;
+      prunedHistory.length = 0;
+    }
+
+    // Shuffle available
+    const shuffled = [...available];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    const selected = shuffled.slice(0, 50);
+
+    // Save selected questions to history
+    const newHistory = selected.map(q => ({
+      question: q.question,
+      seenAt: firebase.firestore.FieldValue.serverTimestamp()
+    }));
+
+    await userRef.update({
+      questionHistory: [...prunedHistory, ...newHistory]
+    });
+
+    return selected;
+  } catch (err) {
+    console.error('getQuizQuestions error:', err);
+    // Fallback
+    const shuffled = [...allQuestions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, 50);
+  }
+}
+
+window.getQuizQuestions = getQuizQuestions;
 
 // ============================================
 // QUIZ SAVE FUNCTION
@@ -498,7 +694,7 @@ async function loadUserDashboard() {
     }
 
     updateRewardProgress(data.totalPoints || 0);
-    updateRewardTiers(data.totalPoints || 0);
+    updateRewardTiers(data.totalPoints || 0, data.claimedMilestones || []);
 
   } catch (err) {
     console.error('Dashboard error:', err);
@@ -526,6 +722,10 @@ async function loadProfile() {
     if (el('profile-points')) el('profile-points').textContent = (data.totalPoints || 0).toLocaleString();
     if (el('profile-streak')) el('profile-streak').textContent = (data.currentStreak || 0);
 
+    // Populate contact fields
+    if (el('profile-phone')) el('profile-phone').value = data.phoneNumber || '';
+    if (el('profile-network')) el('profile-network').value = data.networkProvider || '';
+
   } catch (err) {
     console.error('Profile error:', err);
   }
@@ -536,7 +736,6 @@ function updateRewardProgress(points) {
   const nextMilestoneEl = document.getElementById('reward-next-milestone');
   if (!fill) return;
 
-  // THRESHOLDS: 5K (1GB), 10K (2.5GB), 20K (5GB)
   let nextMilestone = 5000;
   if (points >= 5000) nextMilestone = 10000;
   if (points >= 10000) nextMilestone = 20000;
@@ -554,7 +753,6 @@ function updateRewardProgress(points) {
 }
 
 function updateRewardTiers(points) {
-  // TIERS: 5K (1GB), 10K (2.5GB), 20K (5GB)
   const tiers = [
     { threshold: 5000, reward: '1GB', id: 'tier-5000' },
     { threshold: 10000, reward: '2.5GB', id: 'tier-10000' },
@@ -577,10 +775,9 @@ function updateRewardTiers(points) {
 }
 
 // ============================================
-// UTILITY FUNCTIONS (FIXED WEEK LOGIC)
+// UTILITY FUNCTIONS
 // ============================================
 
-// EPOCH: May 5, 2026 (when you launched) - Monday start
 const WEEK_EPOCH = new Date('2026-05-05T00:00:00');
 
 function getCurrentWeekId() {
@@ -663,7 +860,6 @@ async function checkDailyQuizLimit() {
     };
   } catch (err) {
     console.error('Daily limit check error:', err);
-    // FAIL CLOSED: if anything goes wrong (missing index, network, etc.), BLOCK the quiz
     return {
       blocked: true,
       remaining: 0,
@@ -679,7 +875,6 @@ function showDailyLimitMessage(timeData) {
   const actionsDiv = welcomeSection ? welcomeSection.querySelector('.welcome-actions') : null;
   if (!actionsDiv) return;
 
-  // If the check failed (missing index, etc.), show a different message
   if (timeData.reason === 'check_failed') {
     actionsDiv.innerHTML = `
       <div style="background: #fee2e2; border: 2px solid #fca5a5; border-radius: 16px; padding: 24px; text-align: center;">
@@ -721,7 +916,6 @@ function showQuizAttemptsLeft(attempts) {
   const el = document.getElementById('quiz-attempts-left');
   if (!el) return;
 
-  // Guard against undefined/null
   const safeAttempts = typeof attempts === 'number' ? attempts : 0;
 
   if (safeAttempts > 0) {
@@ -756,10 +950,29 @@ function startCountdown(msRemaining) {
 }
 
 // ============================================
-// BEGIN QUIZ GATEKEEPER (all entry points use this)
+// BEGIN QUIZ GATEKEEPER
 // ============================================
 
 async function handleBeginQuiz() {
+  const user = auth.currentUser;
+  if (!user) {
+    showAuthModal();
+    return;
+  }
+
+  // Check profile completeness first
+  try {
+    const userDoc = await db.collection('users').doc(user.uid).get();
+    const userData = userDoc.data() || {};
+    if (!userData.phoneNumber || !userData.networkProvider) {
+      showRequiredProfileModal();
+      showToast('📱 Please complete your profile before taking a quiz', 'error');
+      return;
+    }
+  } catch (err) {
+    console.error('Profile pre-check error:', err);
+  }
+
   const btn = document.getElementById('begin-test-btn');
   if (btn) {
     btn.disabled = true;
@@ -800,7 +1013,6 @@ function attachEventListeners() {
   if (loginTab) loginTab.addEventListener('click', () => switchAuthTab('login'));
   if (registerTab) registerTab.addEventListener('click', () => switchAuthTab('register'));
 
-  // Welcome screen buttons — ALL use handleBeginQuiz now
   const beginTestBtn = document.getElementById('begin-test-btn');
   const viewLeaderboardBtn = document.getElementById('view-leaderboard-btn');
   const viewRewardsBtn = document.getElementById('view-rewards-btn');
@@ -823,7 +1035,6 @@ function attachEventListeners() {
     });
   }
 
-  // Leaderboard screen buttons
   const backFromLeaderboard = document.getElementById('back-from-leaderboard');
   const takeQuizFromLeaderboard = document.getElementById('take-quiz-from-leaderboard');
 
@@ -834,7 +1045,6 @@ function attachEventListeners() {
     takeQuizFromLeaderboard.addEventListener('click', handleBeginQuiz);
   }
 
-  // Rewards screen buttons
   const backFromRewards = document.getElementById('back-from-rewards');
   const takeQuizFromRewards = document.getElementById('take-quiz-from-rewards');
 
@@ -847,18 +1057,16 @@ function attachEventListeners() {
 }
 
 // ============================================
-// AUTH STATE LISTENER (FIXED - NO RECURSION)
+// AUTH STATE LISTENER
 // ============================================
 
 auth.onAuthStateChanged(user => {
   if (user) {
-    // User just logged in
     updateUIForLoggedInUser(user);
     loadUserDashboard();
     authModalShown = false;
     hideAuthModal();
   } else {
-    // User logged out or no session
     const authSection = document.getElementById('auth-section');
     const welcomeSection = document.getElementById('welcome-section');
     const fixedLogout = document.getElementById('fixed-logout-btn');
@@ -869,10 +1077,8 @@ auth.onAuthStateChanged(user => {
     if (fixedLogout) fixedLogout.classList.add('hidden');
     if (bottomNav) bottomNav.classList.add('hidden');
 
-    // Reset to landing screen
     showScreen('landing');
 
-    // Always show auth modal when logged out
     if (!authModalShown) {
       setTimeout(() => {
         if (!auth.currentUser) {
@@ -884,20 +1090,18 @@ auth.onAuthStateChanged(user => {
 });
 
 // ============================================
-// NOTIFICATIONS (MANDATORY)
+// NOTIFICATIONS
 // ============================================
 
 function checkNotificationStatus() {
   const user = auth.currentUser;
   if (!user) return;
 
-  // Check if already granted
   if (Notification.permission === 'granted') {
     scheduleDailyReminder();
     return;
   }
 
-  // Show mandatory notification modal
   showNotificationModal();
 }
 
@@ -932,7 +1136,6 @@ function showNotificationModal() {
         modal.classList.add('hidden');
         showToast('✅ Notifications enabled!', 'success');
       } else {
-        // Keep showing until they allow
         alert('⚠️ Please allow notifications in your browser settings to continue.');
       }
     });
@@ -956,14 +1159,12 @@ async function saveNotificationPreference(enabled) {
 function scheduleDailyReminder() {
   if (!('serviceWorker' in navigator)) return;
 
-  // Register service worker for notifications
   navigator.serviceWorker.register('sw.js').then(reg => {
     console.log('Service Worker registered for notifications');
   }).catch(err => {
     console.error('SW registration failed:', err);
   });
 
-  // Show test notification after 3 seconds
   setTimeout(() => {
     showBrowserNotification("📖 Bible Quiz", "You're all set! We'll remind you daily at 9 AM.");
   }, 3000);
@@ -985,7 +1186,6 @@ function showBrowserNotification(title, body) {
 // INITIALIZE
 // ============================================
 
-// DISABLE auto-login: set persistence to NONE
 auth.setPersistence(firebase.auth.Auth.Persistence.NONE).then(() => {
   console.log('🔒 Auth persistence set to NONE (login required every session)');
 }).catch(err => {
