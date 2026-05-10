@@ -1,5 +1,5 @@
 // ============================================
-// BIBLE QUIZ - script.js (FULLY FIXED)
+// BIBLE QUIZ - script.js (CORRECTED)
 // ============================================
 
 const quizScreen    = document.getElementById('quiz-screen');
@@ -35,14 +35,14 @@ const rewardSection    = document.getElementById('reward-section');
 
 let currentIndex = 0;
 let userAnswers  = {};
-let timeLeft     = 20 * 60;
+let timeLeft     = 10 * 60; // CHANGED: 10 minutes for 50 questions
 let timerInterval = null;
 let candidateName = '';
 let quizSubmitted = false;
 let selectedQuestions = [];
 let isWaitingForNext = false;
 
-const TOTAL_QUESTIONS = 100;
+const TOTAL_QUESTIONS = 50; // CHANGED: from 100 to 50
 const LETTERS = ['A', 'B', 'C', 'D'];
 
 const CORRECT_EMOJIS = ['😊', '😄', '🎉', '✨', '🌟', '👏', '🙌', '💯'];
@@ -61,7 +61,7 @@ function init() {
   confirmSubmitBtn.addEventListener('click', submitQuiz);
 }
 
-function startQuiz() {
+async function startQuiz() {
   // Defensive check: ensure questions array exists
   if (typeof questions === 'undefined' || !Array.isArray(questions) || questions.length === 0) {
     alert('Error: Questions failed to load. Please refresh the page.');
@@ -78,11 +78,21 @@ function startQuiz() {
 
   displayNameEl.textContent = candidateName;
 
-  selectedQuestions = shuffleArray(questions).slice(0, TOTAL_QUESTIONS);
+  // CHANGED: Use seen-questions filter from firebase.js
+  if (typeof window.getQuizQuestions === 'function') {
+    try {
+      selectedQuestions = await window.getQuizQuestions(questions);
+    } catch (err) {
+      console.error('getQuizQuestions failed, falling back:', err);
+      selectedQuestions = shuffleArray(questions).slice(0, TOTAL_QUESTIONS);
+    }
+  } else {
+    selectedQuestions = shuffleArray(questions).slice(0, TOTAL_QUESTIONS);
+  }
 
   currentIndex = 0;
   userAnswers = {};
-  timeLeft = 20 * 60;
+  timeLeft = 10 * 60; // CHANGED: 10 minutes
   quizSubmitted = false;
   isWaitingForNext = false;
 
@@ -279,7 +289,6 @@ function calculatePoints(score) {
 }
 
 async function showResults(correctCount, points) {
-  // Transition to result screen FIRST (no side effects in showScreen)
   if (typeof window.showScreen === 'function') {
     window.showScreen('result');
   }
@@ -308,17 +317,14 @@ async function showResults(correctCount, points) {
 
   renderChart(correctCount, TOTAL_QUESTIONS - correctCount);
 
-  // Load dashboard and leaderboard AFTER screen transition is complete
   if (typeof loadUserDashboard === 'function') {
     await loadUserDashboard();
   }
 
-  // Single call to render review leaderboard (not doubled by showScreen)
   if (typeof renderReviewLeaderboard === 'function') {
     await renderReviewLeaderboard();
   }
 
-  // Update week badge on result screen
   if (typeof getDisplayWeek === 'function') {
     const weekBadge = document.getElementById('week-badge');
     if (weekBadge) weekBadge.textContent = 'Week ' + getDisplayWeek();
@@ -332,7 +338,6 @@ async function checkRewardEligibility() {
   if (!user || !rewardSection) return;
 
   try {
-    // Only show top 3 banner if user is actually in top 3
     const entries = await fetchLeaderboard();
     const rank = entries.findIndex(e => e.userId === user.uid) + 1;
 
