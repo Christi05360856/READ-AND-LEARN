@@ -25,11 +25,7 @@
       --bronze: #cd7f32;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -38,7 +34,6 @@
       min-height: 100vh;
     }
 
-    /* Login Screen */
     .login-screen {
       display: flex;
       align-items: center;
@@ -57,135 +52,147 @@
       text-align: center;
     }
 
-    .login-card .logo {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .login-card h1 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .login-card p {
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
+    .login-card .logo { font-size: 48px; margin-bottom: 16px; }
+    .login-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .login-card p { color: var(--text-muted); margin-bottom: 24px; }
     .login-card input {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-size: 15px;
-      margin-bottom: 12px;
-      outline: none;
-      transition: border-color 0.2s;
+      width: 100%; padding: 14px 16px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-size: 15px; margin-bottom: 12px;
+      outline: none; transition: border-color 0.2s;
     }
-
-    .login-card input:focus {
-      border-color: var(--primary);
-    }
-
+    .login-card input:focus { border-color: var(--primary); }
     .login-card button {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+      width: 100%; padding: 14px; background: var(--primary);
+      color: white; border: none; border-radius: 10px;
+      font-size: 16px; font-weight: 600; cursor: pointer;
       transition: background 0.2s;
     }
+    .login-card button:hover { background: var(--primary-hover); }
+    .login-card button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .login-error { color: var(--danger); font-size: 14px; margin-top: 12px; min-height: 20px; }
 
-    .login-card button:hover {
-      background: var(--primary-hover);
-    }
-
-    .login-card button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .login-error {
-      color: var(--danger);
-      font-size: 14px;
-      margin-top: 12px;
-      min-height: 20px;
-    }
-
-    /* Dashboard */
-    .dashboard {
-      display: none;
-    }
+    .dashboard { display: none; }
 
     .top-nav {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 16px 32px; display: flex; align-items: center;
+      justify-content: space-between; position: sticky; top: 0; z-index: 100;
     }
 
     .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 20px;
-      font-weight: 700;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 20px; font-weight: 700;
     }
+    .nav-brand i { color: var(--primary); }
 
-    .nav-brand i {
-      color: var(--primary);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
+    .nav-actions { display: flex; align-items: center; gap: 16px; }
 
     .admin-badge {
-      background: var(--primary);
-      color: white;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      background: var(--primary); color: white;
+      padding: 6px 14px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
     }
 
     .logout-btn {
-      background: transparent;
-      border: 1px solid var(--border);
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-muted); padding: 8px 16px;
+      border-radius: 8px; cursor: pointer;
+      transition: all 0.2s; font-size: 14px;
+    }
+    .logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 32px; }
+
+    /* Winners Section */
+    .winners-section {
+      margin-bottom: 32px;
+    }
+
+    .winners-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .winners-grid { grid-template-columns: 1fr; }
+    }
+
+    .winner-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+
+    .winner-card:hover { transform: translateY(-4px); }
+
+    .winner-card.gold { border-color: rgba(255, 215, 0, 0.3); background: linear-gradient(180deg, rgba(255,215,0,0.08) 0%, var(--card) 100%); }
+    .winner-card.silver { border-color: rgba(192, 192, 192, 0.3); background: linear-gradient(180deg, rgba(192,192,192,0.08) 0%, var(--card) 100%); }
+    .winner-card.bronze { border-color: rgba(205, 127, 50, 0.3); background: linear-gradient(180deg, rgba(205,127,50,0.08) 0%, var(--card) 100%); }
+
+    .winner-rank {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .winner-name {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .winner-email {
+      font-size: 13px;
       color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .winner-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .winner-detail {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       font-size: 14px;
+      color: var(--text-muted);
     }
 
-    .logout-btn:hover {
-      border-color: var(--danger);
-      color: var(--danger);
+    .winner-detail i {
+      width: 16px;
+      text-align: center;
     }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 32px;
+    .winner-points {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--primary);
     }
+
+    .winner-reward {
+      margin-top: 12px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .winner-reward.gold { background: rgba(255, 215, 0, 0.15); color: var(--gold); }
+    .winner-reward.silver { background: rgba(192, 192, 192, 0.15); color: var(--silver); }
+    .winner-reward.bronze { background: rgba(205, 127, 50, 0.15); color: var(--bronze); }
 
     /* Stats Cards */
     .stats-grid {
@@ -202,26 +209,16 @@
       padding: 24px;
       transition: transform 0.2s, border-color 0.2s;
     }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary);
-    }
+    .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
 
     .stat-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 12px;
     }
 
     .stat-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
       font-size: 20px;
     }
 
@@ -232,66 +229,35 @@
     .stat-icon.orange { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
     .stat-icon.red { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-    .stat-value {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
+    .stat-value { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+    .stat-label { color: var(--text-muted); font-size: 14px; }
 
-    .stat-label {
-      color: var(--text-muted);
-      font-size: 14px;
-    }
-
-    /* Section Headers */
     .section-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 20px;
     }
 
     .section-title {
-      font-size: 20px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 20px; font-weight: 700;
+      display: flex; align-items: center; gap: 10px;
     }
-
-    .section-title i {
-      color: var(--primary);
-    }
+    .section-title i { color: var(--primary); }
 
     .refresh-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text-muted); padding: 8px 16px;
+      border-radius: 8px; cursor: pointer; font-size: 14px;
+      display: flex; align-items: center; gap: 8px;
       transition: all 0.2s;
     }
-
-    .refresh-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    .refresh-btn.spinning i {
-      animation: spin 1s linear infinite;
-    }
+    .refresh-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .refresh-btn.spinning i { animation: spin 1s linear infinite; }
 
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
 
-    /* Cards */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -302,46 +268,28 @@
     .card-header {
       padding: 20px 24px;
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
     }
 
-    .card-title {
-      font-size: 16px;
-      font-weight: 600;
-    }
+    .card-title { font-size: 16px; font-weight: 600; }
 
     .badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
     }
-
     .badge.pending { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
     .badge.sent { background: rgba(34, 197, 94, 0.15); color: var(--success); }
     .badge.rejected { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
-    /* Tables */
-    .table-container {
-      overflow-x: auto;
-    }
+    .table-container { overflow-x: auto; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
 
     th {
-      text-align: left;
-      padding: 14px 24px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      background: rgba(0,0,0,0.2);
+      text-align: left; padding: 14px 24px;
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text-muted); background: rgba(0,0,0,0.2);
       border-bottom: 1px solid var(--border);
     }
 
@@ -351,123 +299,68 @@
       font-size: 14px;
     }
 
-    tr:hover td {
-      background: var(--card-hover);
-    }
+    tr:hover td { background: var(--card-hover); }
 
     .user-cell {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: flex; align-items: center; gap: 12px;
     }
 
     .user-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+      width: 36px; height: 36px; border-radius: 50%;
       background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: white;
     }
 
-    .user-info {
-      display: flex;
-      flex-direction: column;
-    }
+    .user-info { display: flex; flex-direction: column; }
+    .user-name { font-weight: 600; }
+    .user-email { font-size: 12px; color: var(--text-muted); }
 
-    .user-name {
-      font-weight: 600;
-    }
-
-    .user-email {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .rank-medal {
-      font-size: 20px;
-    }
+    .rank-medal { font-size: 20px; }
 
     .points-badge {
       background: rgba(99, 102, 241, 0.15);
       color: var(--primary);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      font-size: 13px;
+      padding: 4px 12px; border-radius: 20px;
+      font-weight: 600; font-size: 13px;
     }
 
     .network-badge {
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
+      padding: 4px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 600;
     }
-
     .network-badge.mtn { background: rgba(255, 204, 0, 0.15); color: #ffcc00; }
     .network-badge.glo { background: rgba(0, 153, 51, 0.15); color: #00ff66; }
     .network-badge.airtel { background: rgba(255, 0, 0, 0.15); color: #ff3333; }
     .network-badge.ninemobile { background: rgba(0, 102, 204, 0.15); color: #3399ff; }
 
-    .reward-type {
-      font-weight: 700;
-      color: var(--gold);
-    }
+    .reward-type { font-weight: 700; color: var(--gold); }
 
-    /* Action Buttons */
-    .action-btns {
-      display: flex;
-      gap: 8px;
-    }
+    .action-btns { display: flex; gap: 8px; }
 
     .btn-sm {
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
+      padding: 6px 12px; border-radius: 6px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; border: none;
       transition: all 0.2s;
     }
 
     .btn-success {
-      background: rgba(34, 197, 94, 0.15);
-      color: var(--success);
+      background: rgba(34, 197, 94, 0.15); color: var(--success);
     }
-
-    .btn-success:hover {
-      background: var(--success);
-      color: white;
-    }
+    .btn-success:hover { background: var(--success); color: white; }
 
     .btn-danger {
-      background: rgba(239, 68, 68, 0.15);
-      color: var(--danger);
+      background: rgba(239, 68, 68, 0.15); color: var(--danger);
     }
+    .btn-danger:hover { background: var(--danger); color: white; }
 
-    .btn-danger:hover {
-      background: var(--danger);
-      color: white;
-    }
-
-    /* Empty State */
     .empty-state {
-      text-align: center;
-      padding: 48px 24px;
+      text-align: center; padding: 48px 24px;
       color: var(--text-muted);
     }
+    .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
 
-    .empty-state i {
-      font-size: 48px;
-      margin-bottom: 16px;
-      opacity: 0.5;
-    }
-
-    /* Two Column Layout */
     .two-col {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -476,150 +369,82 @@
     }
 
     @media (max-width: 1024px) {
-      .two-col {
-        grid-template-columns: 1fr;
-      }
+      .two-col { grid-template-columns: 1fr; }
     }
 
-    /* Loading */
     .loading-row td {
-      text-align: center;
-      padding: 32px;
+      text-align: center; padding: 32px;
       color: var(--text-muted);
     }
+    .loading-row i { animation: spin 1s linear infinite; margin-right: 8px; }
 
-    .loading-row i {
-      animation: spin 1s linear infinite;
-      margin-right: 8px;
-    }
+    .date-cell { font-size: 13px; color: var(--text-muted); }
 
-    /* Date */
-    .date-cell {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    /* Tabs */
     .tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 24px;
-      background: var(--card);
-      padding: 6px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
+      display: flex; gap: 4px; margin-bottom: 24px;
+      background: var(--card); padding: 6px;
+      border-radius: 10px; border: 1px solid var(--border);
       width: fit-content;
     }
 
     .tab {
-      padding: 8px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-muted);
-      transition: all 0.2s;
-      border: none;
-      background: transparent;
+      padding: 8px 20px; border-radius: 8px;
+      cursor: pointer; font-size: 14px; font-weight: 500;
+      color: var(--text-muted); transition: all 0.2s;
+      border: none; background: transparent;
     }
+    .tab.active { background: var(--primary); color: white; }
+    .tab:hover:not(.active) { color: var(--text); }
 
-    .tab.active {
-      background: var(--primary);
-      color: white;
-    }
-
-    .tab:hover:not(.active) {
-      color: var(--text);
-    }
-
-    /* Toast */
     .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.4);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 1000;
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s; z-index: 1000;
     }
-
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-
+    .toast.show { transform: translateY(0); opacity: 1; }
     .toast.success { border-left: 4px solid var(--success); }
     .toast.error { border-left: 4px solid var(--danger); }
-
-    .toast i {
-      font-size: 20px;
-    }
-
+    .toast i { font-size: 20px; }
     .toast.success i { color: var(--success); }
     .toast.error i { color: var(--danger); }
 
-    /* Filter */
     .filter-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
+      display: flex; gap: 12px;
+      margin-bottom: 20px; flex-wrap: wrap;
     }
 
     .filter-select {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-      cursor: pointer;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--text); padding: 8px 14px;
+      border-radius: 8px; font-size: 14px;
+      outline: none; cursor: pointer;
     }
+    .filter-select:focus { border-color: var(--primary); }
 
-    .filter-select:focus {
-      border-color: var(--primary);
-    }
-
-    /* Debug Console */
     .debug-panel {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 24px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; margin-top: 24px;
     }
-
     .debug-panel h3 {
-      font-size: 16px;
-      margin-bottom: 12px;
+      font-size: 16px; margin-bottom: 12px;
       color: var(--text-muted);
     }
-
     .debug-log {
-      background: rgba(0,0,0,0.3);
-      border-radius: 8px;
-      padding: 12px;
-      font-family: monospace;
-      font-size: 12px;
-      color: var(--text-muted);
-      max-height: 200px;
-      overflow-y: auto;
+      background: rgba(0,0,0,0.3); border-radius: 8px;
+      padding: 12px; font-family: monospace;
+      font-size: 12px; color: var(--text-muted);
+      max-height: 200px; overflow-y: auto;
       white-space: pre-wrap;
     }
-
     .debug-log .error { color: var(--danger); }
     .debug-log .success { color: var(--success); }
     .debug-log .info { color: var(--info); }
   </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -653,6 +478,52 @@
     </nav>
 
     <div class="container">
+
+      <!-- WEEKLY WINNERS (NEW) -->
+      <div class="winners-section">
+        <div class="section-header">
+          <h2 class="section-title"><i class="fas fa-crown"></i> This Week's Top 3 Winners</h2>
+          <button class="refresh-btn" onclick="loadWinners()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+        <div id="winners-grid" class="winners-grid">
+          <div class="winner-card gold">
+            <div class="winner-rank">🥇</div>
+            <div class="winner-name">Loading...</div>
+            <div class="winner-email">-</div>
+            <div class="winner-details">
+              <div class="winner-detail"><i class="fas fa-phone"></i> -</div>
+              <div class="winner-detail"><i class="fas fa-signal"></i> -</div>
+            </div>
+            <div class="winner-points">-</div>
+            <div class="winner-reward gold">2GB Data</div>
+          </div>
+          <div class="winner-card silver">
+            <div class="winner-rank">🥈</div>
+            <div class="winner-name">Loading...</div>
+            <div class="winner-email">-</div>
+            <div class="winner-details">
+              <div class="winner-detail"><i class="fas fa-phone"></i> -</div>
+              <div class="winner-detail"><i class="fas fa-signal"></i> -</div>
+            </div>
+            <div class="winner-points">-</div>
+            <div class="winner-reward silver">1GB Data</div>
+          </div>
+          <div class="winner-card bronze">
+            <div class="winner-rank">🥉</div>
+            <div class="winner-name">Loading...</div>
+            <div class="winner-email">-</div>
+            <div class="winner-details">
+              <div class="winner-detail"><i class="fas fa-phone"></i> -</div>
+              <div class="winner-detail"><i class="fas fa-signal"></i> -</div>
+            </div>
+            <div class="winner-points">-</div>
+            <div class="winner-reward bronze">500MB Data</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Stats -->
       <div class="stats-grid">
         <div class="stat-card">
@@ -743,12 +614,14 @@
                   <th>Rank</th>
                   <th>User</th>
                   <th>Email</th>
+                  <th>Phone</th>
+                  <th>Network</th>
                   <th>Points</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody id="leaderboard-body">
-                <tr class="loading-row"><td colspan="5"><i class="fas fa-spinner"></i> Loading...</td></tr>
+                <tr class="loading-row"><td colspan="7"><i class="fas fa-spinner"></i> Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -760,6 +633,11 @@
         <div class="section-header">
           <h2 class="section-title"><i class="fas fa-gift"></i> Reward Claims</h2>
           <div style="display:flex;gap:12px">
+            <select class="filter-select" id="claim-type-filter" onchange="loadClaims()">
+              <option value="all">All Types</option>
+              <option value="milestone">Milestone</option>
+              <option value="weekly">Weekly Top 3</option>
+            </select>
             <select class="filter-select" id="claim-filter" onchange="loadClaims()">
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -777,7 +655,7 @@
               <thead>
                 <tr>
                   <th>User</th>
-                  <th>Rank</th>
+                  <th>Type</th>
                   <th>Reward</th>
                   <th>Network</th>
                   <th>Phone</th>
@@ -810,6 +688,8 @@
                 <tr>
                   <th>User</th>
                   <th>Email</th>
+                  <th>Phone</th>
+                  <th>Network</th>
                   <th>Quizzes</th>
                   <th>Best Score</th>
                   <th>Total Points</th>
@@ -818,7 +698,7 @@
                 </tr>
               </thead>
               <tbody id="users-body">
-                <tr class="loading-row"><td colspan="7"><i class="fas fa-spinner"></i> Loading...</td></tr>
+                <tr class="loading-row"><td colspan="9"><i class="fas fa-spinner"></i> Loading...</td></tr>
               </tbody>
             </table>
           </div>
@@ -890,10 +770,11 @@
     let currentTab = 'leaderboard';
     let isLoggingIn = false;
 
-    // EPOCH: May 5, 2026 (Monday) - Week 1 starts here
     const WEEK_EPOCH = new Date('2026-05-05T00:00:00');
 
-    // ========== DEBUG LOGGING ==========
+    // Cache for user details (phone/network lookup)
+    let userCache = {};
+
     function logDebug(msg, type = 'info') {
       const logEl = document.getElementById('debug-log');
       const timestamp = new Date().toLocaleTimeString();
@@ -907,7 +788,6 @@
       console.log(`[Admin] ${msg}`);
     }
 
-    // ========== AUTH ==========
     async function adminLogin() {
       if (isLoggingIn) return;
       isLoggingIn = true;
@@ -951,7 +831,6 @@
       loadAllData();
     }
 
-    // Check if already logged in
     auth.onAuthStateChanged(user => {
       if (user) {
         logDebug(`Auth state: logged in as ${user.email}`, 'success');
@@ -961,7 +840,6 @@
       }
     });
 
-    // ========== TABS ==========
     function switchTab(tab) {
       currentTab = tab;
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -975,7 +853,6 @@
       if (tab === 'quizzes') loadQuizzes();
     }
 
-    // ========== WEEK FUNCTIONS (FIXED) ==========
     function getCurrentWeekId() {
       const now = new Date();
       const diffTime = now - WEEK_EPOCH;
@@ -1012,40 +889,36 @@
       return end.toISOString().split('T')[0];
     }
 
-    // ========== LOAD ALL STATS ==========
     async function loadAllData() {
       loadStats();
+      loadWinners();
       loadLeaderboard();
     }
 
     async function loadStats() {
       logDebug('Loading stats...', 'info');
       try {
-        // Total users
-        logDebug('Fetching users collection...', 'info');
         const usersSnap = await db.collection('users').get();
         logDebug(`Users fetched: ${usersSnap.size}`, 'success');
         document.getElementById('stat-users').textContent = usersSnap.size;
 
-        // Total quizzes
-        logDebug('Fetching quizAttempts collection...', 'info');
+        // Build user cache for phone/network lookup
+        usersSnap.forEach(doc => {
+          userCache[doc.id] = doc.data();
+        });
+
         const quizzesSnap = await db.collection('quizAttempts').get();
         logDebug(`Quizzes fetched: ${quizzesSnap.size}`, 'success');
         document.getElementById('stat-quizzes').textContent = quizzesSnap.size;
 
-        // Total claims
-        logDebug('Fetching rewardClaims collection...', 'info');
         const claimsSnap = await db.collection('rewardClaims').get();
         logDebug(`Claims fetched: ${claimsSnap.size}`, 'success');
         document.getElementById('stat-claims').textContent = claimsSnap.size;
 
-        // Pending claims
-        logDebug('Fetching pending claims...', 'info');
         const pendingSnap = await db.collection('rewardClaims').where('status', '==', 'pending').get();
         logDebug(`Pending claims: ${pendingSnap.size}`, 'success');
         document.getElementById('stat-pending').textContent = pendingSnap.size;
 
-        // Average score
         let totalScore = 0;
         let count = 0;
         quizzesSnap.forEach(doc => {
@@ -1059,7 +932,6 @@
         logDebug(`Average score calculated: ${avg}% (${count} attempts)`, 'info');
         document.getElementById('stat-avg').textContent = avg + '%';
 
-        // Current week (FIXED)
         const weekNum = getDisplayWeek();
         logDebug(`Current week: W${weekNum}`, 'info');
         document.getElementById('stat-week').textContent = 'W' + weekNum;
@@ -1070,10 +942,71 @@
       }
     }
 
+    // ========== WEEKLY WINNERS (NEW) ==========
+    async function loadWinners() {
+      const grid = document.getElementById('winners-grid');
+      if (!grid) return;
+
+      try {
+        const weekId = getCurrentWeekId();
+        logDebug(`Loading winners for ${weekId}...`, 'info');
+        const doc = await db.collection('leaderboard').doc(weekId).get();
+
+        if (!doc.exists) {
+          logDebug(`No leaderboard data for ${weekId}`, 'info');
+          grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-crown"></i><br>No leaderboard data for this week yet</div>';
+          return;
+        }
+
+        const entries = doc.data().entries || [];
+        logDebug(`Winners entries: ${entries.length}`, 'success');
+
+        if (entries.length === 0) {
+          grid.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;"><i class="fas fa-crown"></i><br>No entries yet</div>';
+          return;
+        }
+
+        const top3 = entries.slice(0, 3);
+        const rewards = ['2GB Data', '1GB Data', '500MB Data'];
+        const classes = ['gold', 'silver', 'bronze'];
+        const medals = ['🥇', '🥈', '🥉'];
+
+        let html = '';
+        for (let i = 0; i < 3; i++) {
+          const entry = top3[i];
+          const userData = entry ? (userCache[entry.userId] || {}) : {};
+          const name = entry ? (entry.name || 'Unknown') : 'No Winner';
+          const email = userData.email || '-';
+          const phone = userData.phoneNumber || '-';
+          const network = userData.networkProvider || '-';
+          const points = entry ? entry.points.toLocaleString() : '-';
+
+          html += `
+            <div class="winner-card ${classes[i]}">
+              <div class="winner-rank">${medals[i]}</div>
+              <div class="winner-name">${name}</div>
+              <div class="winner-email">${email}</div>
+              <div class="winner-details">
+                <div class="winner-detail"><i class="fas fa-phone"></i> ${phone}</div>
+                <div class="winner-detail"><i class="fas fa-signal"></i> ${network}</div>
+              </div>
+              <div class="winner-points">${points} pts</div>
+              <div class="winner-reward ${classes[i]}">${rewards[i]}</div>
+            </div>
+          `;
+        }
+
+        grid.innerHTML = html;
+      } catch (err) {
+        logDebug(`Winners error: ${err.message}`, 'error');
+        console.error('Winners error:', err);
+      }
+    }
+
     // ========== LEADERBOARD ==========
     async function loadLeaderboard() {
       const tbody = document.getElementById('leaderboard-body');
-      tbody.innerHTML = '<tr class="loading-row"><td colspan="5"><i class="fas fa-spinner"></i> Loading...</td></tr>';
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fas fa-spinner"></i> Loading...</td></tr>';
 
       try {
         const weekId = getCurrentWeekId();
@@ -1082,7 +1015,7 @@
 
         if (!doc.exists) {
           logDebug(`No leaderboard data for ${weekId}`, 'info');
-          tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-trophy"></i><br>No leaderboard data for this week</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-trophy"></i><br>No leaderboard data for this week</td></tr>';
           return;
         }
 
@@ -1090,7 +1023,7 @@
         logDebug(`Leaderboard entries: ${entries.length}`, 'success');
 
         if (entries.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-trophy"></i><br>No entries yet</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-trophy"></i><br>No entries yet</td></tr>';
           return;
         }
 
@@ -1099,6 +1032,10 @@
           const rank = index + 1;
           const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '#' + rank;
           const status = rank <= 3 ? '<span class="badge" style="background:rgba(255,215,0,0.15);color:var(--gold)">🏆 Winner</span>' : '<span class="badge" style="background:rgba(148,163,184,0.15);color:var(--text-muted)">Participant</span>';
+          const userData = userCache[entry.userId] || {};
+          const phone = userData.phoneNumber || '-';
+          const network = userData.networkProvider || '-';
+          const networkClass = network.toLowerCase().replace('9mobile', 'ninemobile');
 
           html += `<tr>
             <td><span class="rank-medal">${medal}</span></td>
@@ -1110,33 +1047,40 @@
                 </div>
               </div>
             </td>
-            <td class="user-email">${entry.userId || '-'}</td>
+            <td class="user-email">${userData.email || entry.userId || '-'}</td>
+            <td>${phone}</td>
+            <td><span class="network-badge ${networkClass}">${network}</span></td>
             <td><span class="points-badge">${entry.points.toLocaleString()} pts</span></td>
             <td>${status}</td>
           </tr>`;
         });
 
-        tbody.innerHTML = html;
+        if (html === '') {
+          tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-gift"></i><br>No claims match the selected filters</td></tr>';
+        } else {
+          tbody.innerHTML = html;
+        }
       } catch (err) {
         logDebug(`Leaderboard error: ${err.message}`, 'error');
         console.error('Leaderboard error:', err);
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading data</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading data</td></tr>';
       }
     }
 
     // ========== REWARD CLAIMS ==========
     async function loadClaims() {
       const tbody = document.getElementById('claims-body');
-      const filter = document.getElementById('claim-filter').value;
+      const statusFilter = document.getElementById('claim-filter').value;
+      const typeFilter = document.getElementById('claim-type-filter').value;
       tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><i class="fas fa-spinner"></i> Loading...</td></tr>';
 
       try {
         let query = db.collection('rewardClaims').orderBy('claimedAt', 'desc');
-        if (filter !== 'all') {
-          query = query.where('status', '==', filter);
+        if (statusFilter !== 'all') {
+          query = query.where('status', '==', statusFilter);
         }
 
-        logDebug(`Loading claims with filter: ${filter}...`, 'info');
+        logDebug(`Loading claims with status: ${statusFilter}, type: ${typeFilter}...`, 'info');
         const snap = await query.get();
         logDebug(`Claims loaded: ${snap.size}`, 'success');
 
@@ -1188,7 +1132,11 @@
           </tr>`;
         });
 
-        tbody.innerHTML = html;
+        if (html === '') {
+          tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-gift"></i><br>No claims match the selected filters</td></tr>';
+        } else {
+          tbody.innerHTML = html;
+        }
       } catch (err) {
         logDebug(`Claims error: ${err.message}`, 'error');
         console.error('Claims error:', err);
@@ -1199,7 +1147,6 @@
     async function updateClaimStatus(claimId, status) {
       logDebug(`Updating claim ${claimId} to status: ${status}...`, 'info');
       try {
-        // Check if document exists first
         const docRef = db.collection('rewardClaims').doc(claimId);
         const docSnap = await docRef.get();
 
@@ -1230,7 +1177,7 @@
     // ========== USERS ==========
     async function loadUsers() {
       const tbody = document.getElementById('users-body');
-      tbody.innerHTML = '<tr class="loading-row"><td colspan="7"><i class="fas fa-spinner"></i> Loading...</td></tr>';
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="9"><i class="fas fa-spinner"></i> Loading...</td></tr>';
 
       try {
         logDebug('Loading users...', 'info');
@@ -1238,7 +1185,7 @@
         logDebug(`Users loaded: ${snap.size}`, 'success');
 
         if (snap.empty) {
-          tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-users"></i><br>No users registered</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-users"></i><br>No users registered</td></tr>';
           return;
         }
 
@@ -1246,6 +1193,7 @@
         snap.forEach(doc => {
           const data = doc.data();
           const joined = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : '-';
+          const networkClass = (data.networkProvider || '').toLowerCase().replace('9mobile', 'ninemobile');
 
           html += `<tr>
             <td>
@@ -1257,6 +1205,8 @@
               </div>
             </td>
             <td class="user-email">${data.email || '-'}</td>
+            <td>${data.phoneNumber || '-'}</td>
+            <td><span class="network-badge ${networkClass}">${data.networkProvider || '-'}</span></td>
             <td>${data.quizzesTaken || 0}</td>
             <td>${data.bestScore || 0}%</td>
             <td><span class="points-badge">${(data.totalPoints || 0).toLocaleString()} pts</span></td>
@@ -1265,11 +1215,15 @@
           </tr>`;
         });
 
-        tbody.innerHTML = html;
+        if (html === '') {
+          tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-gift"></i><br>No claims match the selected filters</td></tr>';
+        } else {
+          tbody.innerHTML = html;
+        }
       } catch (err) {
         logDebug(`Users error: ${err.message}`, 'error');
         console.error('Users error:', err);
-        tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading users</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-exclamation-circle"></i><br>Error loading users</td></tr>';
       }
     }
 
@@ -1303,7 +1257,7 @@
                 </div>
               </div>
             </td>
-            <td style="color:${scoreColor};font-weight:700">${data.score || 0} / ${data.totalQuestions || 100}</td>
+            <td style="color:${scoreColor};font-weight:700">${data.score || 0} / ${data.totalQuestions || 50}</td>
             <td style="color:${scoreColor};font-weight:700">${data.percentage || 0}%</td>
             <td><span class="points-badge">+${(data.points || 0).toLocaleString()}</span></td>
             <td>${Math.floor((data.timeLeft || 0) / 60)}:${((data.timeLeft || 0) % 60).toString().padStart(2,'0')}</td>
@@ -1311,7 +1265,11 @@
           </tr>`;
         });
 
-        tbody.innerHTML = html;
+        if (html === '') {
+          tbody.innerHTML = '<tr><td colspan="9" class="empty-state"><i class="fas fa-gift"></i><br>No claims match the selected filters</td></tr>';
+        } else {
+          tbody.innerHTML = html;
+        }
       } catch (err) {
         logDebug(`Quizzes error: ${err.message}`, 'error');
         console.error('Quizzes error:', err);
@@ -1330,7 +1288,6 @@
       setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // Enter key on login
     document.addEventListener('keydown', e => {
       if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
         adminLogin();
