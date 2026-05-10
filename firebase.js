@@ -404,6 +404,9 @@ async function updateUIForLoggedInUser(user) {
 
   updateWeekBadges();
 
+  // Always show a loading state first
+  showQuizAttemptsLeft(null, true);
+
   // Check if profile is complete
   try {
     const userDoc = await db.collection('users').doc(user.uid).get();
@@ -412,19 +415,23 @@ async function updateUIForLoggedInUser(user) {
     if (!userData.phoneNumber || !userData.networkProvider) {
       showRequiredProfileModal();
       showToast('📱 Please complete your profile to continue', 'info');
+      // Hide the attempts indicator while profile is incomplete
+      showQuizAttemptsLeft(0);
     } else {
-      // Profile complete — check daily limit normally
-      setTimeout(async () => {
-        const limitCheck = await checkDailyQuizLimit();
-        if (limitCheck.blocked) {
-          showDailyLimitMessage(limitCheck);
-        } else {
-          showQuizAttemptsLeft(limitCheck.remaining);
-        }
-      }, 500);
+      // Profile complete — check daily limit immediately
+      const limitCheck = await checkDailyQuizLimit();
+      if (limitCheck.blocked && limitCheck.reason !== 'check_failed') {
+        showDailyLimitMessage(limitCheck);
+      } else if (limitCheck.blocked && limitCheck.reason === 'check_failed') {
+        // Index missing or error — show retry message but DON'T block the button
+        showQuizAttemptsLeft(null, true, true);
+      } else {
+        showQuizAttemptsLeft(limitCheck.remaining);
+      }
     }
   } catch (err) {
     console.error('Profile check error:', err);
+    showQuizAttemptsLeft(2); // Default to showing 2 attempts if check fails
   }
 
   setTimeout(() => checkNotificationStatus(), 1000);
@@ -912,15 +919,29 @@ function showDailyLimitMessage(timeData) {
 
 let countdownInterval = null;
 
-function showQuizAttemptsLeft(attempts) {
+function showQuizAttemptsLeft(attempts, isLoading, isError) {
   const el = document.getElementById('quiz-attempts-left');
   if (!el) return;
+
+  if (isLoading) {
+    el.textContent = isError 
+      ? '⚠️ Unable to check daily limit. Tap Begin Test to retry.'
+      : '🎯 Checking daily limit...';
+    el.classList.remove('hidden');
+    el.style.background = isError ? '#fee2e2' : '#f0f9ff';
+    el.style.borderColor = isError ? '#fca5a5' : '#bae6fd';
+    el.style.color = isError ? '#991b1b' : '#0369a1';
+    return;
+  }
 
   const safeAttempts = typeof attempts === 'number' ? attempts : 0;
 
   if (safeAttempts > 0) {
     el.textContent = '🎯 ' + safeAttempts + ' of 2 quiz attempts left today';
     el.classList.remove('hidden');
+    el.style.background = '#f0f9ff';
+    el.style.borderColor = '#bae6fd';
+    el.style.color = '#0369a1';
   } else {
     el.classList.add('hidden');
   }
@@ -982,6 +1003,17 @@ async function handleBeginQuiz() {
   const limitCheck = await checkDailyQuizLimit();
 
   if (limitCheck.blocked) {
+    if (limitCheck.reason === 'check_failed') {
+      // If check failed, let them try anyway but warn them
+      showToast('⚠️ Could not verify daily limit. Proceeding...', 'info');
+      showScreen('quiz');
+      if (typeof window.startQuiz === 'function') window.startQuiz();
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '📝 Begin Test';
+      }
+      return;
+    }
     showDailyLimitMessage(limitCheck);
     if (btn) {
       btn.disabled = false;
