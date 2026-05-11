@@ -759,27 +759,107 @@ function updateRewardProgress(points) {
   }
 }
 
-function updateRewardTiers(points) {
+function updateRewardTiers(points, claimedMilestones) {
   const tiers = [
-    { threshold: 5000, reward: '1GB', id: 'tier-5000' },
-    { threshold: 10000, reward: '2.5GB', id: 'tier-10000' },
-    { threshold: 20000, reward: '5GB', id: 'tier-20000' }
+    { threshold: 5000, reward: '1GB', id: 'tier-5000', dataReward: '1GB Data' },
+    { threshold: 10000, reward: '2.5GB', id: 'tier-10000', dataReward: '2.5GB Data' },
+    { threshold: 20000, reward: '5GB', id: 'tier-20000', dataReward: '5GB Data' }
   ];
+
+  const claimed = claimedMilestones || [];
 
   tiers.forEach(tier => {
     const el = document.getElementById(tier.id);
-    if (el) {
-      if (points >= tier.threshold) {
-        el.textContent = 'Unlocked ✅ (' + tier.reward + ')';
-        el.classList.add('unlocked');
-        el.parentElement.classList.add('tier-unlocked');
-      } else {
-        const remaining = tier.threshold - points;
-        el.textContent = remaining.toLocaleString() + ' pts to go 🔒 (' + tier.reward + ')';
-      }
+    if (!el) return;
+
+    const isUnlocked = points >= tier.threshold;
+    const isClaimed = claimed.includes(tier.threshold);
+
+    if (isClaimed) {
+      el.innerHTML = 'Claimed ✓ (' + tier.reward + ')';
+      el.classList.add('unlocked');
+      if (el.parentElement) el.parentElement.classList.add('tier-unlocked');
+      el.style.background = '#dcfce7';
+      el.style.color = '#166534';
+    } else if (isUnlocked) {
+      el.innerHTML = '<button onclick="claimMilestoneReward(' + tier.threshold + ', '' + tier.dataReward + '')" class="primary-btn" style="padding: 6px 14px; font-size: 12px; border-radius: 8px;">Claim Reward</button>';
+      el.classList.add('unlocked');
+      if (el.parentElement) el.parentElement.classList.add('tier-unlocked');
+      el.style.background = 'transparent';
+    } else {
+      const remaining = tier.threshold - points;
+      el.textContent = remaining.toLocaleString() + ' pts to go 🔒 (' + tier.reward + ')';
+      el.classList.remove('unlocked');
+      if (el.parentElement) el.parentElement.classList.remove('tier-unlocked');
+      el.style.background = '#f1f5f9';
+      el.style.color = '#64748b';
     }
   });
 }
+
+window.updateRewardTiers = updateRewardTiers;
+
+async function claimMilestoneReward(threshold, rewardType) {
+  const user = auth.currentUser;
+  if (!user) {
+    showToast('Please login to claim your reward', 'error');
+    return;
+  }
+
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Claiming...';
+
+  try {
+    const userRef = db.collection('users').doc(user.uid);
+    const userDoc = await userRef.get();
+    const userData = userDoc.data() || {};
+
+    const claimed = userData.claimedMilestones || [];
+    if (claimed.includes(threshold)) {
+      showToast('You have already claimed this reward!', 'info');
+      btn.disabled = false;
+      btn.textContent = 'Claim Reward';
+      return;
+    }
+
+    if (!userData.phoneNumber || !userData.networkProvider) {
+      showToast('Please complete your profile (phone + network) before claiming', 'error');
+      navigateTo('profile');
+      btn.disabled = false;
+      btn.textContent = 'Claim Reward';
+      return;
+    }
+
+    await db.collection('rewardClaims').add({
+      userId: user.uid,
+      userName: user.displayName || userData.name || 'User',
+      email: userData.email || user.email,
+      phone: userData.phoneNumber,
+      network: userData.networkProvider,
+      rewardType: rewardType,
+      tier: threshold,
+      type: 'milestone',
+      status: 'pending',
+      week: getCurrentWeekId(),
+      claimedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    await userRef.update({
+      claimedMilestones: firebase.firestore.FieldValue.arrayUnion(threshold)
+    });
+
+    showToast('✅ Reward claimed! Admin will send it shortly.', 'success');
+    loadUserDashboard();
+  } catch (err) {
+    console.error('Claim error:', err);
+    showToast('Error claiming reward. Please try again.', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Claim Reward';
+  }
+}
+
+window.claimMilestoneReward = claimMilestoneReward;
 
 // ============================================
 // UTILITY FUNCTIONS
