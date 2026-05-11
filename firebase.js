@@ -11,6 +11,73 @@ let currentScreen = 'landing';
 let isProcessingAuth = false;
 
 // ============================================
+// WEEK CONFIGURATION - MONDAY 9AM WAT (08:00 UTC)
+// ============================================
+
+// Week starts every MONDAY at 9:00 AM Nigeria time (WAT = UTC+1, so 08:00 UTC)
+// First epoch: Monday, May 4, 2026 at 08:00 UTC (09:00 WAT)
+const WEEK_EPOCH = new Date('2026-05-04T08:00:00Z');
+
+function getCurrentWeekId() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const diffMs = Math.floor(diffTime);
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekNumber = Math.floor(diffMs / msPerWeek) + 1;
+  return '2026-W' + weekNumber;
+}
+
+function getWeekStart() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekNumber = Math.floor(diffTime / msPerWeek);
+  const start = new Date(WEEK_EPOCH);
+  start.setTime(start.getTime() + (weekNumber * msPerWeek));
+  return start.toISOString();
+}
+
+function getWeekEnd() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekNumber = Math.floor(diffTime / msPerWeek);
+  const end = new Date(WEEK_EPOCH);
+  end.setTime(end.getTime() + ((weekNumber + 1) * msPerWeek) - 1);
+  return end.toISOString();
+}
+
+function getDisplayWeek() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekNumber = Math.floor(diffTime / msPerWeek) + 1;
+  return weekNumber;
+}
+
+// Get next Monday 9AM WAT
+function getNextWeekStart() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekNumber = Math.floor(diffTime / msPerWeek);
+  return new Date(WEEK_EPOCH.getTime() + ((weekNumber + 1) * msPerWeek));
+}
+
+// Format time until next week
+function getTimeUntilNextWeek() {
+  const now = new Date();
+  const nextWeek = getNextWeekStart();
+  const diff = nextWeek - now;
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+  return { days, hours, minutes, totalMs: diff, nextWeek };
+}
+
+// ============================================
 // TOAST UTILITY
 // ============================================
 
@@ -213,7 +280,7 @@ async function handleRegister(e) {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    showAuthSuccess('✅ Account created successfully!');
+    showAuthSuccess('Account created successfully!');
     setTimeout(() => {
       hideAuthModal();
       updateUIForLoggedInUser(userCred.user);
@@ -252,7 +319,7 @@ async function handleLogin(e) {
 
   try {
     const userCred = await auth.signInWithEmailAndPassword(email, password);
-    showAuthSuccess('✅ Login successful!');
+    showAuthSuccess('Login successful!');
     setTimeout(() => {
       hideAuthModal();
       updateUIForLoggedInUser(userCred.user);
@@ -303,7 +370,7 @@ async function saveProfileContact() {
       networkProvider: network,
       profileComplete: true
     });
-    showToast('✅ Contact details saved!', 'success');
+    showToast('Contact details saved!', 'success');
     loadProfile();
   } catch (err) {
     console.error('Save contact error:', err);
@@ -341,7 +408,7 @@ async function saveRequiredContact() {
     const modal = document.getElementById('profile-required-modal');
     if (modal) modal.classList.add('hidden');
 
-    showToast('✅ Profile complete! You can now take quizzes.', 'success');
+    showToast('Profile complete! You can now take quizzes.', 'success');
     loadProfile();
   } catch (err) {
     console.error('Save required contact error:', err);
@@ -403,6 +470,7 @@ async function updateUIForLoggedInUser(user) {
   if (rewardsUserName) rewardsUserName.textContent = user.displayName || user.email;
 
   updateWeekBadges();
+  checkNewWeekBanner();
 
   // Always show a loading state first
   showQuizAttemptsLeft(null, true);
@@ -444,6 +512,177 @@ function updateWeekBadges() {
     if (badge) badge.textContent = 'Week ' + weekNum;
   });
 }
+
+// ============================================
+// NEW WEEK BANNER & NOTIFICATIONS
+// ============================================
+
+function checkNewWeekBanner() {
+  const lastSeenWeek = localStorage.getItem('lastSeenWeek');
+  const currentWeek = getCurrentWeekId();
+
+  if (lastSeenWeek !== currentWeek) {
+    // New week detected! Show banner
+    showNewWeekBanner(currentWeek);
+    localStorage.setItem('lastSeenWeek', currentWeek);
+
+    // Send push notification if enabled
+    if (Notification.permission === 'granted') {
+      showBrowserNotification(
+        '🎉 New Week Started!',
+        `Week ${getDisplayWeek()} has begun! The leaderboard has been reset. Good luck!`
+      );
+    }
+  }
+}
+
+function showNewWeekBanner(weekId) {
+  // Remove existing banner if any
+  const existing = document.getElementById('new-week-banner');
+  if (existing) existing.remove();
+
+  const banner = document.createElement('div');
+  banner.id = 'new-week-banner';
+  banner.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10000;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    padding: 16px 24px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+    animation: slideDown 0.5s ease;
+  `;
+
+  const weekNum = getDisplayWeek();
+  const timeLeft = getTimeUntilNextWeek();
+
+  banner.innerHTML = `
+    <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+      <span>🎉</span>
+      <span>Welcome to <strong>Week ${weekNum}</strong>! Leaderboard reset. ${timeLeft.days}d ${timeLeft.hours}h until next reset.</span>
+      <button onclick="document.getElementById('new-week-banner').remove()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500;">Dismiss</button>
+    </div>
+  `;
+
+  document.body.appendChild(banner);
+
+  // Auto-dismiss after 10 seconds
+  setTimeout(() => {
+    if (banner.parentNode) banner.remove();
+  }, 10000);
+}
+
+// Add slideDown animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+  }
+`;
+document.head.appendChild(style);
+
+// ============================================
+// WEEKLY AUTO-ARCHIVE & REWARD CLAIMS
+// ============================================
+
+/**
+ * Archives top 3 winners and auto-creates reward claims
+ * This should be called by admin or a scheduled function at week end
+ */
+async function archiveWeeklyWinners() {
+  const previousWeekId = getPreviousWeekId();
+
+  try {
+    const doc = await db.collection('leaderboard').doc(previousWeekId).get();
+    if (!doc.exists) {
+      console.log('No leaderboard data for previous week');
+      return;
+    }
+
+    const entries = doc.data().entries || [];
+    const top3 = entries.slice(0, 3);
+    const rewards = ['2GB Data', '1GB Data', '500MB Data'];
+
+    if (top3.length === 0) {
+      console.log('No winners to archive');
+      return;
+    }
+
+    // Archive winners
+    await db.collection('weeklyWinners').doc(previousWeekId).set({
+      week: previousWeekId,
+      weekStart: doc.data().weekStart,
+      weekEnd: doc.data().weekEnd,
+      archivedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      winners: top3.map((entry, index) => ({
+        rank: index + 1,
+        userId: entry.userId,
+        name: entry.name,
+        points: entry.points,
+        reward: rewards[index]
+      }))
+    });
+
+    // Auto-create reward claims for top 3
+    for (let i = 0; i < top3.length; i++) {
+      const winner = top3[i];
+
+      // Get user details for phone/network
+      const userDoc = await db.collection('users').doc(winner.userId).get();
+      const userData = userDoc.exists ? userDoc.data() : {};
+
+      // Check if claim already exists
+      const existingClaim = await db.collection('rewardClaims')
+        .where('userId', '==', winner.userId)
+        .where('week', '==', previousWeekId)
+        .where('type', '==', 'weekly')
+        .get();
+
+      if (existingClaim.empty) {
+        await db.collection('rewardClaims').add({
+          userId: winner.userId,
+          userName: winner.name,
+          email: userData.email || '',
+          phone: userData.phoneNumber || '',
+          network: userData.networkProvider || '',
+          rewardType: rewards[i],
+          tier: null,
+          type: 'weekly',
+          status: 'pending',
+          week: previousWeekId,
+          rank: i + 1,
+          points: winner.points,
+          claimedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }
+    }
+
+    console.log(`Week ${previousWeekId} archived with ${top3.length} winners`);
+    showToast(`Week ${previousWeekId} archived! ${top3.length} winners auto-claimed.`, 'success');
+
+  } catch (err) {
+    console.error('Archive weekly winners error:', err);
+  }
+}
+
+function getPreviousWeekId() {
+  const now = new Date();
+  const diffTime = now - WEEK_EPOCH;
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const weekNumber = Math.floor(diffTime / msPerWeek); // Current week number (0-indexed)
+  const prevWeekNum = weekNumber; // Previous week number
+  return '2026-W' + prevWeekNum;
+}
+
+window.archiveWeeklyWinners = archiveWeeklyWinners;
 
 // ============================================
 // SEEN QUESTIONS TRACKER (7-day cooldown)
@@ -762,123 +1001,6 @@ function updateRewardProgress(points) {
   }
 }
 
-// ============================================
-// REWARD TIERS - FIXED WITH PROPER LIFECYCLE
-// ============================================
-
-/**
- * Fetches milestone rewards that admin has marked as 'sent' from rewardClaims collection
- */
-async function getSentMilestones(userId) {
-  try {
-    const snap = await db.collection('rewardClaims')
-      .where('userId', '==', userId)
-      .where('type', '==', 'milestone')
-      .where('status', '==', 'sent')
-      .get();
-    
-    const sent = [];
-    snap.forEach(doc => {
-      const data = doc.data();
-      if (data.tier) sent.push(data.tier);
-    });
-    return sent;
-  } catch (err) {
-    console.error('getSentMilestones error:', err);
-    return [];
-  }
-}
-
-window.getSentMilestones = getSentMilestones;
-
-/**
- * Updates reward tier display with proper lifecycle:
- * - LOCKED: Always visible, shows "X pts to go"
- * - UNLOCKED (not claimed): Shows "Claim Reward" button
- * - CLAIMED (pending): Shows "Claimed — Pending"
- * - SENT/PAID: HIDDEN completely
- */
-function updateRewardTiers(points, claimedMilestones, sentMilestones) {
-  const tiers = [
-    { threshold: 5000, reward: '1GB', id: 'tier-5000', dataReward: '1GB Data' },
-    { threshold: 10000, reward: '2.5GB', id: 'tier-10000', dataReward: '2.5GB Data' },
-    { threshold: 20000, reward: '5GB', id: 'tier-20000', dataReward: '5GB Data' }
-  ];
-
-  const claimed = claimedMilestones || [];
-  const sent = sentMilestones || [];
-
-  tiers.forEach(tier => {
-    const el = document.getElementById(tier.id);
-    const tierCard = el ? el.closest('.reward-tier') : null;
-    if (!el) return;
-
-    const isUnlocked = points >= tier.threshold;
-    const isClaimed = claimed.includes(tier.threshold);
-    const isSent = sent.includes(tier.threshold);
-
-    // HIDE completely if admin has sent/paid this reward
-    if (isSent) {
-      if (tierCard) tierCard.style.display = 'none';
-      return;
-    }
-
-    // Ensure card is visible for non-sent states
-    if (tierCard) tierCard.style.display = '';
-
-    if (isClaimed) {
-      // User claimed but admin hasn't sent yet — show pending status
-      el.innerHTML = 'Claimed — Pending ⏳ (' + tier.reward + ')';
-      el.classList.add('unlocked');
-      if (el.parentElement) el.parentElement.classList.add('tier-unlocked');
-      el.style.background = '#fef3c7';
-      el.style.color = '#92400e';
-      el.style.border = '1px solid #fbbf24';
-      el.style.padding = '8px 16px';
-      el.style.borderRadius = '10px';
-      el.style.fontSize = '13px';
-      el.style.fontWeight = '600';
-    } else if (isUnlocked) {
-      // Threshold reached, not claimed yet — show CLAIM BUTTON
-      // FIXED: Proper string escaping for onclick handler
-      const onclickAttr = "claimMilestoneReward(" + tier.threshold + ", '" + tier.dataReward.replace(/'/g, "\\'") + "')";
-      el.innerHTML = '<button onclick="' + onclickAttr + '" class="primary-btn claim-reward-btn" style="padding: 8px 18px; font-size: 13px; border-radius: 10px; font-weight: 600;">Claim ' + tier.reward + '</button>';
-      el.classList.add('unlocked');
-      if (el.parentElement) el.parentElement.classList.add('tier-unlocked');
-      el.style.background = 'transparent';
-    } else {
-      // Still locked — show remaining points
-      const remaining = tier.threshold - points;
-      el.textContent = remaining.toLocaleString() + ' pts to go 🔒 (' + tier.reward + ')';
-      el.classList.remove('unlocked');
-      if (el.parentElement) el.parentElement.classList.remove('tier-unlocked');
-      el.style.background = '#f1f5f9';
-      el.style.color = '#64748b';
-      el.style.border = 'none';
-      el.style.padding = '8px 16px';
-      el.style.borderRadius = '10px';
-      el.style.fontSize = '13px';
-      el.style.fontWeight = '600';
-    }
-  });
-}
-
-window.updateRewardTiers = updateRewardTiers;
-
-async function claimMilestoneReward(threshold, rewardType) {
-  const user = auth.currentUser;
-  if (!user) {
-    showToast('Please login to claim your reward', 'error');
-    return;
-  }
-
-  // Find the button that was clicked
-  const btn = document.querySelector('.claim-reward-btn');
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = 'Claiming...';
-  }
-
   try {
     const userRef = db.collection('users').doc(user.uid);
     const userDoc = await userRef.get();
@@ -922,8 +1044,8 @@ async function claimMilestoneReward(threshold, rewardType) {
       claimedMilestones: firebase.firestore.FieldValue.arrayUnion(threshold)
     });
 
-    showToast('✅ Reward claimed! Admin will send it shortly.', 'success');
-    
+    showToast('Reward claimed! Admin will send it shortly.', 'success');
+
     // Refresh dashboard to show pending state
     await loadUserDashboard();
   } catch (err) {
@@ -937,160 +1059,6 @@ async function claimMilestoneReward(threshold, rewardType) {
 }
 
 window.claimMilestoneReward = claimMilestoneReward;
-
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
-
-const WEEK_EPOCH = new Date('2026-05-05T00:00:00');
-
-function getCurrentWeekId() {
-  const now = new Date();
-  const diffTime = now - WEEK_EPOCH;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const weekNumber = Math.floor(diffDays / 7) + 1;
-  return '2026-W' + weekNumber;
-}
-
-function getWeekStart() {
-  const now = new Date();
-  const diffTime = now - WEEK_EPOCH;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const weekNumber = Math.floor(diffDays / 7);
-  const start = new Date(WEEK_EPOCH);
-  start.setDate(start.getDate() + (weekNumber * 7));
-  return start.toISOString().split('T')[0];
-}
-
-function getWeekEnd() {
-  const now = new Date();
-  const diffTime = now - WEEK_EPOCH;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const weekNumber = Math.floor(diffDays / 7);
-  const end = new Date(WEEK_EPOCH);
-  end.setDate(end.getDate() + (weekNumber * 7) + 6);
-  return end.toISOString().split('T')[0];
-}
-
-function getDisplayWeek() {
-  const now = new Date();
-  const diffTime = now - WEEK_EPOCH;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const weekNumber = Math.floor(diffDays / 7) + 1;
-  return weekNumber;
-}
-
-// ============================================
-// DAILY QUIZ LIMIT (FAIL-CLOSED)
-// ============================================
-
-async function checkDailyQuizLimit() {
-  const user = auth.currentUser;
-  if (!user) {
-    return { blocked: true, remaining: 0, takenToday: 0, reason: 'not_logged_in' };
-  }
-
-  try {
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrowStart = new Date(todayStart);
-    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
-
-    const snap = await db.collection('quizAttempts')
-      .where('userId', '==', user.uid)
-      .where('timestamp', '>=', todayStart)
-      .where('timestamp', '<', tomorrowStart)
-      .get();
-
-    const takenToday = snap.size;
-    const maxPerDay = 2;
-    const remaining = Math.max(0, maxPerDay - takenToday);
-
-    if (remaining <= 0) {
-      const msUntilMidnight = tomorrowStart - now;
-      return {
-        blocked: true,
-        nextQuizTime: tomorrowStart,
-        msUntilMidnight: msUntilMidnight,
-        takenToday: takenToday,
-        remaining: 0
-      };
-    }
-
-    return {
-      blocked: false,
-      takenToday: takenToday,
-      remaining: remaining
-    };
-  } catch (err) {
-    console.error('Daily limit check error:', err);
-    return {
-      blocked: true,
-      remaining: 0,
-      takenToday: 0,
-      reason: 'check_failed',
-      error: err.message
-    };
-  }
-}
-
-function showDailyLimitMessage(timeData) {
-  const welcomeSection = document.getElementById('welcome-section');
-  const actionsDiv = welcomeSection ? welcomeSection.querySelector('.welcome-actions') : null;
-  if (!actionsDiv) return;
-
-  if (timeData.reason === 'check_failed') {
-    actionsDiv.innerHTML = `
-      <div style="background: #fee2e2; border: 2px solid #fca5a5; border-radius: 16px; padding: 24px; text-align: center;">
-        <div style="font-size: 48px; margin-bottom: 12px;">🛡️</div>
-        <h3 style="color: #991b1b; margin-bottom: 8px;">Daily Limit Check Unavailable</h3>
-        <p style="color: #b91c1c; font-size: 14px; margin-bottom: 16px;">
-          We couldn't verify your daily quiz count. Please try again in a moment.
-        </p>
-        <button onclick="location.reload()" class="primary-btn" style="width: 100%;">Retry</button>
-      </div>
-    `;
-    return;
-  }
-
-  const hours = Math.floor(timeData.msUntilMidnight / (1000 * 60 * 60));
-  const minutes = Math.floor((timeData.msUntilMidnight % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((timeData.msUntilMidnight % (1000 * 60)) / 1000);
-
-  actionsDiv.innerHTML = `
-    <div style="background: #fef3c7; border: 2px solid #fbbf24; border-radius: 16px; padding: 24px; text-align: center;">
-      <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
-      <h3 style="color: #92400e; margin-bottom: 8px;">You've taken your 2 quizzes today!</h3>
-      <p style="color: #a16207; font-size: 14px; margin-bottom: 16px;">
-        You can take up to 2 quizzes per day. Come back tomorrow!
-      </p>
-      <div style="font-size: 32px; font-weight: 800; color: #92400e; font-variant-numeric: tabular-nums;" id="countdown-timer">
-        ${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}
-      </div>
-      <p style="font-size: 12px; color: #a16207; margin-top: 8px;">until next quiz</p>
-    </div>
-  `;
-
-  startCountdown(timeData.msUntilMidnight);
-}
-
-let countdownInterval = null;
-
-function showQuizAttemptsLeft(attempts, isLoading, isError) {
-  const el = document.getElementById('quiz-attempts-left');
-  if (!el) return;
-
-  if (isLoading) {
-    el.textContent = isError 
-      ? '⚠️ Unable to check daily limit. Tap Begin Test to retry.'
-      : '🎯 Checking daily limit...';
-    el.classList.remove('hidden');
-    el.style.background = isError ? '#fee2e2' : '#f0f9ff';
-    el.style.borderColor = isError ? '#fca5a5' : '#bae6fd';
-    el.style.color = isError ? '#991b1b' : '#0369a1';
-    return;
-  }
-
   const safeAttempts = typeof attempts === 'number' ? attempts : 0;
 
   if (safeAttempts > 0) {
@@ -1277,7 +1245,6 @@ auth.onAuthStateChanged(user => {
     }
   }
 });
-
 // ============================================
 // NOTIFICATIONS
 // ============================================
