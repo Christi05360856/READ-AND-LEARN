@@ -700,8 +700,11 @@ async function loadUserDashboard() {
       el('reward-current-points').textContent = (data.totalPoints || 0).toLocaleString();
     }
 
+    // Fetch sent milestones from rewardClaims collection
+    const sentMilestones = await getSentMilestones(user.uid);
+
     updateRewardProgress(data.totalPoints || 0);
-    updateRewardTiers(data.totalPoints || 0, data.claimedMilestones || []);
+    updateRewardTiers(data.totalPoints || 0, data.claimedMilestones || [], sentMilestones);
 
   } catch (err) {
     console.error('Dashboard error:', err);
@@ -759,7 +762,43 @@ function updateRewardProgress(points) {
   }
 }
 
-function updateRewardTiers(points, claimedMilestones) {
+// ============================================
+// REWARD TIERS - FIXED WITH PROPER LIFECYCLE
+// ============================================
+
+/**
+ * Fetches milestone rewards that admin has marked as 'sent' from rewardClaims collection
+ */
+async function getSentMilestones(userId) {
+  try {
+    const snap = await db.collection('rewardClaims')
+      .where('userId', '==', userId)
+      .where('type', '==', 'milestone')
+      .where('status', '==', 'sent')
+      .get();
+    
+    const sent = [];
+    snap.forEach(doc => {
+      const data = doc.data();
+      if (data.tier) sent.push(data.tier);
+    });
+    return sent;
+  } catch (err) {
+    console.error('getSentMilestones error:', err);
+    return [];
+  }
+}
+
+window.getSentMilestones = getSentMilestones;
+
+/**
+ * Updates reward tier display with proper lifecycle:
+ * - LOCKED: Always visible, shows "X pts to go"
+ * - UNLOCKED (not claimed): Shows "Claim Reward" button
+ * - CLAIMED (pending): Shows "Claimed — Pending"
+ * - SENT/PAID: HIDDEN completely
+ */
+function updateRewardTiers(points, claimedMilestones, sentMilestones) {
   const tiers = [
     { threshold: 5000, reward: '1GB', id: 'tier-5000', dataReward: '1GB Data' },
     { threshold: 10000, reward: '2.5GB', id: 'tier-10000', dataReward: '2.5GB Data' },
@@ -767,32 +806,59 @@ function updateRewardTiers(points, claimedMilestones) {
   ];
 
   const claimed = claimedMilestones || [];
+  const sent = sentMilestones || [];
 
   tiers.forEach(tier => {
     const el = document.getElementById(tier.id);
+    const tierCard = el ? el.closest('.reward-tier') : null;
     if (!el) return;
 
     const isUnlocked = points >= tier.threshold;
     const isClaimed = claimed.includes(tier.threshold);
+    const isSent = sent.includes(tier.threshold);
+
+    // HIDE completely if admin has sent/paid this reward
+    if (isSent) {
+      if (tierCard) tierCard.style.display = 'none';
+      return;
+    }
+
+    // Ensure card is visible for non-sent states
+    if (tierCard) tierCard.style.display = '';
 
     if (isClaimed) {
-      el.innerHTML = 'Claimed ✓ (' + tier.reward + ')';
+      // User claimed but admin hasn't sent yet — show pending status
+      el.innerHTML = 'Claimed — Pending ⏳ (' + tier.reward + ')';
       el.classList.add('unlocked');
       if (el.parentElement) el.parentElement.classList.add('tier-unlocked');
-      el.style.background = '#dcfce7';
-      el.style.color = '#166534';
+      el.style.background = '#fef3c7';
+      el.style.color = '#92400e';
+      el.style.border = '1px solid #fbbf24';
+      el.style.padding = '8px 16px';
+      el.style.borderRadius = '10px';
+      el.style.fontSize = '13px';
+      el.style.fontWeight = '600';
     } else if (isUnlocked) {
-      el.innerHTML = '<button onclick="claimMilestoneReward(' + tier.threshold + ', '' + tier.dataReward + '')" class="primary-btn" style="padding: 6px 14px; font-size: 12px; border-radius: 8px;">Claim Reward</button>';
+      // Threshold reached, not claimed yet — show CLAIM BUTTON
+      // FIXED: Proper string escaping for onclick handler
+      const onclickAttr = "claimMilestoneReward(" + tier.threshold + ", '" + tier.dataReward.replace(/'/g, "\\'") + "')";
+      el.innerHTML = '<button onclick="' + onclickAttr + '" class="primary-btn claim-reward-btn" style="padding: 8px 18px; font-size: 13px; border-radius: 10px; font-weight: 600;">Claim ' + tier.reward + '</button>';
       el.classList.add('unlocked');
       if (el.parentElement) el.parentElement.classList.add('tier-unlocked');
       el.style.background = 'transparent';
     } else {
+      // Still locked — show remaining points
       const remaining = tier.threshold - points;
       el.textContent = remaining.toLocaleString() + ' pts to go 🔒 (' + tier.reward + ')';
       el.classList.remove('unlocked');
       if (el.parentElement) el.parentElement.classList.remove('tier-unlocked');
       el.style.background = '#f1f5f9';
       el.style.color = '#64748b';
+      el.style.border = 'none';
+      el.style.padding = '8px 16px';
+      el.style.borderRadius = '10px';
+      el.style.fontSize = '13px';
+      el.style.fontWeight = '600';
     }
   });
 }
@@ -806,9 +872,12 @@ async function claimMilestoneReward(threshold, rewardType) {
     return;
   }
 
-  const btn = event.target;
-  btn.disabled = true;
-  btn.textContent = 'Claiming...';
+  // Find the button that was clicked
+  const btn = document.querySelector('.claim-reward-btn');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Claiming...';
+  }
 
   try {
     const userRef = db.collection('users').doc(user.uid);
@@ -818,16 +887,20 @@ async function claimMilestoneReward(threshold, rewardType) {
     const claimed = userData.claimedMilestones || [];
     if (claimed.includes(threshold)) {
       showToast('You have already claimed this reward!', 'info');
-      btn.disabled = false;
-      btn.textContent = 'Claim Reward';
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Claim ' + rewardType.split(' ')[0];
+      }
       return;
     }
 
     if (!userData.phoneNumber || !userData.networkProvider) {
       showToast('Please complete your profile (phone + network) before claiming', 'error');
       navigateTo('profile');
-      btn.disabled = false;
-      btn.textContent = 'Claim Reward';
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Claim ' + rewardType.split(' ')[0];
+      }
       return;
     }
 
@@ -850,12 +923,16 @@ async function claimMilestoneReward(threshold, rewardType) {
     });
 
     showToast('✅ Reward claimed! Admin will send it shortly.', 'success');
-    loadUserDashboard();
+    
+    // Refresh dashboard to show pending state
+    await loadUserDashboard();
   } catch (err) {
     console.error('Claim error:', err);
     showToast('Error claiming reward. Please try again.', 'error');
-    btn.disabled = false;
-    btn.textContent = 'Claim Reward';
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Claim ' + rewardType.split(' ')[0];
+    }
   }
 }
 
